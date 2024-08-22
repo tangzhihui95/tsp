@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/synchronize"})
 @Api(tags = {"TSP - OTA"})
 public class SynchronizeController {
+
     /*@Autowired
     public SynchronizeController(SynVehicleMapper synVehicleMapper, SynStdModelMapper synStdModelMapper, SynModelMapper synModelMapper) {
         this.synVehicleMapper = synVehicleMapper;
