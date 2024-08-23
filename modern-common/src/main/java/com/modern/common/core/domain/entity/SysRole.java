@@ -13,7 +13,7 @@ import com.modern.common.core.domain.BaseEntity;
 /**
  * 角色表 sys_role
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class SysRole extends BaseEntity
 {

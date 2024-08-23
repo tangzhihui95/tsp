@@ -3,7 +3,7 @@ package com.modern.common.core.domain.model;
 /**
  * 用户登录对象
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class LoginBody
 {

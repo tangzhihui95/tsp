@@ -3,7 +3,7 @@ package com.modern.common.exception;
 /**
  * 工具类异常
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class UtilException extends RuntimeException
 {

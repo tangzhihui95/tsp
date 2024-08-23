@@ -6,7 +6,7 @@ import com.modern.generator.domain.GenTableColumn;
 /**
  * 业务字段 服务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface IGenTableColumnService
 {

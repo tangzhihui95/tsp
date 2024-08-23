@@ -3,7 +3,7 @@ package com.modern.common.constant;
 /**
  * 用户常量信息
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class UserConstants
 {

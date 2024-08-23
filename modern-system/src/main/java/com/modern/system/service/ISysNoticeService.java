@@ -6,7 +6,7 @@ import com.modern.system.domain.SysNotice;
 /**
  * 公告 服务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface ISysNoticeService
 {

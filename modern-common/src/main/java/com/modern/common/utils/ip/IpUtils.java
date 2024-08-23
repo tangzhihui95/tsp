@@ -9,7 +9,7 @@ import com.modern.common.utils.StringUtils;
 /**
  * 获取IP方法
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class IpUtils
 {

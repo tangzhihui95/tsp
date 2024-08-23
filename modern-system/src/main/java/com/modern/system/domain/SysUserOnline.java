@@ -3,7 +3,7 @@ package com.modern.system.domain;
 /**
  * 当前在线会话
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class SysUserOnline
 {

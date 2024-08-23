@@ -3,7 +3,7 @@ package com.modern.common.constant;
 /**
  * 任务调度通用常量
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class ScheduleConstants
 {

@@ -15,7 +15,7 @@ import com.modern.common.utils.StringUtils;
 /**
  * Filter配置
  *
- * @author ruoyi
+ * @author tzh
  */
 @Configuration
 public class FilterConfig

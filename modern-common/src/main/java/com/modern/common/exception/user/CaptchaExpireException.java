@@ -3,7 +3,7 @@ package com.modern.common.exception.user;
 /**
  * 验证码失效异常类
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class CaptchaExpireException extends UserException
 {

@@ -14,7 +14,7 @@ import com.modern.system.service.ISysConfigService;
 /**
  * 注册验证
  * 
- * @author ruoyi
+ * @author tzh
  */
 @RestController
 public class SysRegisterController extends BaseController

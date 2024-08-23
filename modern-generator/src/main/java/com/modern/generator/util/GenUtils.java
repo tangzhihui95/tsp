@@ -11,7 +11,7 @@ import com.modern.generator.domain.GenTableColumn;
 /**
  * 代码生成器 工具类
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class GenUtils
 {

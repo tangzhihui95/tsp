@@ -3,7 +3,7 @@ package com.modern.common.utils.sign;
 /**
  * Base64工具类
  * 
- * @author ruoyi
+ * @author tzh
  */
 public final class Base64
 {

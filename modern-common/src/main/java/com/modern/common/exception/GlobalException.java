@@ -3,7 +3,7 @@ package com.modern.common.exception;
 /**
  * 全局异常
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class GlobalException extends RuntimeException
 {

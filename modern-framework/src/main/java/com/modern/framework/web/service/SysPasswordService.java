@@ -16,7 +16,7 @@ import com.modern.framework.security.context.AuthenticationContextHolder;
 /**
  * 登录密码方法
  * 
- * @author ruoyi
+ * @author tzh
  */
 @Component
 public class SysPasswordService

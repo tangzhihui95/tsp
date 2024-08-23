@@ -6,7 +6,7 @@ import com.modern.system.domain.SysOperLog;
 /**
  * 操作日志 服务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface ISysOperLogService
 {

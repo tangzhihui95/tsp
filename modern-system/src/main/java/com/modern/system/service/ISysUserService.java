@@ -6,7 +6,7 @@ import com.modern.common.core.domain.entity.SysUser;
 /**
  * 用户 业务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface ISysUserService
 {

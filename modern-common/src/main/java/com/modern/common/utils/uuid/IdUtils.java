@@ -3,7 +3,7 @@ package com.modern.common.utils.uuid;
 /**
  * ID生成器工具类
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class IdUtils
 {

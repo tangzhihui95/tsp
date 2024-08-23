@@ -12,7 +12,7 @@ import com.modern.common.core.domain.BaseEntity;
 /**
  * 菜单权限表 sys_menu
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class SysMenu extends BaseEntity
 {

@@ -18,7 +18,7 @@ import com.modern.system.service.ISysUserService;
 /**
  * 用户验证处理
  *
- * @author ruoyi
+ * @author tzh
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService

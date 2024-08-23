@@ -35,7 +35,7 @@ import com.modern.system.service.ISysUserService;
 /**
  * 用户信息
  * 
- * @author ruoyi
+ * @author tzh
  */
 @RestController
 @RequestMapping("/system/user")

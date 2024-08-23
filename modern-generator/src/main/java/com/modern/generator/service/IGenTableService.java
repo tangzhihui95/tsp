@@ -7,7 +7,7 @@ import com.modern.generator.domain.GenTable;
 /**
  * 业务 服务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface IGenTableService
 {

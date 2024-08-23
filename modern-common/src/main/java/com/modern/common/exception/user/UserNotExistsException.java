@@ -3,7 +3,7 @@ package com.modern.common.exception.user;
 /**
  * 用户不存在异常类
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class UserNotExistsException extends UserException
 {

@@ -12,7 +12,7 @@ import com.modern.common.constant.Constants;
 /**
  * Redis使用FastJson序列化
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T>
 {

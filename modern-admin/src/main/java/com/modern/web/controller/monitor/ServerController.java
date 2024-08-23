@@ -10,7 +10,7 @@ import com.modern.framework.web.domain.Server;
 /**
  * 服务器监控
  * 
- * @author ruoyi
+ * @author tzh
  */
 @RestController
 @RequestMapping("/monitor/server")

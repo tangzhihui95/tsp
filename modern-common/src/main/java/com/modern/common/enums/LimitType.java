@@ -3,7 +3,7 @@ package com.modern.common.enums;
 /**
  * 限流类型
  *
- * @author ruoyi
+ * @author tzh
  */
 
 public enum LimitType

@@ -3,7 +3,7 @@ package com.modern.common.enums;
 /**
  * 用户状态
  * 
- * @author ruoyi
+ * @author tzh
  */
 public enum UserStatus
 {

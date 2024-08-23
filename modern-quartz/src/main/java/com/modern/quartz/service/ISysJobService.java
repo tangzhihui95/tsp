@@ -8,7 +8,7 @@ import com.modern.quartz.domain.SysJob;
 /**
  * 定时任务调度信息信息 服务层
  * 
- * @author ruoyi
+ * @author tzh
  */
 public interface ISysJobService
 {

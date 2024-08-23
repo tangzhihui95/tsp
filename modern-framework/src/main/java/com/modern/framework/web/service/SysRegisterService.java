@@ -21,7 +21,7 @@ import com.modern.system.service.ISysUserService;
 /**
  * 注册校验方法
  * 
- * @author ruoyi
+ * @author tzh
  */
 @Component
 public class SysRegisterService

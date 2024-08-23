@@ -19,7 +19,7 @@ import com.modern.framework.interceptor.RepeatSubmitInterceptor;
 /**
  * 通用配置
  * 
- * @author ruoyi
+ * @author tzh
  */
 @Configuration
 public class ResourcesConfig implements WebMvcConfigurer

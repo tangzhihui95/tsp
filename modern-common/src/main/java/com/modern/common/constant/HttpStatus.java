@@ -3,7 +3,7 @@ package com.modern.common.constant;
 /**
  * 返回状态码
  * 
- * @author ruoyi
+ * @author tzh
  */
 public class HttpStatus
 {
