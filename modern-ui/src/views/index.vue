@@ -3,8 +3,8 @@
     <el-row :gutter="20">
       <el-col :sm="24" :lg="24">
         <blockquote class="text-warning" style="font-size: 14px">
-          领取阿里云通用云产品1888优惠券
-          <br />
+          摩登汽车-tsp平台
+          <!-- <br />
           <el-link
             href="https://www.aliyun.com/minisite/goods?userCode=brki8iof"
             type="primary"
@@ -31,10 +31,10 @@
           ><br />
           <h4 class="text-danger">
             云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)
-          </h4>
+          </h4> -->
         </blockquote>
-
-        <hr />
+      </el-col>
+        <!-- <hr />
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -979,7 +979,7 @@
             >
           </div>
         </el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>
