@@ -1,4 +1,4 @@
-package com.modern.controller;
+package com.modern;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

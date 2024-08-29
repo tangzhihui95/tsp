@@ -2,20 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.modern</groupId>
         <artifactId>modern</artifactId>
         <version>3.8.7</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>modern-tsp</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <description>tsp业务模块</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -27,6 +24,19 @@
             <version>1.5.21</version>
             <scope>compile</scope>
         </dependency>
+
+        <!--公共模块-->
+        <dependency>
+            <groupId>com.modern</groupId>
+            <artifactId>modern-common</artifactId>
+        </dependency>
+
+        <!--get set-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
