@@ -1,6 +1,7 @@
 package com.modern.common.core.domain;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.Objects;
  * @Date：2024/8/28 15:26
  * @Filename：ResultErrInfo
  */
+@Data
 public class ResultErrInfo<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 

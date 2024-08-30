@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.modern.common.constant.ErrorEnum;
 import com.modern.common.core.page.PageInfo;
+import com.modern.common.utils.JsonResult;
+import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
 import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
@@ -14,6 +17,7 @@ import com.modern.mapper.TspEquipmentModelMapperNew;
 import com.modern.mapper.TspEquipmentTypeMapper;
 import com.modern.model.dto.TspEquipmentModelPageListDTO;
 import com.modern.model.dto.TspEquipmentTypePageListDTO;
+import com.modern.model.vo.TspEquipmentTypeAddVO;
 import com.modern.repository.TspEquipmentModelRepository;
 import com.modern.repository.TspEquipmentTypeRepository;
 import org.springframework.beans.BeanUtils;
@@ -108,5 +112,22 @@ public class EquipmentTypeService extends TspBaseService {
         return PageInfo.of(dtos, vo.getPageNum().intValue(), vo.getPageSize().intValue(), page.getTotal());
     }
 
+    /**
+     * 设备分类-添加
+     *
+     * @param vo
+     * @return
+     */
+    public JsonResult add(TspEquipmentTypeAddVO vo) {
+        TspEquipmentType type = this.tspEquipmentTypeRepository.getByName(vo.getName(), vo.getExtraType());
+        if (type != null)
+            ErrorEnum.TSP_EQUIPMENT_TYPE_NOT_NULL_ERR.throwErr();
+        type = new TspEquipmentType();
+        BeanUtils.copyProperties(vo, type);
+        type.setCreateBy(SecurityUtils.getUsername());
+        type.setUpdateBy(SecurityUtils.getUsername());
+        tspEquipmentTypeRepository.save(type);
+        return JsonResult.getResult(true);
+    }
 
 }
