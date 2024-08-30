@@ -9,10 +9,12 @@ package com.modern.controller;
  * @Filename：TspEquipmentTypeController
  */
 
+import com.modern.common.annotation.Log;
 import com.modern.common.core.domain.Result;
 import com.modern.common.core.page.PageInfo;
 import com.modern.domain.FrontQuery;
 import com.modern.model.dto.TspEquipmentTypePageListDTO;
+import com.modern.model.vo.TspEquipmentTypeAddVO;
 import com.modern.service.EquipmentTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping({"/tsp/equipmentType"})
@@ -37,5 +41,14 @@ public class TspEquipmentTypeController {
     public Result<PageInfo<TspEquipmentTypePageListDTO>> list(@RequestBody FrontQuery vo) {
         return Result.ok(equipmentTypeService.getPageList(vo));
         //return Result.ok(equipmentTypeService.getList(vo));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:equipmentType:add')")
+    @ApiOperation("")
+    @Log(title = "- , businessType = BusinessType.INSERT")
+    @PostMapping({"/add"})
+    public Result add(@RequestBody @Valid TspEquipmentTypeAddVO vo) {
+        //return Result.data(() -> this.equipmentTypeService.add(vo));
+        return null;
     }
 }
