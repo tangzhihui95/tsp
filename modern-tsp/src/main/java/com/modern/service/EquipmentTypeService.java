@@ -10,6 +10,7 @@ import com.modern.common.utils.StringUtils;
 import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.domain.TspEquipmentType;
+import com.modern.mapper.TspEquipmentModelMapperNew;
 import com.modern.mapper.TspEquipmentTypeMapper;
 import com.modern.model.dto.TspEquipmentModelPageListDTO;
 import com.modern.model.dto.TspEquipmentTypePageListDTO;
@@ -40,10 +41,32 @@ public class EquipmentTypeService extends TspBaseService {
     @Autowired
     public TspEquipmentTypeRepository tspEquipmentTypeRepository;
 
+
     @Autowired
     public TspEquipmentTypeMapper tspEquipmentTypeMapper;
+    @Autowired
+    public TspEquipmentModelMapperNew tspEquipmentModelMapperNew;
 
+    /**
+     * 设备分类-列表查询
+     *
+     * @param vo
+     * @return
+     */
+    public PageInfo<TspEquipmentTypePageListDTO> getList(FrontQuery vo) {
 
+        if (Objects.nonNull(vo.getTspEquipmentModelId())) {
+            TspEquipmentModel tspEquipmentModel = tspEquipmentModelMapperNew.getById(vo.getTspEquipmentModelId());
+        }
+        return null;
+    }
+
+    /**
+     * 设备分类-列表查询
+     *
+     * @param vo
+     * @return
+     */
     public PageInfo<TspEquipmentTypePageListDTO> getPageList(FrontQuery vo) {
         List<TspEquipmentTypePageListDTO> dtos = new ArrayList<>();
         QueryWrapper<TspEquipmentType> ew = new QueryWrapper();

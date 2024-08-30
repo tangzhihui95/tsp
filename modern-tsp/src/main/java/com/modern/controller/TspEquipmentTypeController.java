@@ -36,5 +36,6 @@ public class TspEquipmentTypeController {
     @PostMapping({"/list"})
     public Result<PageInfo<TspEquipmentTypePageListDTO>> list(@RequestBody FrontQuery vo) {
         return Result.ok(equipmentTypeService.getPageList(vo));
+        //return Result.ok(equipmentTypeService.getList(vo));
     }
 }

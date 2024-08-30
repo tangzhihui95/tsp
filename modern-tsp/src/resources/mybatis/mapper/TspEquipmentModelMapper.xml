@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.modern.mapper.TspEquipmentModelMapperNew">
+
+    <resultMap id="BaseResultMap" type="com.modern.domain.TspEquipmentModel">
+        <id column="id" property="id" javaType="java.lang.Long"/>
+        <result column="model_name" property="modelName" javaType="java.lang.String"/>
+        <result column="suppliers" property="suppliers" javaType="java.lang.String"/>
+        <result column="batch_number" property="batchNumber" javaType="java.lang.String"/>
+        <result column="tsp_equipment_type_id" property="tspEquipmentTypeId" javaType="java.lang.Long"/>
+        <result column="is_delete" property="isDelete" javaType="java.lang.Integer"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" javaType="java.lang.String"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" javaType="java.lang.String"/>
+    </resultMap>
+
+    <sql id="selectTspEquipmentModel">
+        select id,
+               model_name,
+               suppliers,
+               batch_number,
+               tsp_equipment_type_id,
+               is_delete,
+               create_time,
+               create_by,
+               update_time,
+               update_by
+        from tsp_equipment_model
+    </sql>
+
+    <select id="getById" parameterType="Long" resultMap="BaseResultMap">
+        <include refid="selectTspEquipmentModel"/>
+        where id = #{tspEquipmentModelId} and is_delete = 0
+    </select>
+
+
+</mapper> 
