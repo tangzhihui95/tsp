@@ -8,6 +8,8 @@ import com.modern.mapper.TspEquipmentTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @Author：tzh
  * @Package：com.modern.repository
@@ -42,6 +44,14 @@ public class TspEquipmentTypeRepository extends ServicePlusImpl<TspEquipmentType
     @Override
     public boolean save(TspEquipmentType entity) {
         return super.save(entity);
+    }
+
+    public TspEquipmentType getByName(String name, @NotNull(message = "设备扩展信息不能为空") String extraType) {
+        QueryWrapper<TspEquipmentType> ew = new QueryWrapper();
+        ew.eq("name", name);
+        ew.eq("extra_type", extraType);
+        return (TspEquipmentType)
+                getOne((Wrapper) ew);
     }
 
 /*    public List<TspEquipmentTypeSelectDTO> selectList(FrontQuery vo) {

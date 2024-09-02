@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,7 +23,7 @@ public class TspEquipmentTypeAddVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long equipmentTypeId;
 
-    @NotEmpty(message = "设备类型不能为空")
+    @NotNull(message = "设备类型不能为空")
     @ApiModelProperty("设备类型")
     private String name;
 

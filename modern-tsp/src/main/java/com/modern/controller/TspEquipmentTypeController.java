@@ -12,6 +12,8 @@ package com.modern.controller;
 import com.modern.common.annotation.Log;
 import com.modern.common.core.domain.Result;
 import com.modern.common.core.page.PageInfo;
+import com.modern.common.enums.BusinessType;
+import com.modern.common.utils.JsonResult;
 import com.modern.domain.FrontQuery;
 import com.modern.model.dto.TspEquipmentTypePageListDTO;
 import com.modern.model.vo.TspEquipmentTypeAddVO;
@@ -35,6 +37,12 @@ public class TspEquipmentTypeController {
     @Autowired
     public EquipmentTypeService equipmentTypeService;
 
+    /**
+     * 设备分类-列表查询
+     *
+     * @param vo
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:list')")
     @ApiOperation("分页列表")
     @PostMapping({"/list"})
@@ -43,12 +51,17 @@ public class TspEquipmentTypeController {
         //return Result.ok(equipmentTypeService.getList(vo));
     }
 
+    /**
+     * 设备分类-设备分类添加
+     *
+     * @param vo
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:add')")
-    @ApiOperation("")
-    @Log(title = "- , businessType = BusinessType.INSERT")
+    @ApiOperation("设备分类-添加")
+    @Log(title = "设备分类-添加", businessType = BusinessType.INSERT)
     @PostMapping({"/add"})
-    public Result add(@RequestBody @Valid TspEquipmentTypeAddVO vo) {
-        //return Result.data(() -> this.equipmentTypeService.add(vo));
-        return null;
+    public JsonResult add(@RequestBody @Valid TspEquipmentTypeAddVO vo) {
+        return JsonResult.getResult1(equipmentTypeService.add(vo));
     }
 }
