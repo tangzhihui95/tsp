@@ -4,6 +4,7 @@ const path = require('path')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
+
 //
 const CompressionPlugin = require('compression-webpack-plugin')
 
@@ -35,8 +36,8 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        //target: `http://10.110.1.240:8080`,
-        target: `http://127.0.0.1:8088`,
+        target: `http://10.110.1.241:8088`,
+        //target: `http://127.0.0.1:8088`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
@@ -48,7 +49,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        sassOptions: { outputStyle: "expanded" }
+        sassOptions: {outputStyle: "expanded"}
       }
     }
   },
@@ -93,39 +94,39 @@ module.exports = {
       .end()
 
     config.when(process.env.NODE_ENV !== 'development', config => {
-          config
-            .plugin('ScriptExtHtmlWebpackPlugin')
-            .after('html')
-            .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
-              inline: /runtime\..*\.js$/
-            }])
-            .end()
+      config
+        .plugin('ScriptExtHtmlWebpackPlugin')
+        .after('html')
+        .use('script-ext-html-webpack-plugin', [{
+          // `runtime` must same as runtimeChunk name. default is `runtime`
+          inline: /runtime\..*\.js$/
+        }])
+        .end()
 
-          config.optimization.splitChunks({
-            chunks: 'all',
-            cacheGroups: {
-              libs: {
-                name: 'chunk-libs',
-                test: /[\\/]node_modules[\\/]/,
-                priority: 10,
-                chunks: 'initial' // only package third parties that are initially dependent
-              },
-              elementUI: {
-                name: 'chunk-elementUI', // split elementUI into a single package
-                test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
-                priority: 20 // the weight needs to be larger than libs and app or it will be packaged into libs or app
-              },
-              commons: {
-                name: 'chunk-commons',
-                test: resolve('src/components'), // can customize your rules
-                minChunks: 3, //  minimum common number
-                priority: 5,
-                reuseExistingChunk: true
-              }
-            }
-          })
-          config.optimization.runtimeChunk('single')
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          libs: {
+            name: 'chunk-libs',
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            chunks: 'initial' // only package third parties that are initially dependent
+          },
+          elementUI: {
+            name: 'chunk-elementUI', // split elementUI into a single package
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
+            priority: 20 // the weight needs to be larger than libs and app or it will be packaged into libs or app
+          },
+          commons: {
+            name: 'chunk-commons',
+            test: resolve('src/components'), // can customize your rules
+            minChunks: 3, //  minimum common number
+            priority: 5,
+            reuseExistingChunk: true
+          }
+        }
+      })
+      config.optimization.runtimeChunk('single')
     })
   }
 }
