@@ -179,7 +179,7 @@
     </dependencyManagement>
 
     <modules>
-        <module>modern-admin</module>
+        <module>modern-web</module>
         <module>modern-framework</module>
         <module>modern-system</module>
         <module>modern-quartz</module>
