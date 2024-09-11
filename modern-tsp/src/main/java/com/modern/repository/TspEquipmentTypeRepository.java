@@ -2,13 +2,20 @@ package com.modern.repository;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.modern.common.core.ServicePlusImpl;
+import com.modern.common.core.domain.BaseModel;
+import com.modern.domain.FrontQuery;
+import com.modern.domain.TspEquipmentModel;
 import com.modern.domain.TspEquipmentType;
 import com.modern.mapper.TspEquipmentTypeMapper;
+import com.modern.model.dto.TspEquipmentTypeSelectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -54,13 +61,13 @@ public class TspEquipmentTypeRepository extends ServicePlusImpl<TspEquipmentType
                 getOne((Wrapper) ew);
     }
 
-/*    public List<TspEquipmentTypeSelectDTO> selectList(FrontQuery vo) {
+    public List<TspEquipmentTypeSelectDTO> selectList(FrontQuery vo) {
         ArrayList<TspEquipmentTypeSelectDTO> dtos = new ArrayList<>();
         List<TspEquipmentType> types = ((LambdaQueryChainWrapper) lambdaQuery().eq(BaseModel::getIsDelete, Integer.valueOf(0))).list();
         TspEquipmentTypeSelectDTO selectDTO = new TspEquipmentTypeSelectDTO();
         if (vo.getNeedAll() != null && vo.getNeedAll().intValue() == 1) {
-            selectDTO.setLabel(");
-                    selectDTO.setValue(new Long(0L));
+            selectDTO.setLabel("全部");
+            selectDTO.setValue(new Long(0L));
             dtos.add(selectDTO);
         }
         for (TspEquipmentType type : types) {
@@ -90,14 +97,5 @@ public class TspEquipmentTypeRepository extends ServicePlusImpl<TspEquipmentType
         }
         return suppliersDTOS;
     }
-
-    public TspEquipmentType getByName(String name, @NotNull(message = "") String extraType) {
-            QueryWrapper<TspEquipmentType>ew = new QueryWrapper();
-            ew.eq("name", name);
-    ew.eq("extra_type",extraType);
-    return(TspEquipmentType)
-
-    getOne((Wrapper)ew);
-    }*/
 
 }

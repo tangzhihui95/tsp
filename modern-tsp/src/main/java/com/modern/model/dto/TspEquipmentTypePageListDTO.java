@@ -1,6 +1,6 @@
 package com.modern.model.dto;
 
-import com.modern.common.core.domain.dto.BaseDto;
+import com.modern.common.core.domain.BaseModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,14 +15,14 @@ import java.util.List;
  * @Filename：TspEquipmentTypePageListDTO
  */
 @Data
-public class TspEquipmentTypePageListDTO extends BaseDto {
+public class TspEquipmentTypePageListDTO extends BaseModel {
 
     @ApiModelProperty("设备类型")
     private String name;
     @ApiModelProperty("供应商")
     private String suppliers;
     @ApiModelProperty("是否为终端")
-    private Boolean isTerminal;
+    private Integer isTerminal;
     @ApiModelProperty("设备扩展类型")
     private String extraType;
     @ApiModelProperty("关联设备")

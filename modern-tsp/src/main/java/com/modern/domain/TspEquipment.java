@@ -45,7 +45,7 @@ public class TspEquipment extends BaseModel {
     private String version;
 
     @Column(name = "is_terminal")
-    private Boolean isTerminal;
+    private Integer isTerminal;
     @Column(name = "supplier_code")
     private String supplierCode;
 
