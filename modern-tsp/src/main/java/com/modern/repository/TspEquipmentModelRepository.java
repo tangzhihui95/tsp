@@ -3,6 +3,8 @@ package com.modern.repository;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.modern.common.core.ServicePlusImpl;
+import com.modern.common.utils.StringUtils;
+import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.mapper.TspEquipmentModelMapper;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,22 @@ public class TspEquipmentModelRepository extends ServicePlusImpl<TspEquipmentMod
         QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
         ew.eq("tsp_equipment_type_id", id);
         return (int) count((Wrapper) ew);
+    }
+
+    public QueryWrapper<TspEquipmentModel> getPageList(FrontQuery vo) {
+        QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
+        ew.and(StringUtils.isNotEmpty(vo.getSearch()), q -> q.like("name", vo.getSearch())).or().like("extra_type", vo.getSearch());
+        ew.eq((vo.getTspEquipmentModelId() != null), "t.id", vo.getTspEquipmentModelId());
+        ew.eq("t.is_delete", "0");
+        ew.orderByDesc("a.update_time", new String[0]);
+        return ew;
+    }
+
+    public TspEquipmentModel getByModelNameAndType(String modelName, Long tspEquipmentTypeId) {
+        QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
+        ew.eq("model_name", modelName);
+        ew.eq("tsp_equipment_type_id", tspEquipmentTypeId);
+        return (TspEquipmentModel) getOne((Wrapper) ew);
     }
 
 }

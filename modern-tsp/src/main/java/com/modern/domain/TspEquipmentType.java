@@ -29,7 +29,7 @@ public class TspEquipmentType extends BaseModel {
     @Column(name = "suppliers")
     private String suppliers;
     @Column(name = "is_terminal")
-    private Boolean isTerminal;
+    private Integer isTerminal;
     @Column(name = "extra_type")
     private String extraType;
 

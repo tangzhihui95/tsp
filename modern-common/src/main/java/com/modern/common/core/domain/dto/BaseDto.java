@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -18,22 +20,30 @@ import java.time.LocalDateTime;
  * @Date：2024/8/28 14:56
  * @Filename：BaseVO
  */
-public class BaseDto {
+@Data
+@Entity
+public class BaseDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty("ID")
     private Long id;
     @ApiModelProperty("创建人")
     private String createBy;
     @ApiModelProperty("创建时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
     @ApiModelProperty("更新人")
     private String updateBy;
     @ApiModelProperty("更新时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updateTime;
+
+    @ApiModelProperty("是否删除 1-是 0-否")
+    // @Column(name = "是否删除 1-是 0-否", columnDefinition = "INTdefaultValue = 0")
+    private Integer isDelete;
 }

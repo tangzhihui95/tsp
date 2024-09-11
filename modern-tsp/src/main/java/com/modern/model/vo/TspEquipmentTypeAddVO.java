@@ -35,5 +35,5 @@ public class TspEquipmentTypeAddVO {
     private String extraType;
 
     @ApiModelProperty("是否为终端设备")
-    private Boolean isTerminal;
+    private Integer isTerminal;
 }

@@ -1,6 +1,7 @@
 package com.modern.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.modern.common.core.domain.BaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,7 +16,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel("设备信息-数据传输-导入导出")
-public class TspEquipmentModelPageListDTO {
+public class TspEquipmentModelPageListDTO extends BaseModel {
 
     @ApiModelProperty("设备类型名称")
     private String name;
@@ -25,7 +26,7 @@ public class TspEquipmentModelPageListDTO {
     private Long tspEquipmentTypeId;
 
     @ApiModelProperty("是否为终端0:否 1:是")
-    private Boolean isTerminal;
+    private Integer isTerminal;
 
     @ApiModelProperty("设备扩展信息类型")
     private String extraType;
