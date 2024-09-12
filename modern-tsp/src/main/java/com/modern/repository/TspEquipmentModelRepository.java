@@ -22,6 +22,18 @@ import java.util.List;
 @Service
 public class TspEquipmentModelRepository extends ServicePlusImpl<TspEquipmentModelMapper, TspEquipmentModel, TspEquipmentModel> {
 
+    public TspEquipmentModel getByModelName(String modelName) {
+        QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
+        ew.eq("model_name", modelName);
+        return (TspEquipmentModel) getOne((Wrapper) ew);
+    }
+
+    public TspEquipmentModel getByModelNameNotId(String modelName, Long tspEquipmentModelId) {
+        QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
+        ew.eq("model_name", modelName);
+        ew.notIn("id", new Object[]{tspEquipmentModelId});
+        return (TspEquipmentModel) getOne((Wrapper) ew);
+    }
 
     public List<TspEquipmentModel> findByTspModelId(Long tspEquipmentTypeId, Long tspEquipmentModelId) {
         QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();

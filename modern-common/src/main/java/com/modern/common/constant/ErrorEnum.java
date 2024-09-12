@@ -13,6 +13,8 @@ import com.modern.common.exception.ServiceException;
 public enum ErrorEnum {
     TSP_EQUIPMENT_TYPE_NOT_NULL_ERR(Integer.valueOf(3), Integer.valueOf(107), "设备分类已存在"),
     TSP_EQUIPMENT_TYPE_NULL_ERR(Integer.valueOf(3), Integer.valueOf(108), "未找到设备分类"),
+    TSP_EQUIPMENT_MODEL_NOT_NULL_ERR(Integer.valueOf(12), Integer.valueOf(110), "设备型号已存在"),
+    TSP_EQUIPMENT_MODEL_DELETE_ERR(Integer.valueOf(13), Integer.valueOf(112), "设备型号下存在设备无法删除"),
     TSP_EQUIPMENT_TYPE_DELETE_ERR(Integer.valueOf(3), Integer.valueOf(109), "设备分类下存在设备型号,无法删除");
 
     private Integer type;
