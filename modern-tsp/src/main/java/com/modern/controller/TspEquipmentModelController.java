@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
+ * TSP - 设备型号
+ *
  * @Author：tzh
  * @Package：com.modern.controller
  * @Project：tsp
@@ -22,8 +24,8 @@ import javax.validation.Valid;
  * @Filename：TspEquipmentModelController
  */
 @RestController
-@RequestMapping({"/tsp/equipmentModel"})
 @Api(tags = {"TSP - 设备型号"})
+@RequestMapping({"/tsp/equipmentModel"})
 public class TspEquipmentModelController {
     @Autowired
     private TspEquipmentModelService tspEquipmentModelService;

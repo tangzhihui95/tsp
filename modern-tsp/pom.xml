@@ -31,6 +31,20 @@
             <artifactId>modern-common</artifactId>
         </dependency>
 
+        <!--framework框架核心-->
+        <dependency>
+            <groupId>com.modern</groupId>
+            <artifactId>modern-framework</artifactId>
+        </dependency>
+
+        <!--车辆模块-->
+        <dependency>
+            <groupId>com.modern</groupId>
+            <artifactId>modern-exInterface</artifactId>
+            <version>3.8.7</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--get set-->
         <dependency>
             <groupId>org.projectlombok</groupId>

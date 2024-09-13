@@ -1,4 +1,4 @@
-package com.modern.domain;
+package com.modern.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modern.common.core.domain.vo.BaseVO;

@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.modern.common.core.ServicePlusImpl;
 import com.modern.common.utils.StringUtils;
-import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.mapper.TspEquipmentModelMapper;
+import com.modern.model.vo.FrontQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +70,17 @@ public class TspEquipmentModelRepository extends ServicePlusImpl<TspEquipmentMod
         ew.eq("model_name", modelName);
         ew.eq("tsp_equipment_type_id", tspEquipmentTypeId);
         return (TspEquipmentModel) getOne((Wrapper) ew);
+    }
+
+    public List<TspEquipmentModel> findByTspEquipmentIdLikeName(Long tspEquipmentId, String modelName) {
+        QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
+        ew.eq("id", tspEquipmentId);
+        ew.like(!StringUtils.isEmpty(modelName), "model_name", modelName);
+        return list((Wrapper) ew);
+    }
+
+    public TspEquipmentModel getByIdContainsDelete(Long tspEquipmentId) {
+        return ((TspEquipmentModelMapper) this.baseMapper).getByIdContainsDelete(tspEquipmentId);
     }
 
 }
