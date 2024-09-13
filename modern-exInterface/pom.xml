@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.modern</groupId>
+        <artifactId>modern</artifactId>
+        <version>3.8.7</version>
+    </parent>
+    <artifactId>modern-exInterface</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+
+    <description>tsp-车辆业务模块</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.21</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--公共模块-->
+        <dependency>
+            <groupId>com.modern</groupId>
+            <artifactId>modern-common</artifactId>
+        </dependency>
+
+        <!--get set-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>
