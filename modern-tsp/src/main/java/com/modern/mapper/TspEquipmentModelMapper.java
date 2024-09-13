@@ -22,4 +22,6 @@ public interface TspEquipmentModelMapper extends BaseMapperPlus<TspEquipmentMode
     @Select({"SELECT t.id,t.model_name,t.suppliers,t.batch_number,a.name,a.is_terminal,a.extra_type FROM tsp_equipment_model t LEFT JOIN tsp_equipment_type a ON a.id = t.tsp_equipment_type_id ${ew.customSqlSegment}"})
     IPage<TspEquipmentModelPageListDTO> getPageList(Page<Object> paramPage, @Param("ew") QueryWrapper<TspEquipmentModel> paramQueryWrapper);
 
+    @Select({"select * from tsp_equipment_model where id = #{id}"})
+    TspEquipmentModel getByIdContainsDelete(@Param("id") Long paramLong);
 }

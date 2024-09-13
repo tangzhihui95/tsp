@@ -1,8 +1,6 @@
 package com.modern.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.modern.common.constant.ErrorEnum;
@@ -13,12 +11,12 @@ import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.poi.ExcelUtil;
-import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.domain.TspEquipmentType;
 import com.modern.mapper.TspEquipmentModelMapperNew;
 import com.modern.mapper.TspEquipmentTypeMapper;
 import com.modern.model.dto.*;
+import com.modern.model.vo.FrontQuery;
 import com.modern.model.vo.TspEquipmentTypeAddVO;
 import com.modern.repository.TspEquipmentModelRepository;
 import com.modern.repository.TspEquipmentTypeRepository;
@@ -92,20 +90,20 @@ public class TspEquipmentTypeService extends TspBaseService {
         ew.and(StringUtils.isNotEmpty(vo.getSearch()), q ->
                 ((QueryWrapper) ((QueryWrapper) q.like("name", vo.getSearch())).or()).like("extra_type", vo.getSearch()));
         ew.orderByDesc("create_time", new String[0]);
-        Page<TspEquipmentType> page = (Page<TspEquipmentType>) this.tspEquipmentTypeRepository.page((IPage) new Page(vo.getPageNum().intValue(), vo.getPageSize().intValue()), (Wrapper) ew);
+        Page<TspEquipmentType> page = tspEquipmentTypeRepository.page(new Page(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
         for (TspEquipmentType type : page.getRecords()) {
             List<TspEquipmentModel> modelList;
             TspEquipmentTypePageListDTO dto = new TspEquipmentTypePageListDTO();
             BeanUtils.copyProperties(type, dto);
-            int count = this.tspEquipmentTypeMapper.countByTspEquipmentTypeId(type.getId());
+            int count = tspEquipmentTypeMapper.countByTspEquipmentTypeId(type.getId());
             if (Objects.nonNull(vo.getTspEquipmentModelId())) {
-                modelList = this.tspEquipmentModelRepository.findByTspModelId(type.getId(), vo.getTspEquipmentModelId());
+                modelList = tspEquipmentModelRepository.findByTspModelId(type.getId(), vo.getTspEquipmentModelId());
             } else {
-                modelList = this.tspEquipmentModelRepository.findByTspEquipmentTypeId(type.getId());
+                modelList = tspEquipmentModelRepository.findByTspEquipmentTypeId(type.getId());
             }
             List<TspEquipmentModelPageListDTO> modelDTOs = new ArrayList<>();
             for (TspEquipmentModel tspEquipmentModel : modelList) {
-                int modelCount = this.tspEquipmentTypeMapper.countByTspEquipmentModelId(tspEquipmentModel.getId());
+                int modelCount = tspEquipmentTypeMapper.countByTspEquipmentModelId(tspEquipmentModel.getId());
                 TspEquipmentModelPageListDTO modelDTO = new TspEquipmentModelPageListDTO();
                 BeanUtils.copyProperties(tspEquipmentModel, modelDTO);
                 modelDTO.setCount(Integer.valueOf(modelCount));
@@ -127,8 +125,8 @@ public class TspEquipmentTypeService extends TspBaseService {
      * @return
      */
     public JsonResult add(TspEquipmentTypeAddVO vo) {
-        TspEquipmentType type = this.tspEquipmentTypeRepository.getByName(vo.getName(), vo.getExtraType());
-        if (type != null)
+        TspEquipmentType type = tspEquipmentTypeRepository.getByName(vo.getName(), vo.getExtraType());
+        if (Objects.nonNull(type))
             ErrorEnum.TSP_EQUIPMENT_TYPE_NOT_NULL_ERR.throwErr();
         type = new TspEquipmentType();
         BeanUtils.copyProperties(vo, type);
@@ -194,7 +192,7 @@ public class TspEquipmentTypeService extends TspBaseService {
         ArrayList<TspEquipmentTypeExcelDTO> dtos = new ArrayList<>();
         List<TspEquipmentModelPageListDTO> list = tspEquipmentModelService.getPageList(vo).getList();
         for (TspEquipmentModelPageListDTO tspEquipmentModelPageListDTO : list) {
-            int count = this.tspEquipmentTypeMapper.countByTspEquipmentModelId(tspEquipmentModelPageListDTO.getId());
+            int count = tspEquipmentTypeMapper.countByTspEquipmentModelId(tspEquipmentModelPageListDTO.getId());
             TspEquipmentTypeExcelDTO dto = new TspEquipmentTypeExcelDTO();
             BeanUtils.copyProperties(tspEquipmentModelPageListDTO, dto);
             dto.setCount(Integer.valueOf(count));
@@ -219,14 +217,14 @@ public class TspEquipmentTypeService extends TspBaseService {
                     failureNum = ((Integer) checkMap.get("failureNum")).intValue();
                     failureMsg = (StringBuilder) checkMap.get("failureMsg");
                     if (failureNum == 0) {
-                        TspEquipmentType tspEquipmentType = this.tspEquipmentTypeRepository.getByNameAndExtraType(dto.getName(), dto.getExtraType());
-                        if (tspEquipmentType == null) {
+                        TspEquipmentType tspEquipmentType = tspEquipmentTypeRepository.getByNameAndExtraType(dto.getName(), dto.getExtraType());
+                        if (Objects.isNull(tspEquipmentType)) {
                             failureNum++;
                             failureMsg.append("<br/>").append(failureNum).append("、设备类型").append(dto.getExtraType()).append("不存在");
                             continue;
                         }
-                        TspEquipmentModel tspEquipmentModel = this.tspEquipmentModelRepository.getByModelNameAndType(dto.getModelName(), tspEquipmentType.getId());
-                        if (tspEquipmentModel != null) {
+                        TspEquipmentModel tspEquipmentModel = tspEquipmentModelRepository.getByModelNameAndType(dto.getModelName(), tspEquipmentType.getId());
+                        if (Objects.nonNull(tspEquipmentModel)) {
                             failureNum++;
                             failureMsg.append("<br/>").append(failureNum).append("、设备类型下的型号").append(dto.getModelName()).append("已存在");
                             continue;
@@ -236,7 +234,7 @@ public class TspEquipmentTypeService extends TspBaseService {
                         tspEquipmentModel.setTspEquipmentTypeId(tspEquipmentType.getId());
                         tspEquipmentModel.setCreateBy(SecurityUtils.getUsername());
                         tspEquipmentModel.setUpdateBy(SecurityUtils.getUsername());
-                        this.tspEquipmentModelRepository.save(tspEquipmentModel);
+                        tspEquipmentModelRepository.save(tspEquipmentModel);
                         successNum++;
                         successMsg.append("<br/>").append(successNum).append("、设备型号").append(dto.getModelName()).append("更新成功");
                     }
@@ -321,7 +319,7 @@ public class TspEquipmentTypeService extends TspBaseService {
                     failureNum = ((Integer) checkMap.get("failureNum")).intValue();
                     failureMsg = (StringBuilder) checkMap.get("failureMsg");
                     if (failureNum == 0) {
-                        TspEquipmentType tspEquipmentType = this.tspEquipmentTypeRepository.getByNameAndExtraType(dto.getName(), dto.getExtraType());
+                        TspEquipmentType tspEquipmentType = tspEquipmentTypeRepository.getByNameAndExtraType(dto.getName(), dto.getExtraType());
                         if (tspEquipmentType != null) {
                             failureNum++;
                             failureMsg.append("<br/>").append(failureNum).append("、设备类型").append(dto.getName()).append("已存在");
@@ -336,7 +334,7 @@ public class TspEquipmentTypeService extends TspBaseService {
                         }
                         tspEquipmentType.setCreateBy(SecurityUtils.getUsername());
                         tspEquipmentType.setUpdateBy(SecurityUtils.getUsername());
-                        this.tspEquipmentTypeRepository.save(tspEquipmentType);
+                        tspEquipmentTypeRepository.save(tspEquipmentType);
                         successNum++;
                         successMsg.append("<br/>").append(successNum).append("、设备类型").append(dto.getName()).append("添加成功");
                     }

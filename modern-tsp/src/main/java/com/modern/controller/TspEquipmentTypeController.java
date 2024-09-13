@@ -16,11 +16,11 @@ import com.modern.common.core.page.PageInfo;
 import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.poi.ExcelUtil;
-import com.modern.domain.FrontQuery;
 import com.modern.model.dto.TspEquipmentTypeExcelDTO;
 import com.modern.model.dto.TspEquipmentTypeImportDTO;
 import com.modern.model.dto.TspEquipmentTypePageListDTO;
 import com.modern.model.dto.TspEquipmentTypeSelectDTO;
+import com.modern.model.vo.FrontQuery;
 import com.modern.model.vo.TspEquipmentTypeAddVO;
 import com.modern.service.TspEquipmentTypeService;
 import io.swagger.annotations.Api;
@@ -34,9 +34,20 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+
+/**
+ * tsp-设备类型
+ *
+ * @Author：tzh
+ * @Package：com.modern.controller
+ * @Project：tsp
+ * @name：TspEquipmentTypeController
+ * @Date：2024/8/29 10:45
+ * @Filename：TspEquipmentTypeController
+ */
 @RestController
-@RequestMapping({"/tsp/equipmentType"})
 @Api(tags = {"tsp-设备类型"})
+@RequestMapping({"/tsp/equipmentType"})
 public class TspEquipmentTypeController {
 
     @Autowired

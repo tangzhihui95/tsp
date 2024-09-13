@@ -4,7 +4,9 @@ import com.modern.common.core.domain.BaseModel;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @Author：tzh
@@ -20,9 +22,9 @@ import javax.persistence.*;
 @Table(name = "tsp_equipment_model")
 public class TspEquipmentModel extends BaseModel {
 
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long id;*/
     @Column(name = "model_name")
     private String modelName;
     @Column(name = "suppliers")

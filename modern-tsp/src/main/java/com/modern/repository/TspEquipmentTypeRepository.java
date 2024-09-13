@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.modern.common.core.ServicePlusImpl;
 import com.modern.common.core.domain.BaseModel;
-import com.modern.domain.FrontQuery;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.domain.TspEquipmentType;
 import com.modern.mapper.TspEquipmentTypeMapper;
 import com.modern.model.dto.TspEquipmentTypeSelectDTO;
+import com.modern.model.vo.FrontQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

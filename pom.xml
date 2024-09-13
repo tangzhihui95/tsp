@@ -186,6 +186,7 @@
         <module>modern-generator</module>
         <module>modern-common</module>
         <module>modern-tsp</module>
+        <module>modern-exInterface</module>
     </modules>
     <packaging>pom</packaging>
 

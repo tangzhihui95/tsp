@@ -7,11 +7,10 @@
         <artifactId>modern</artifactId>
         <version>3.8.7</version>
     </parent>
+    <artifactId>modern-exInterface</artifactId>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>modern-tsp</artifactId>
-
-    <description>tsp业务模块</description>
+    <description>tsp-车辆业务模块</description>
 
     <dependencies>
         <dependency>
@@ -31,26 +30,12 @@
             <artifactId>modern-common</artifactId>
         </dependency>
 
-        <!--framework框架核心-->
-        <dependency>
-            <groupId>com.modern</groupId>
-            <artifactId>modern-framework</artifactId>
-        </dependency>
-
-        <!--车辆模块-->
-        <dependency>
-            <groupId>com.modern</groupId>
-            <artifactId>modern-exInterface</artifactId>
-            <version>3.8.7</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!--get set-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
     </dependencies>
+
 
 </project>
