@@ -81,8 +81,8 @@ public class TspEquipmentTypeController {
     }
 
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:edit')")
-    @ApiOperation("")
-    @Log(title = "- ", businessType = BusinessType.UPDATE)
+    @ApiOperation("设备分类-编辑")
+    @Log(title = "设备分类-编辑", businessType = BusinessType.UPDATE)
     @PutMapping({"/edit"})
     public JsonResult edit(@RequestBody @Valid TspEquipmentTypeAddVO vo) {
         return JsonResult.getResult(equipmentTypeService.edit(vo));
