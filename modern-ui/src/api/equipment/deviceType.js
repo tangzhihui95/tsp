@@ -10,12 +10,7 @@ export function listdeviceType(query) {
 }
 
 // 查询设备类型详细
-export function getdeviceType(tspEquipmentTypeId) {
-  return request({
-    url: '/tsp/equipmentType/list/' + tspEquipmentTypeId ,
-    method: 'get'
-  })
-}
+
 
 // 新增设备类型
 export function adddeviceType(data) {
