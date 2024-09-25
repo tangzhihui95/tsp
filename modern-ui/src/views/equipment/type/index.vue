@@ -207,6 +207,7 @@
             <el-radio
             v-for="a in terminals"
             :label="a.value"
+            :key="a.label"
             >{{a.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
