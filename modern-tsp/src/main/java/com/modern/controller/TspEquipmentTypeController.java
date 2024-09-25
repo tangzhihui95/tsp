@@ -1,14 +1,5 @@
 package com.modern.controller;
 
-/**
- * @Author：tzh
- * @Package：com.modern.controller
- * @Project：tsp
- * @name：TspEquipmentTypeController
- * @Date：2024/8/28 14:45
- * @Filename：TspEquipmentTypeController
- */
-
 import com.modern.common.annotation.Log;
 import com.modern.common.core.domain.AjaxResult;
 import com.modern.common.core.domain.Result;
