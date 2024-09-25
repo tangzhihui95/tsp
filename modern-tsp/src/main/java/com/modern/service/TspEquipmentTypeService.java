@@ -7,6 +7,7 @@ import com.modern.common.constant.ErrorEnum;
 import com.modern.common.core.domain.BaseModel;
 import com.modern.common.core.page.PageInfo;
 import com.modern.common.exception.ServiceException;
+import com.modern.common.utils.DateUtils;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
@@ -132,6 +133,7 @@ public class TspEquipmentTypeService extends TspBaseService {
         BeanUtils.copyProperties(vo, type);
         type.setCreateBy(SecurityUtils.getUsername());
         type.setUpdateBy(SecurityUtils.getUsername());
+        type.setCreateTime(DateUtils.getCurrentTime());
         tspEquipmentTypeRepository.save(type);
         return JsonResult.getResult(true);
     }
