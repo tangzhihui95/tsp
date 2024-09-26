@@ -6,6 +6,7 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -52,7 +53,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static final LocalDateTime getCurrentTime() {
-        return LocalDateTime.parse(dateTimeNow(YYYY_MM_DD_HH_MM_SS));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(System.currentTimeMillis());
+        return LocalDateTime.parse(formatter.format(date), dateFormat);
     }
 
     public static final String dateTimeNow() {
