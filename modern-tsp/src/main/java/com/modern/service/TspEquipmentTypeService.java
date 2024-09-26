@@ -152,6 +152,7 @@ public class TspEquipmentTypeService extends TspBaseService {
         if (Objects.nonNull(one))
             ErrorEnum.TSP_EQUIPMENT_TYPE_NOT_NULL_ERR.throwErr();
         BeanUtils.copyProperties(vo, equipmentType);
+        equipmentType.setUpdateTime(DateUtils.getCurrentTime());
         equipmentType.setUpdateBy(SecurityUtils.getUsername());
         tspEquipmentTypeRepository.updateById(equipmentType);
         return JsonResult.getResult(true);
