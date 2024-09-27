@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.modern.common.core.BaseMapperPlus;
 import com.modern.domain.TspEquipment;
 import com.modern.model.dto.TspEquipmentPageListDTO;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
