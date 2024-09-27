@@ -23,7 +23,7 @@ public class TspEquipmentTypeExcelDTO {
     @ApiModelProperty("设备类型名称")
     private String name;
 
-    @Excel(name = "是否为终端", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "1:是 0:否", sort = 2)
+    @Excel(name = "是否为终端", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "1=是,0=否", sort = 2)
     @ApiModelProperty("是否为终端 1:是 0:否")
     private Integer isTerminal;
 

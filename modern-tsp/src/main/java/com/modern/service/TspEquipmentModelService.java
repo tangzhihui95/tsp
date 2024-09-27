@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.modern.common.constant.ErrorEnum;
 import com.modern.common.core.page.PageInfo;
+import com.modern.common.utils.DateUtils;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.bean.BeanCopyUtils;
@@ -55,8 +56,8 @@ public class TspEquipmentModelService extends TspBaseService {
         if (Objects.nonNull(model))
             ErrorEnum.TSP_EQUIPMENT_MODEL_NOT_NULL_ERR.throwErr();
         TspEquipmentModel copy = BeanCopyUtils.oneCopy(vo, CopyOptions.create(), TspEquipmentModel.class);
-        copy.setUpdateBy(SecurityUtils.getUsername());
         copy.setCreateBy(SecurityUtils.getUsername());
+        copy.setCreateTime(DateUtils.getCurrentTime());
         this.tspEquipmentModelRepository.save(copy);
         return JsonResult.getResult(true);
     }
@@ -69,6 +70,7 @@ public class TspEquipmentModelService extends TspBaseService {
             ErrorEnum.TSP_EQUIPMENT_MODEL_NOT_NULL_ERR.throwErr();
         TspEquipmentModel copy = BeanCopyUtils.oneCopy(vo, CopyOptions.create(), TspEquipmentModel.class);
         copy.setUpdateBy(SecurityUtils.getUsername());
+        copy.setUpdateTime(DateUtils.getCurrentTime());
         copy.setId(vo.getTspEquipmentModelId());
         this.tspEquipmentModelRepository.updateById(copy);
         return JsonResult.getResult(true);
