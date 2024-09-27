@@ -58,7 +58,7 @@ public class TspEquipmentModelRepository extends ServicePlusImpl<TspEquipmentMod
 
     public QueryWrapper<TspEquipmentModel> getPageList(FrontQuery vo) {
         QueryWrapper<TspEquipmentModel> ew = new QueryWrapper();
-        ew.and(StringUtils.isNotEmpty(vo.getSearch()), q -> q.like("name", vo.getSearch())).or().like("extra_type", vo.getSearch());
+        ew.and(StringUtils.isNotEmpty(vo.getSearch()), q -> ((QueryWrapper) ((QueryWrapper) q.like("name", vo.getSearch())).or()).like("extra_type", vo.getSearch()));
         ew.eq((vo.getTspEquipmentModelId() != null), "t.id", vo.getTspEquipmentModelId());
         ew.eq("t.is_delete", "0");
         ew.orderByDesc("a.update_time", new String[0]);

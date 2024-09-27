@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -105,11 +106,11 @@ public class TspEquipmentTypeController {
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:export')")
     @ApiOperation("导出")
     @Log(title = "设备信息-导出", businessType = BusinessType.EXPORT)
-    @GetMapping({"/export"})
-    public AjaxResult export(FrontQuery vo) {
+    @PostMapping({"/export"})
+    public void export(HttpServletResponse response, FrontQuery vo) {
         List<TspEquipmentTypeExcelDTO> list = this.equipmentTypeService.exportList(vo);
         ExcelUtil<TspEquipmentTypeExcelDTO> util = new ExcelUtil(TspEquipmentTypeExcelDTO.class);
-        return util.exportExcel(list, "");
+        util.exportExcel(response, list, "设备分类信息");
     }
 
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:importEquipmentModel')")
