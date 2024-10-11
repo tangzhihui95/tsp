@@ -9,15 +9,29 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="设备类型-型号" prop="modelName" label-width="120px">
-        <el-select v-model="queryParams.modelName" placeholder="请选择" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
+      <el-form-item label="设备类型ID" prop="tspEquipmentTypeId" v-if="false" label-width="100px">
+        <el-input
+          v-model="queryParams.tspEquipmentTypeId"
+          placeholder="设备类型ID"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="设备型号ID" prop="tspEquipmentModelId" v-if="false" label-width="100px">
+        <el-input
+          v-model="queryParams.tspEquipmentModelId"
+          placeholder="设备型号ID"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="设备类型-型号" prop="typeModelValue" label-width="120px">
+    <el-cascader
+      v-model="queryParams.typeModelValue"
+      style="width:200px"
+      size="small"
+      :options="option"
+      @change="handleChange"
+       clerable
+    /> 
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">查询</el-button>
@@ -63,7 +77,7 @@
             icon="el-icon-download"
             size="mini"
             @click="handleExport"
-            v-hasPermi="['system:deviceTypeModel:export']"
+            v-hasPermi="['equipment:type:export']"
           >导出</el-button>
         </el-col>
       <el-col :span="1.5">
@@ -73,7 +87,7 @@
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
-          @click="handleDelete"
+          @click="batchDelete"
           v-hasPermi="['system:deviceType:remove']"
         >批量删除</el-button>
       </el-col>
@@ -110,15 +124,15 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row.ids)"
-            v-hasPermi="['system:deviceType:edit']"
+            @click="handleUpdateModel(scope.row)"
+            v-hasPermi="['system:deviceModel:edit']"
           >编辑型号</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row.ids)"
-            v-hasPermi="['system:deviceType:remove']"
+            @click="handleDeleteModel(scope.row)"
+            v-hasPermi="['system:deviceModel:remove']"
           >删除型号</el-button>
           </template>
         </el-table-column>
@@ -134,17 +148,17 @@
         </template>
       </el-table-column>
       <el-table-column label="设备类型" align="center" prop="name"></el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template> 
-      </el-table-column>
       <el-table-column  label="是否为终端">
       <template slot-scope="scope">
         <div>{{scope.row.isTerminal|capitalize}}</div>
       </template>
     </el-table-column>
       <el-table-column label="设备扩展信息类型" align="center" prop="extraType" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+         <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template> 
+      </el-table-column>
       <el-table-column label="关联设备数" align="center" prop="count" /> 
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -152,7 +166,7 @@
           size="mini"
           type="text"
           icon="el-icon-plus"
-          @click="handleAdd(scope.row.tspequipmenttypeId)"
+          @click="handleAddModel(scope.row)"
           v-hasPermi="['system:deviceModel:add']"
         >添加型号</el-button>
           <el-button
@@ -166,7 +180,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row.id)"
+            @click="handleDelete(scope.row)"
             v-hasPermi="['system:deviceType:remove']"
           >删除</el-button>
         </template>
@@ -184,6 +198,7 @@
     <!-- 添加或修改设备类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="设备类型ID" prop="equipmentTypeId" v-if="false" :disabled="true"/>
           <el-form-item label="设备类型" prop="name" :required="true">
             <el-input
           v-model="form.name"
@@ -195,10 +210,10 @@
         <el-form-item label="设备扩展信息" prop="extraType" label-width="120px":required="true">          
           <el-select v-model="form.extraType" placeholder="请输入设备扩展信息" clearable>
           <el-option
-            v-for="dict in dict.type.equipment_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.label"
+            v-for="dict2 in dict.type.equipment_type"
+            :key="dict2.value"
+            :label="dict2.label"
+            :value="dict2.label"
           />
         </el-select>
         </el-form-item>
@@ -217,17 +232,54 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 添加或修改设备型号对话框 -->
+    <el-dialog :title="title" :visible.sync="open2" width="500px" append-to-body>
+      <el-form ref="form2" :model="form2" :rules="rules" label-width="80px">
+      <el-form-item label="设备类型ID" prop="tspEquipmentTypeId" v-if="false" :disabled="true"/>
+      <el-form-item label="设备型号ID" prop="tspEquipmentModelId" v-if="false" :disabled="true"/>
+          <el-form-item label="设备型号" prop="modelName" :required="true">
+            <el-input
+          v-model="form2.modelName"
+          placeholder="请输入设备型号"
+          style="width: 70%"
+          clearable
+        />
+      </el-form-item>
+        <el-form-item label="供应商" prop="suppliers" :required="true">          
+          <el-select v-model="form2.suppliers" placeholder="请选择供应商" clearable>
+          <el-option
+            v-for="dict3 in dict.type.supplier_type"
+            :key="dict3.value"
+            :label="dict3.label"
+            :value="dict3.label"
+          />
+        </el-select>
+        </el-form-item>
+        <el-form-item label="生产批次" prop="batchNumber" :required="true">
+            <el-input
+          v-model="form2.batchNumber"
+          placeholder="请输入生产批次"
+          style="width: 70%"
+          clearable
+        />
+      </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm2">确 定</el-button>
+        <el-button @click="cancel2">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
-<script>
-import { listdeviceType, adddeviceType,updatedeviceType,getdeviceType,} from "@/api/equipment/deviceType";
-import { get } from "sortablejs";
-
+  <script>
+import { listdeviceType, adddeviceType,updatedeviceType,deldeviceType,batchdeldeviceType,
+  adddeviceModel,updatedeviceModel, deldeviceModel} from "@/api/equipment/deviceType";
+import { selectdeviceType } from "../../../api/equipment/deviceType";
 
 export default {
   name: "listdeviceType",
-  dicts: ['sys_normal_disable', 'equipment_type'],
+  dicts: ['sys_normal_disable','equipment_type','supplier_type'],
   data() {
     return {
       // 遮罩层
@@ -248,12 +300,15 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      open2: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         search: undefined,
-        modelName: undefined, 
+        typeModelValue: undefined,
+        tspEquipmentModelId: undefined, 
+        tspEquipmentTypeId: undefined, 
       },
       // 终端设备数据
       terminals: [
@@ -262,6 +317,7 @@ export default {
       ],
       // 表单参数
       form: {},
+      form2: {},
       // 表单校验
       rules: {
         name: [
@@ -269,12 +325,26 @@ export default {
         ],
         extraType: [
           { required: true, message: "设备扩展信息不能为空", trigger: "blur" }
-        ]
-      }
+        ],
+        modelName: [
+          { required: true, message: "设备型号不能为空", trigger: "blur" }
+        ],
+        batchNumber: [
+          { required: true, message: "生产批次不能为空", trigger: "blur" }
+        ],
+        suppliers: [
+          { required: true, message: "供应商不能为空", trigger: "blur" }
+        ],
+    
+      },
+      //时间树
+      typeModelValue: [],
+      option: [],
     };
   },
   created() {
     this.getList();
+    this.setTreeData();
   },
   computed: {  
     // 过滤重复值
@@ -303,14 +373,31 @@ export default {
       this.open = false;
       this.reset();
     },
+    cancel2() {
+      this.open2 = false;
+      this.resest2();
+    },
     // 表单重置
     reset() {
       this.form = {
+        id: undefined,
+        equipmentTypeId: undefined,
         name: undefined,
         extraType: undefined,
         isTerminal: "0",
       };
-      this.resetForm("form");
+      his.resetForm("form");
+    },
+    resest2() {
+      this.form2={  
+        tspEquipmentTypeId: undefined,  
+        tspEquipmentModelId: undefined,  
+        modelName: undefined,  
+        suppliers: undefined,  
+        batchNumber: undefined,  
+      };
+      this.resetForm("form2");
+
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -320,14 +407,44 @@ export default {
    /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.typeModelValue = "-1";
+      this.queryParams.tspEquipmentModelId = undefined;
+      this.queryParams.tspEquipmentTypeId = undefined;
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.tspEquipmentTypeId)
+      this.ids = selection.map(item => item.id)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
+    //获取树值
+     handleChange(value) {
+
+      console.log(value)
+      if(value.length>1)
+     {
+      //this.tspEquipmentTypeId=value[0]
+      this.queryParams.tspEquipmentModelId=value[2]
+      //console.log(this.tspEquipmentTypeId)
+      console.log(this.queryParams.tspEquipmentModelId)
+     }
+     else
+     {  
+      this.queryParams.tspEquipmentTypeId=value[0]
+      //this.tspEquipmentModelId=undefined
+      console.log(this.queryParams.tspEquipmentTypeId)
+      //console.log(this.tspEquipmentModelId)
+     }
+  
+    },
+    //给下拉框赋值
+setTreeData() {  
+  this.typeModelValue = [];
+  selectdeviceType(this.queryParams).then(response => {
+        this.option = response.data;
+      });
+},
   //只允许展示一个栏目
   expandChange (row, expandedRows) {
   let that = this
@@ -342,44 +459,103 @@ export default {
   }
 },
 
-    /** 新增按钮操作 */
+    /** 新增设备分类按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
       this.title = "新增分类";
     },
-    /** 修改按钮操作 */
+    /** 新增设备型号按钮操作 */
+    handleAddModel(row) {
+      this.resest2();
+      this.open2 = true;
+      this.form2.tspEquipmentTypeId = row.id;
+      this.title = "添加型号";
+    },
+
+    /** 修改分类按钮操作 */
     handleUpdate(row) {
-      this.reset();
       this.form = row;
+      this.form.equipmentTypeId = row.id;
       this.open = true;
       this.title = "编辑分类";
+    },
+    /** 修改设备型号按钮操作 */ 
+    handleUpdateModel(row) {
+      this.form2 = row;
+      this.form2.tspEquipmentModelId = row.id;
+      this.open2 = true;
+      this.title = "编辑型号";
     },
     /** 提交按钮 */
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.tspEquipmentTypeId != undefined) {
+          if (this.form.equipmentTypeId != undefined) {
             updatedeviceType(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改设备类型成功");
               this.open = false;
               this.getList();
             });
           } else {
             adddeviceType(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增设备类型成功");
               this.open = false;
               this.getList();
             });
           }
         }
       });
+      
     },
-    /** 删除按钮操作 */
+    submitForm2: function() {
+      this.$refs["form2"].validate(valid => {
+        if (valid) {
+          if (this.form2.tspEquipmentModelId != undefined) {  
+            updatedeviceModel(this.form2).then(response => {          
+              this.$modal.msgSuccess("修改型号成功");
+              this.open2 = false;
+              this.getList();
+            });
+          } else {
+            adddeviceModel(this.form2).then(response => {          
+              this.$modal.msgSuccess("新增设备型号成功");
+              this.open2 = false;
+              this.getList();
+            });
+          }
+        }
+      });
+     },
+    /** 删除单条设备分类数据按钮操作 */
     handleDelete(row) {
-      const deviceTypeIds = row.deviceTypeId || this.ids;
-      this.$modal.confirm('是否确认删除设备类型序号为"' + deviceTypeIds + '"的数据项？').then(function() {
-        return deldeviceType(deviceTypeIds);
+      const typeId = row.id ;
+      this.$modal.confirm('是否确认设备名称为"' + row.name + '"的数据项？').then(function() {
+        return deldeviceType(typeId);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
+    },
+    /** 删除设备型号按钮操作 */
+    handleDeleteModel(row) {
+      const modelId = row.id ;
+      this.$modal.confirm('是否确认设备型号为"' + row.modelName + '"的数据项？').then(function() {
+        return deldeviceModel(modelId);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
+    },
+/** 批量删除设备分类按钮操作 */
+    batchDelete() {
+      const typeIds = this.ids;
+      if (typeIds.length == 0) {
+        this.$message.warning("请选择需要删除的数据");
+        return;
+      }
+      this.$modal.confirm("是否确认删除选中数据？").then(() => {
+        return batchdeldeviceType(typeIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -396,13 +572,16 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/deviceType/export', {
+      this.download('/tsp/equipmentType/export', {
         ...this.queryParams
       }, `deviceType_${new Date().getTime()}.xlsx`)
+      // let exportURL = `/tsp/equipmentType/export?content=${content}&ip=${ip}`;
+      // 	window.open(exportURL, "_blank")
     }
 
 
   },
+
   filters: {
     capitalize(value) {
       if (value) return '是'
@@ -410,4 +589,6 @@ export default {
       }
  }
 };
+
+
 </script>
