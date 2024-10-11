@@ -8,6 +8,7 @@ import com.modern.common.constant.ErrorEnum;
 import com.modern.common.core.domain.model.LoginUser;
 import com.modern.common.core.page.PageInfo;
 import com.modern.common.exception.ServiceException;
+import com.modern.common.utils.DateUtils;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
@@ -29,7 +30,6 @@ import com.modern.repository.TspEquipmentModelRepository;
 import com.modern.repository.TspEquipmentRepository;
 import com.modern.repository.TspEquipmentTypeRepository;
 import com.modern.repository.TspVehicleRepository;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -134,19 +134,25 @@ public class TspEquipmentService extends TspBaseService {
 
     public JsonResult add(TspEquipmentAddVO vo) {
         TspEquipment tspEquipment = tspEquipmentRepository.getBySn(vo.getSn());
-        if (Strings.isNotEmpty(tspEquipment.getSn())) ErrorEnum.TSP_SN_NOT_UNIQ_ERR.throwErr();
+        if (Objects.nonNull(tspEquipment))
+            ErrorEnum.TSP_SN_NOT_UNIQ_ERR.throwErr();
         tspEquipment = tspEquipmentRepository.getByICCID(vo.getIccId());
-        if (Strings.isNotEmpty(tspEquipment.getIccId())) ErrorEnum.TSP_ICCID_NOT_UNIQ_ERR.throwErr();
+        if (Objects.nonNull(tspEquipment))
+            ErrorEnum.TSP_ICCID_NOT_UNIQ_ERR.throwErr();
         tspEquipment = this.tspEquipmentRepository.getByIMSI(vo.getImsi());
-        if (Strings.isNotEmpty(tspEquipment.getImsi())) ErrorEnum.TSP_IMSI_NOT_UNIQ_ERR.throwErr();
+        if (Objects.nonNull(tspEquipment))
+            ErrorEnum.TSP_IMSI_NOT_UNIQ_ERR.throwErr();
         tspEquipment = this.tspEquipmentRepository.getBySIM(vo.getSim());
-        if (Strings.isNotEmpty(tspEquipment.getSim())) ErrorEnum.TSP_SIM_NOT_UNIQ_ERR.throwErr();
+        if (Objects.nonNull(tspEquipment))
+            ErrorEnum.TSP_SIM_NOT_UNIQ_ERR.throwErr();
         tspEquipment = this.tspEquipmentRepository.getByIMEI(vo.getImei());
-        if (Strings.isNotEmpty(tspEquipment.getImei())) ErrorEnum.TSP_IMEI_NOT_UNIQ_ERR.throwErr();
+        if (Objects.nonNull(tspEquipment))
+            ErrorEnum.TSP_IMEI_NOT_UNIQ_ERR.throwErr();
         tspEquipment = new TspEquipment();
         BeanUtils.copyProperties(vo, tspEquipment);
         tspEquipment.setCreateBy(SecurityUtils.getUsername());
         tspEquipment.setUpdateBy(SecurityUtils.getUsername());
+        tspEquipment.setCreateTime(DateUtils.getCurrentTime());
         tspEquipment.setIsScrap(Boolean.valueOf(false));
         this.tspEquipmentRepository.save(tspEquipment);
         return JsonResult.getResult(true);
@@ -171,6 +177,7 @@ public class TspEquipmentService extends TspBaseService {
             ErrorEnum.TSP_IMEI_NOT_UNIQ_ERR.throwErr();
         BeanUtils.copyProperties(vo, equipment);
         equipment.setUpdateBy(SecurityUtils.getUsername());
+        equipment.setUpdateTime(DateUtils.getCurrentTime());
         this.tspEquipmentRepository.updateById(equipment);
         return JsonResult.getResult(true);
     }

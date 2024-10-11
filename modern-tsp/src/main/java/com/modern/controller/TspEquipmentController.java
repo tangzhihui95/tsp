@@ -36,7 +36,7 @@ import java.util.List;
  * @Filename：TspEquipmentController
  */
 @RestController
-@Api("Tsp-设备信息")
+@Api(tags = {"Tsp-设备信息"})
 @RequestMapping({"/tsp/equipment"})
 public class TspEquipmentController {
 
@@ -45,6 +45,7 @@ public class TspEquipmentController {
 
     @ApiOperation("设备信息-列表查询")
     @GetMapping({"/list"})
+    @PreAuthorize("@ss.hasPermi('tsp:equipment:list')")
     public Result<PageInfo<TspEquipmentPageListDTO>> list(TspEquipmentPageListVO vo) {
         return Result.ok(tspEquipmentService.getPageList(vo));
     }
