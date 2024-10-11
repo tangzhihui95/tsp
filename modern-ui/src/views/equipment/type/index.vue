@@ -605,12 +605,12 @@ setTreeData() {
      /** 导入设备分类按钮操作 */
      handleImportType() {
       this.upload.title = "设备类型导入";
-      this.upload.url = "/tsp/equipmentType/importEquipmentType";
+      this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentType";
       this.upload.open = true;
     },
     handleImportModel() {  
       this.upload.title = "设备型号导入";
-      this.upload.url = "/tsp/equipmentType/importEquipmentModel";
+      this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentModel";
       this.upload.open = true;
     },
     /** 下载模板操作 */

@@ -379,7 +379,7 @@ export default {
           open: false,
           isUploading: false,
           updateSupport: 0,
-          url: "/tsp/equipment/importEquipment",
+          url:process.env.VUE_APP_BASE_API+ "/tsp/equipment/importEquipment",
           headers: {
             Authorization: "Bearer " + getToken() 
           },
