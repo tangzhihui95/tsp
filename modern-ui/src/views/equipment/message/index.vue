@@ -314,7 +314,7 @@
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
           <div class="el-upload__tip" slot="tip">
-            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的用户数据
+            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的设备信息数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
@@ -379,7 +379,7 @@ export default {
           open: false,
           isUploading: false,
           updateSupport: 0,
-          url: "/tsp/equipment/importEquipment",
+          url:process.env.VUE_APP_BASE_API+ "/tsp/equipment/importEquipment",
           headers: {
             Authorization: "Bearer " + getToken() 
           },
@@ -687,14 +687,7 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-      // handleImport() {
-      //   this.$modal.confirm('是否确认导入设备类型数据？').then(function() {
-      //     return this.$refs.importForm.submit();          
-      //   }).then(() => {          
-      //     this.$modal.msgSuccess("导入成功");
-      //     this.getList();
-      //   }).catch(() => {});        
-      // },
+
       /** 导出按钮操作 */
       handleExport() {
         this.download('/tsp/equipment/export', {
@@ -724,6 +717,6 @@ export default {
     }
    },
 
-   
+
   }
   </script>

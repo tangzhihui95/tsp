@@ -56,7 +56,7 @@
             plain
             icon="el-icon-upload2"
             size="mini"
-            @click="handleImport"
+            @click="handleImportType"
             v-hasPermi="['system:equipmentType:import']"
           >导入设备类型</el-button>
         </el-col>
@@ -66,7 +66,7 @@
             plain
             icon="el-icon-upload2"
             size="mini"
-            @click="handleImport"
+            @click="handleImportModel"
             v-hasPermi="['system:deviceModel:import']"
           >导入设备型号</el-button>
         </el-col>
@@ -269,6 +269,35 @@
         <el-button @click="cancel2">取 消</el-button>
       </div>
     </el-dialog>
+          <!-- 导入设备类型弹窗 -->
+          <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
+            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的数据
+          </div>
+          <span>仅允许导入xls、xlsx格式文件。</span>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -276,6 +305,7 @@
 import { listdeviceType, adddeviceType,updatedeviceType,deldeviceType,batchdeldeviceType,
   adddeviceModel,updatedeviceModel, deldeviceModel} from "@/api/equipment/deviceType";
 import { selectdeviceType } from "../../../api/equipment/deviceType";
+import { getToken } from "@/utils/auth";
 
 export default {
   name: "listdeviceType",
@@ -310,6 +340,17 @@ export default {
         tspEquipmentModelId: undefined, 
         tspEquipmentTypeId: undefined, 
       },
+      //导入设备类型/型号参数
+      upload: {
+          title: "",
+          open: false,
+          isUploading: false,
+          updateSupport: 0,
+          url: "",
+          headers: {
+            Authorization: "Bearer " + getToken() 
+          },
+        },
       // 终端设备数据
       terminals: [
       { value: 1, label: "是" },
@@ -561,24 +602,53 @@ setTreeData() {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 导入按钮操作 */
-    handleImport() {
-      this.$modal.confirm('是否确认导入设备类型数据？').then(function() {
-        return this.$refs.importForm.submit();          
-      }).then(() => {          
-        this.$modal.msgSuccess("导入成功");
-        this.getList();
-      }).catch(() => {});        
+     /** 导入设备分类按钮操作 */
+     handleImportType() {
+      this.upload.title = "设备类型导入";
+      this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentType";
+      this.upload.open = true;
+    },
+    handleImportModel() {  
+      this.upload.title = "设备型号导入";
+      this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentModel";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      if(this.upload.title=="设备类型导入")
+      {
+        this.download('/tsp/equipmentType/importTypeTemplate', {
+        }, `设备分类导入模板${new Date().getTime()}.xlsx`)
+      }
+      else if(this.upload.title=="设备型号导入")
+      {
+        this.download('/tsp/equipmentType/importModelTemplate', {
+        }, `设备型号导入模板${new Date().getTime()}.xlsx`)
+      }
+      
+    },
+        // 文件上传中处理
+        handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     },
     /** 导出按钮操作 */
     handleExport() {
       this.download('/tsp/equipmentType/export', {
         ...this.queryParams
       }, `deviceType_${new Date().getTime()}.xlsx`)
-      // let exportURL = `/tsp/equipmentType/export?content=${content}&ip=${ip}`;
-      // 	window.open(exportURL, "_blank")
     }
-
 
   },
 
