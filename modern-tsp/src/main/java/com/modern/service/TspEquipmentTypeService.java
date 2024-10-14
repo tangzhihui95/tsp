@@ -237,6 +237,7 @@ public class TspEquipmentTypeService extends TspBaseService {
                         tspEquipmentModel.setTspEquipmentTypeId(tspEquipmentType.getId());
                         tspEquipmentModel.setCreateBy(SecurityUtils.getUsername());
                         tspEquipmentModel.setUpdateBy(SecurityUtils.getUsername());
+                        tspEquipmentModel.setCreateTime(DateUtils.getCurrentTime());
                         tspEquipmentModelRepository.save(tspEquipmentModel);
                         successNum++;
                         successMsg.append("<br/>").append(successNum).append("、设备型号").append(dto.getModelName()).append("更新成功");
@@ -337,6 +338,7 @@ public class TspEquipmentTypeService extends TspBaseService {
                         }
                         tspEquipmentType.setCreateBy(SecurityUtils.getUsername());
                         tspEquipmentType.setUpdateBy(SecurityUtils.getUsername());
+                        tspEquipmentType.setCreateTime(DateUtils.getCurrentTime());
                         tspEquipmentTypeRepository.save(tspEquipmentType);
                         successNum++;
                         successMsg.append("<br/>").append(successNum).append("、设备类型").append(dto.getName()).append("添加成功");
@@ -375,7 +377,7 @@ public class TspEquipmentTypeService extends TspBaseService {
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getTerminal() != null && !dto.getTerminal().equals("") && !".equals(dto.getTerminal()) && !".equals(dto.getTerminal())) {
+        if (dto.getTerminal() != null && !dto.getTerminal().equals("") && !"是".equals(dto.getTerminal()) && !"否".equals(dto.getTerminal())) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、是否为终端").append(dto.getTerminal()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));

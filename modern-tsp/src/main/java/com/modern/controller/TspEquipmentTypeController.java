@@ -135,16 +135,16 @@ public class TspEquipmentTypeController {
     }
 
     @ApiOperation("设备分类下载模版")
-    @GetMapping({"/importTypeTemplate"})
-    public AjaxResult importTypeTemplate() {
+    @PostMapping({"/importTypeTemplate"})
+    public void importTypeTemplate(HttpServletResponse response) {
         ExcelUtil<TspEquipmentTypeImportDTO> util = new ExcelUtil(TspEquipmentTypeImportDTO.class);
-        return util.importTemplateExcel("设备类型数据");
+        util.importTemplateExcel(response,"设备类型数据");
     }
 
     @ApiOperation("设备型号下载模版")
-    @GetMapping({"/importModelTemplate"})
-    public AjaxResult importModelTemplate() {
+    @PostMapping({"/importModelTemplate"})
+    public void importModelTemplate(HttpServletResponse response) {
         ExcelUtil<TspEquipmentTypeExcelDTO> util = new ExcelUtil(TspEquipmentTypeExcelDTO.class);
-        return util.importTemplateExcel("设备型号数据");
+        util.importTemplateExcel(response,"设备型号数据");
     }
 }
