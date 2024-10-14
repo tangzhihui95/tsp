@@ -36,7 +36,7 @@ public class TspEquipmentExcelDTO {
     @Excel(name = "版本号", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 3)
     @ApiModelProperty("版本号")
     @NotEmpty(message = "版本号不能为空")
-    @Pattern(regexp = "^([0-9A-Za-z]){1,10}(-([0-9A-Za-z]){1,10}){2}$", message = "")
+    @Pattern(regexp = "^([0-9A-Za-z]){1,10}(-([0-9A-Za-z]){1,10}){2}$", message = "版本号格式错误，版本号格式应为x-x-x组成")
     private String version;
 
     @Excel(name = "设备SN", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 4)
@@ -46,33 +46,33 @@ public class TspEquipmentExcelDTO {
     @Excel(name = "ICCID", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 5)
     @ApiModelProperty("ICCID")
     @NotEmpty(message = "ICCID不能为空")
-    @Length(min = 19, max = 19, message = "ICCID")
-    @Pattern(regexp = "^[A-Za-z\\d]+$", message = "ICCID")
+    @Length(min = 19, max = 19, message = "ICCID必须由长度为19位的字母数字组成")
+    @Pattern(regexp = "^[A-Za-z\\d]+$", message = "ICCID必须由长度为19位的字母数字组成")
     private String iccId;
 
     @Excel(name = "IMSI", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 6)
     @ApiModelProperty("IMSI")
     @NotEmpty(message = "IMSI不能为空")
-    @Length(min = 1, max = 15, message = "IMSI")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "IMSI")
+    @Length(min = 1, max = 15, message = "IMSI只能由不超过15位的数字组成")
+    @Pattern(regexp = "^[0-9]\\d*$", message = "IMSI只能由不超过15位的数字组成")
     private String imsi;
 
     @Excel(name = "SIM", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 7)
     @ApiModelProperty("SIM")
     @NotEmpty(message = "SIM不能为空")
-    @Length(min = 11, max = 11, message = "SIM")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "SIM")
+    @Length(min = 11, max = 11, message = "SIM必须为长度11位数字组成")
+    @Pattern(regexp = "^[0-9]\\d*$", message = "SIM必须为长度11位数字组成")
     private String sim;
 
     @Excel(name = "IMEI", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 8)
     @ApiModelProperty("IMEI")
     @NotEmpty(message = "IMEI不能为空")
-    @Length(min = 15, max = 15, message = "IMEI")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "IMEI")
+    @Length(min = 15, max = 15, message = "IMEI必须长度为15位数字")
+    @Pattern(regexp = "^[0-9]\\d*$", message = "IMEI必须长度为15位数字")
     private String imei;
 
-    @Excel(name = "是否为终端", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "true=", sort = 9)
-    @ApiModelProperty("是否为终端")
+    @Excel(name = "是否为终端", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "true=是,false=否", sort = 9)
+    @ApiModelProperty("是否为终端1-是 0-否")
     private Boolean isTerminal;
 
     @Excel(name = "供应商代码", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 10)
@@ -86,7 +86,7 @@ public class TspEquipmentExcelDTO {
     @ApiModelProperty("是否在线1:在线 0:未在线")
     private Boolean isOnline;
 
-    @Excel(name = "是否注册", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "true=", sort = 13)
+    @Excel(name = "是否注册", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "true=是,false=否", sort = 13)
     @ApiModelProperty("是否注册1:是 0:否")
     private Boolean isRegister;
 

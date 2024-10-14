@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -84,11 +85,11 @@ public class TspEquipmentController {
     @PreAuthorize("@ss.hasPermi('tsp:equipment:export')")
     @ApiOperation("导出")
     @Log(title = "设备信息- 导出", businessType = BusinessType.EXPORT)
-    @GetMapping({"/export"})
-    public AjaxResult export(TspEquipmentPageListVO vo) {
+    @PostMapping({"/export"})
+    public void export(HttpServletResponse response,TspEquipmentPageListVO vo) {
         List<TspEquipmentExcelDTO> list = tspEquipmentService.exportList(vo);
         ExcelUtil<TspEquipmentExcelDTO> util = new ExcelUtil(TspEquipmentExcelDTO.class);
-        return util.exportExcel(list, "设备信息");
+        util.exportExcel(response,list, "设备信息");
     }
 
     @ApiOperation("导入")
@@ -100,10 +101,10 @@ public class TspEquipmentController {
     }
 
     @ApiOperation("下载模版")
-    @GetMapping({"/importTemplate"})
-    public AjaxResult importTemplate() {
+    @PostMapping({"/importTemplate"})
+    public void importTemplate(HttpServletResponse response) {
         ExcelUtil<TspEquipmentExcelDTO> util = new ExcelUtil(TspEquipmentExcelDTO.class);
-        return util.importTemplateExcel("设备信息数据");
+        util.importTemplateExcel(response,"设备信息数据");
     }
 
     @PreAuthorize("@ss.hasPermi('tsp:equipment:scrap')")

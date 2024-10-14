@@ -277,6 +277,7 @@ public class TspEquipmentService extends TspBaseService {
                             equipment.setTspEquipmentModelId(equipmentModel.getId());
                             equipment.setIsScrap(Boolean.valueOf(false));
                             equipment.setIsTerminal(1);
+                            equipment.setCreateTime(DateUtils.getCurrentTime());
                             this.tspEquipmentRepository.save(equipment);
                             successNum++;
                             successMsg.append("<br/>").append(successNum).append("、设备").append(dto.getSn()).append("导入成功");
