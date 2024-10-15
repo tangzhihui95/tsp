@@ -696,7 +696,7 @@ handleAddModel(row) {
         this.reset2();
         this.open2 = true;
         this.form2.vehicleTypeId = row.id;
-        this.form2.name = row.name;
+        this.form2.typeName = row.vehicleType;
         this.isEditMode=true;
         this.title = "添加型号";
       },
@@ -721,6 +721,7 @@ handleAddModel(row) {
         this.isEditMode = false;
         this.form2 = row;
         this.form2.vehicleModelId = row.id;
+        //this.form2.typeName = this.vehicleType;
         this.open2 = true;
         this.title = "二级型号详情";
 
