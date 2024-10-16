@@ -129,7 +129,7 @@ public class TspEquipmentService extends TspBaseService {
             }
             record.setIsOnline(Boolean.valueOf(false));
         }
-        return PageInfo.of(pageList);
+        return PageInfo.of(pageList, (long) pageList.getRecords().size());
     }
 
     public JsonResult add(TspEquipmentAddVO vo) {

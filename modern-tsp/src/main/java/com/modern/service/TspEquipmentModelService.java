@@ -46,7 +46,7 @@ public class TspEquipmentModelService extends TspBaseService {
         QueryWrapper<TspEquipmentModel> ew = tspEquipmentModelRepository.getPageList(vo);
         IPage<TspEquipmentModelPageListDTO> pageList = tspEquipmentModelMapper.getPageList(
                 Page.of(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
-        return PageInfo.of(pageList);
+        return PageInfo.of(pageList, (long) pageList.getRecords().size());
     }
 
     public JsonResult add(TspEquipmentModelAddVO vo) {
