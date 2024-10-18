@@ -20,6 +20,7 @@ import com.modern.repository.TspEquipmentModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -36,10 +37,10 @@ public class TspEquipmentModelService extends TspBaseService {
     @Autowired
     private TspEquipmentModelRepository tspEquipmentModelRepository;
 
-    @Autowired
+    @Resource
     private TspEquipmentModelMapper tspEquipmentModelMapper;
 
-    @Autowired
+    @Resource
     private TspEquipmentTypeMapper tspEquipmentTypeMapper;
 
     public PageInfo<TspEquipmentModelPageListDTO> getPageList(FrontQuery vo) {

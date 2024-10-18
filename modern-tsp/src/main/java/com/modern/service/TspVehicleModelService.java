@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class TspVehicleModelService extends TspBaseService {
     @Autowired
     private TspVehicleRepository tspVehicleRepository;
 
-    @Autowired
+    @Resource
     private TspVehicleModelMapper tspVehicleModelMapper;
 
     public PageInfo<TspVehicleModelPageListDTO> getPageList(TspVehicleModelPageListVO vo) {

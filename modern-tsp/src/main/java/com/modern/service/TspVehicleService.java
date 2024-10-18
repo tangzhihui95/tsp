@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -49,11 +50,11 @@ public class TspVehicleService extends TspBaseService {
     private ISysRoleService roleService;
     @Autowired
     private TspCarRoleRelationService tspCarRoleRelationService;
-    @Autowired
+    @Resource
     private TspEquipmentMapper tspEquipmentMapper;
     @Autowired
     private TspVehicleRepository tspVehicleRepository;
-    @Autowired
+    @Resource
     private TspVehicleMapper tspVehicleMapper;
     @Autowired
     private TspVehicleLicenseRepository tspVehicleLicenseRepository;
