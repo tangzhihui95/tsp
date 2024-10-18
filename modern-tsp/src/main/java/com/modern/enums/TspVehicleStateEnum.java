@@ -17,12 +17,12 @@ import io.swagger.annotations.ApiModel;
 public enum TspVehicleStateEnum implements IEnum<Integer> {
 
     ALL("全部", 0),
-    CREATED("", 1),
-    SOLD("", 2),
-    BOUND("", 3),
-    UNBOUND("", 4),
-    SCRAPPED("", 5),
-    ALREADY("", 6);
+    CREATED("已创建", 1),
+    SOLD("已销售", 2),
+    BOUND("已绑定", 3),
+    UNBOUND("已解绑", 4),
+    SCRAPPED("已报废", 5),
+    ALREADY("已注册", 6);
 
     @JsonValue
     private String key;
