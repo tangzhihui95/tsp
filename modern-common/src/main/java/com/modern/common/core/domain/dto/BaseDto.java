@@ -1,10 +1,14 @@
 package com.modern.common.core.domain.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
+import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -43,7 +47,9 @@ public class BaseDto implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updateTime;
 
+    @TableLogic(value = "0", delval = "1")
+    @TableField(select = false)
     @ApiModelProperty("是否删除 1-是 0-否")
-    // @Column(name = "是否删除 1-是 0-否", columnDefinition = "INTdefaultValue = 0")
+    @Column(comment = "是否删除 1-是 0-否", type = MySqlTypeConstant.INT, defaultValue = "0")
     private Integer isDelete;
 }

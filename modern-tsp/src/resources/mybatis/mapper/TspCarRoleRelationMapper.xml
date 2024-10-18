@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.modern.mapper.TspCarRoleRelationMapper">
+    <select id="selectCarInfo" resultType="com.modern.model.vo.VehicleVo">
+        select a.vin,a.id,td.dealer_address as 'dealerAddress',td.dealer_name 'dealerName',tvsm.std_mode_name as 'carType'
+        from tsp_vehicle a
+        left join tsp_dealer td on a.dealer_id = td.id
+        left join tsp_vehicle_std_model tvsm on a.tsp_vehicle_std_model_id = tvsm.id
+        where a.is_delete = 0
+        AND a.state != 5
+        <if test="vo.dealerAddress != null and vo.dealerAddress != ''">
+            and td.dealer_address like CONCAT(#{vo.dealerAddress},'%')
+        </if>
+        <if test="vo.vin!=null and vo.vin!= ''">
+            and a.vin like concat('%',concat(#{vo.vin},'%'))
+        </if>
+        <if test="vo.carType!=null and vo.carType!= ''">
+            and tvsm.std_mode_name = #{vo.carType}
+        </if>
+        <if test="vo.dealerId!=null">
+            and td.id = #{vo.dealerId}
+        </if>
+    </select>
+
+    <delete id="deleteByRoleId">
+        delete
+        from tsp_car_role_relation
+        where role_id = #{roleId}
+    </delete>
+
+    <select id="selectCarInfoByRoleIds" resultType="com.modern.domain.TspCarRoleRelation">
+        select tcrr.id,tcrr.car_id as 'carId' ,tcrr.role_id as 'roleId',sr.role_name as 'roleName' from tsp_car_role_relation tcrr left join sys_role sr on tcrr.role_id = sr.role_id
+        <where>
+            <if test="ids != null and ids.size > 0">
+                and tcrr.car_id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="queryCarInfoByRoleIds" resultType="com.modern.model.vo.VehicleVo">
+        select tcrr.role_id,concat(concat('as 'carInfoText'
+        from tsp_car_role_relation tcrr
+        left join tsp_vehicle tv on tv.id = tcrr.car_id
+        left join tsp_vehicle_std_model tvsm on tv.tsp_vehicle_std_model_id = tvsm.id
+        <where>
+            <if test="roleIds != null and roleIds.size > 0">
+                tcrr.role_id in
+                <foreach collection="roleIds" item="roleId" open="(" close=")" separator="," >
+                    #{roleId}
+                </foreach>
+            </if>
+            and tv.is_delete = 0
+        </where>
+    </select>-->
+
+    <select id="queryCarInfoByRoleId" resultType="com.modern.model.vo.VehicleVo">
+        select tv.vin,tv.id,tcrr.role_id,td.dealer_name 'dealerName',tvsm.std_mode_name as 'carType',td.dealer_address as 'dealerAddress'
+        from tsp_car_role_relation tcrr
+                 left join tsp_vehicle tv on tv.id = tcrr.car_id
+                 left join tsp_dealer td on tv.dealer_id = td.id
+                 left join tsp_vehicle_std_model tvsm on tv.tsp_vehicle_std_model_id = tvsm.id
+        where tv.is_delete = 0 and tcrr.role_id = #{roleId}
+    </select>
+</mapper>

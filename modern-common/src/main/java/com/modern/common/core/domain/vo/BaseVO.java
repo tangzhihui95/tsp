@@ -56,7 +56,4 @@ public class BaseVO {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endTime;
-
-
-
 }
