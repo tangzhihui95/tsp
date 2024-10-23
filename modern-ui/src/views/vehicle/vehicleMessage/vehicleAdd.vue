@@ -598,7 +598,7 @@
       </el-table>
       </div>
      </el-form>
-    <!-- 设置上一步下一步按钮 -->
+    <!-- 设置页面按钮 -->
      <div  class="button-footer">
     <el-button v-if="active < 5" type="primary" style="margin-top: 12px" @click="next">保存</el-button> 
     <el-button v-if="active > 1" type="primary" style="margin-top: 12px" @click="pre">上一步</el-button>
