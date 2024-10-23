@@ -212,7 +212,7 @@
     <!-- 添加或修改二级型号对话框 -->
       <el-dialog :title="title" :visible.sync="open2" width="1100px" append-to-body>
         <el-form ref="form2" :model="form2" :rules="rules" label-width="180px">
-        <el-form-divider content-position="left" style="border-color:#409EFF;">基本信息</el-form-divider>
+        <h4 class="form-header h4" content-position="left">基本信息</h4>
         <el-form-item label="车辆类型ID" prop="vehicleTypeId" v-if="false" :disabled="true"/>
         <el-form-item label="车辆型号ID" prop="vehicleModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
@@ -265,7 +265,7 @@
           />
         </el-form-item>
         </div>
-        <el-form-divider content-position="left" style="border-color: #409EFF;">整车参数</el-form-divider>
+        <h4 class="form-header h4" content-position="left">整车参数</h4>
         <div class="itemInline">    
           <el-form-item label="气缸数(个)" prop="cylinderNum">
             <el-input
@@ -329,7 +329,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
         </el-form-item>
-        <el-form-divider content-position="left" style="border-color: #409EFF;">性能参数</el-form-divider>
+        <h4 class="form-header h4" content-position="left">性能参数</h4>
         <div class="itemInline">    
           <el-form-item label="发动机排量(mL)" prop="engineDisplacement">
             <el-input
