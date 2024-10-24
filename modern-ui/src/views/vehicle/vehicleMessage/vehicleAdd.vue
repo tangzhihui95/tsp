@@ -571,6 +571,13 @@
           </template> 
         </el-table-column>
       </el-table>
+      <!-- <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="listdeviceType"
+    /> -->
     </div>
 
       <div v-show="active == 5">
@@ -631,7 +638,6 @@ export default {
   props: {
     items: {
       type: Array,
-      required: true
     }
 },
   data() {

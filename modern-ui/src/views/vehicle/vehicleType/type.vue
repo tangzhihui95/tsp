@@ -739,7 +739,7 @@ handleAddModel(row) {
 /** 删除车辆型号按钮操作 */
       handleDeleteModel(row) {
         const vehicleModelId = row.id ;
-        this.$modal.confirm('是否确认设备型号为"' + row.modelName + '"的数据项？').then(function() {
+        this.$modal.confirm('是否确认设备型号为"' + row.modelName + '"的数据项？').then(() => {
           return deldeviceModel(vehicleModelId);
         }).then(() => {
           this.getList();
@@ -753,7 +753,7 @@ handleAddModel(row) {
           this.$message.warning("请选择需要删除的数据");
           return;
         }
-        this.$modal.confirm("是否确认删除选中数据？").then(() => {
+        this.$modal.confirm("是否确认删除选中的"+typeIds.length+"条数据？").then(() => {
           return batchdeldeviceType(typeIds);
         }).then(() => {
           this.getList();
