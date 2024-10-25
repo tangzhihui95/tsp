@@ -10,8 +10,8 @@
             clerable
           />
         </el-form-item>
-        <el-form-item label="关联账号" prop="relationNo" label-width="120px">
-          <el-select v-model="queryParams.relationNo" placeholder="请选择关联账号" clearable>
+        <el-form-item label="关联账号" prop="mobile" label-width="120px">
+          <el-select v-model="queryParams.mobile" placeholder="请选择关联账号" clearable>
             <el-option
               v-for="dict in dict.type.vehicle_relation_no"
               :key="dict.value"
@@ -20,8 +20,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="车辆状态" prop="vehicleStatus" label-width="120px">
-          <el-select v-model="queryParams.vehicleStatus" placeholder="请选择车辆状态" clearable>
+        <el-form-item label="车辆状态" prop="state" label-width="120px">
+          <el-select v-model="queryParams.state" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict2 in dict.type.vehicle_vehicle_status"
               :key="dict2.value"
@@ -50,22 +50,22 @@
         clerable
       /> 
        </el-form-item>
-    <el-form-item label="车辆类型ID" prop="vehicleTypeId" v-if="false" label-width="100px">
+    <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" label-width="100px">
         <el-input
-          v-model="queryParams.vehicleTypeId"
+          v-model="queryParams.tspVehicleModelId"
           placeholder="车辆类型ID"
           clearable
         />
       </el-form-item>
-      <el-form-item label="车辆型号ID" prop="vehicleModelId" v-if="false" label-width="100px">
+      <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" label-width="100px">
         <el-input
-          v-model="queryParams.vehicleModelId"
+          v-model="queryParams.tspVehicleStdModelId"
           placeholder="车辆型号ID"
           clearable
         />
       </el-form-item>
-        <el-form-item label="认证状态" prop="isCertified" label-width="120px">
-          <el-select v-model="queryParams.isCertified" placeholder="请选择认证状态" clearable>
+        <el-form-item label="认证状态" prop="certificationState" label-width="120px">
+          <el-select v-model="queryParams.certificationState" placeholder="请选择认证状态" clearable>
             <el-option
               v-for="dict4 in dict.type.vehicle_certified_status"
               :key="dict4.value"
@@ -74,8 +74,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="推送状态" prop="pushStatus" label-width="120px">
-          <el-select v-model="queryParams.pushStatus" placeholder="请选择推送状态" clearable>
+        <el-form-item label="推送状态" prop="sendStatus" label-width="120px">
+          <el-select v-model="queryParams.sendStatus" placeholder="请选择推送状态" clearable>
             <el-option
               v-for="dict5 in dict.type.vehicle_push_status"
               :key="dict5.value"
@@ -179,39 +179,41 @@
        @selection-change="handleSelectionChange" >
        <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="车辆ID" align="center" v-if="false" prop="id"/>
-      <el-table-column label="车辆型号ID" align="center" v-if="false" prop="vehicleModelId"/>
+      <el-table-column label="设备ID" align="center" v-if="false" prop="tspEquipmentId"/>
+      <el-table-column label="车辆类型ID" align="center" v-if="false" prop="tspVehicleModelId"/>
+      <el-table-column label="车辆型号ID" align="center" v-if="false" prop="tspVehicleStdModelId"/>
       <el-table-column label="序号" type="index" align="center">
           <template slot-scope="scope">
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
        <el-table-column label="VIN" align="center" prop="vin"></el-table-column>
-       <el-table-column label="车牌号" align="center" prop="carNumber"></el-table-column>
+       <el-table-column label="车牌号" align="center" prop="plateCode"></el-table-column>
        <el-table-column label="SIM" align="center" prop="sim"></el-table-column>
-       <el-table-column label="车型" align="center" prop="typeModel"></el-table-column>
+       <el-table-column label="车型" align="center" prop="vehicleType"></el-table-column>
        <el-table-column label="设备绑定状态" align="center" prop="bindStatus">
        <template slot-scope="scope">
           <dict-tag :options="dict.type.vehicle_binding_status" :value="scope.row.bindStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="关联账号" align="center" prop="relationNo">
+      <el-table-column label="关联账号" align="center" prop="mobile">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_relation_no" :value="scope.row.relationNo"/>
+          <dict-tag :options="dict.type.vehicle_relation_no" :value="scope.row.mobile"/>
         </template>
       </el-table-column>
-      <el-table-column label="认证状态" align="center" prop="isCertified">
+      <el-table-column label="认证状态" align="center" prop="certificationState">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_certified_status" :value="scope.row.isCertified"/>
+          <dict-tag :options="dict.type.vehicle_certified_status" :value="scope.row.certificationState"/>
         </template>
       </el-table-column>
-       <el-table-column label="车辆状态" align="center" prop="vehicleStatus">
+       <el-table-column label="车辆状态" align="center" prop="state">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_vehicle_status" :value="scope.row.vehicleStatus"/>
+          <dict-tag :options="dict.type.vehicle_vehicle_status" :value="scope.row.state"/>
         </template>
       </el-table-column>
-      <el-table-column label="推送状态" align="center" prop="pushStatus">
+      <el-table-column label="推送状态" align="center" prop="sendStatus">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_push_status" :value="scope.row.pushStatus"/>
+          <dict-tag :options="dict.type.vehicle_push_status" :value="scope.row.sendStatus"/>
         </template>
       </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -290,8 +292,8 @@
 
          <el-tab-pane label="基本信息" name="first">
           <h4 class="form-header h4" content-position="left">基本信息</h4>
-        <el-form-item label="车辆类型ID" prop="vehicleTypeId" v-if="false" :disabled="true"/>
-        <el-form-item label="车辆型号ID" prop="vehicleModelId" v-if="false" :disabled="true"/>
+        <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
+        <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
         <el-form-item label="车辆厂商" prop="manufacturer":required="true" >
           <el-input
@@ -600,8 +602,8 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="车辆状态" prop="vehicleStatus">          
-            <el-select v-model="form.vehicleStatus" :disabled="true" placeholder="请选择车辆状态" clearable>
+        <el-form-item label="车辆状态" prop="state">          
+            <el-select v-model="form.state" :disabled="true" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict8 in dict.type.vehicle_status"
               :key="dict8.value"
@@ -950,6 +952,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
+import { listVehicleMessage } from "../../../api/vehicle/vehicleMessage";
 
 export default {
   name: "vehicleModel",
@@ -997,13 +1000,13 @@ export default {
         pageSize: 10,
         search: undefined,
         typeModelValue: [],
-        vehicleTypeId: undefined,
-        vehicleModelId: undefined,
+        tspVehicleModelId: undefined,
+        tspVehicleStdModelId: undefined,
         bindStatus: undefined,
-        relationNo: undefined,
-        isCertified: undefined,
-        vehicleStatus: undefined,
-        pushStatus: undefined,
+        mobile: undefined,
+        certificationState: undefined,
+        state: undefined,
+        sendStatus: undefined,
       },
       //新增弹窗
       open: false,
@@ -1052,64 +1055,10 @@ export default {
     //初始化列表数据
     getList() {
       this.loading = true;
-      this.listVehicle = [
-        {
-          id: 1,
-          vehicleModelId: "11",
-          vin: "HJDN3320240619333",
-          carNumber:"沪A123456",
-          sim: "13323215529",
-          typeModel:"客车/客车型号1",
-          bindStatus: "已绑定",
-          relationNo: "13323215529",
-          isCertified: "未认证",
-          vehicleStatus: "已创建",
-          pushStatus: "未推送",
-          createTime: "2021-06-19 10:00:00",
-        },
-        {
-          id: 2,
-          vehicleModelId: "12",
-          vin: "HJDN3320240619334",
-          carNumber:"沪A123457",
-          sim: "13323215530",
-          typeModel:"客车/客车型号2",
-          bindStatus: "已绑定",
-          relationNo: "13323215530",
-          isCertified: "未认证",
-          vehicleStatus: "已创建",
-          pushStatus: "未推送",
-          createTime: "2021-06-19 10:00:00",
-        },
-        {
-          id: 3,
-          vehicleModelId: "11",
-          vin: "HJDN3320240619335",
-          carNumber:"沪A123458",
-          sim: "13323215531",
-          typeModel:"客车/客车型号1",
-          bindStatus: "已绑定",
-          relationNo: "13323215531",
-          isCertified: "未认证",
-          vehicleStatus: "已创建",
-          pushStatus: "未推送",
-          createTime: "2021-06-19 10:00:00",
-        },
-        {
-          id: 4,
-          vehicleModelId: "12",
-          vin: "HJDN3320240619336",
-          carNumber:"沪A123459",
-          sim: "13323215532",
-          typeModel:"客车/客车型号2",
-          bindStatus: "已绑定",
-          relationNo: "13323215532",
-          isCertified: "未认证",
-          vehicleStatus: "已创建",
-          pushStatus: "未推送",
-          createTime: "2021-06-19 10:00:00",
-        },
-      ];
+      listVehicleMessage(this.queryParams).then(response => {
+        this.listVehicle = response.data.list;
+        this.total = response.data.total;
+      });
       this.loading = false;
     },
     //设置树数据
@@ -1152,17 +1101,17 @@ export default {
       //console.log(value.length)
       if(value.length>1)
      {
-      this.queryParams.vehicleModelId=value[1]
-      this.form.vehicleModelId=value[1]
-      console.log(this.queryParams.vehicleModelId)
-      console.log(this.form.vehicleModelId)
+      this.queryParams.tspVehicleStdModelId=value[1]
+      this.form.tspVehicleStdModelId=value[1]
+      console.log(this.queryParams.tspVehicleStdModelId)
+      console.log(this.form.tspVehicleStdModelId)
      }
      else
      {  
-      this.queryParams.vehicleTypeId=value[0]
-      this.form.vehicleTypeId=value[0]
-      console.log(this.queryParams.vehicleTypeId)
-      console.log(this.form.vehicleTypeId)
+      this.queryParams.tspVehicleModelId=value[0]
+      this.form.tspVehicleModelId=value[0]
+      console.log(this.queryParams.tspVehicleModelId)
+      console.log(this.form.tspVehicleModelId)
      }
     },
     /** 搜索按钮操作 */
@@ -1174,8 +1123,8 @@ export default {
      resetQuery() {
         this.resetForm("queryForm");
         this.queryParams.typeModelValue ='-1';
-        this.queryParams.vehicleModelId = undefined;
-        this.queryParams.vehicleTypeId = undefined;
+        this.queryParams.tspVehicleStdModelId = undefined;
+        this.queryParams.tspVehicleModelId = undefined;
         this.handleQuery();
       },  
     /** 新增车辆信息按钮操作 */
