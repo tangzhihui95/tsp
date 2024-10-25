@@ -17,12 +17,11 @@ import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.TspVehicleModel;
 import com.modern.domain.TspVehicleStdModel;
+import com.modern.domain.TspVehicleStdModelExtra;
 import com.modern.enums.TpsVehicleDataKeyEnum;
 import com.modern.mapper.TspVehicleModelMapper;
 import com.modern.model.dto.*;
-import com.modern.model.vo.TspVehicleModelAddVO;
-import com.modern.model.vo.TspVehicleModelPageListVO;
-import com.modern.model.vo.TspVehiclePageListVO;
+import com.modern.model.vo.*;
 import com.modern.repository.TspVehicleModelRepository;
 import com.modern.repository.TspVehicleRepository;
 import com.modern.repository.TspVehicleStdModeRepository;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -62,16 +62,13 @@ public class TspVehicleModelService extends TspBaseService {
     @Resource
     private TspVehicleModelMapper tspVehicleModelMapper;
 
+    @Autowired
+    private TspVehicleStdModelExtraService tspVehicleStdModelExtraService;
+
     public PageInfo<TspVehicleModelPageListDTO> getPageList(TspVehicleModelPageListVO vo) {
-        log.info("查询车辆型号列表------{}", vo);
+        log.info("查询车辆型号列表------------------TspVehicleModelPageListVO={}", vo);
         QueryWrapper<TspVehicleModel> ew = new QueryWrapper<>();
         if (Objects.nonNull(vo.getTspVehicleStdModelId())) {
-           /* Set<Long> modelIds = (Set<Long>) ((LambdaQueryChainWrapper) tspVehicleStdModeRepository.lambdaQuery()
-                    .select(new SFunction[]{TspVehicleStdModel::getTspVehicleModelId})
-                    .eq(BaseModel::getId, vo.getTspVehicleStdModelId())).list().stream()
-                    .map(TspVehicleStdModel::getTspVehicleModelId).collect(Collectors.toSet());
-            ew.in(CollectionUtils.isNotEmpty(modelIds), "id", modelIds);*/
-
             LambdaQueryChainWrapper<TspVehicleStdModel> queryWrapper = tspVehicleStdModeRepository.lambdaQuery()
                     .select(TspVehicleStdModel::getTspVehicleModelId)  // 选择特定字段
                     .eq(BaseModel::getId, vo.getTspVehicleStdModelId());
@@ -83,9 +80,7 @@ public class TspVehicleModelService extends TspBaseService {
                         .collect(Collectors.toSet());
                 ew.in(CollectionUtils.isNotEmpty(modelIds), "id", modelIds);
             }
-
         }
-
         ew.like(StringUtils.isNotEmpty(vo.getVehicleModelName()), "vehicle_model_name", vo.getVehicleModelName());
         ew.orderByDesc("update_time");
         Page<TspVehicleModel> page = (Page<TspVehicleModel>) tspVehicleModelRepository
@@ -128,11 +123,11 @@ public class TspVehicleModelService extends TspBaseService {
             dtos.add(dto);
         }
         log.info("车辆型号转换完毕--------");
-        return PageInfo.of(dtos, page.getCurrent(), page.getSize(), page.getTotal());
+        return PageInfo.of(dtos, page.getCurrent(), page.getSize(), page.getRecords().size());
     }
 
     public JsonResult add(TspVehicleModelAddVO vo) {
-        log.info("车型添加-------{}", vo);
+        log.info("车型添加-----------------TspVehicleModelAddVO={}", vo);
         TspVehicleModel vehicleModel = this.tspVehicleModelRepository.getByVehicleModelName(vo.getVehicleModelName());
         if (Objects.nonNull(vehicleModel))
             ErrorEnum.TSP_VEHICLE_MODEL_VEHICLE_MODEL_NOT_NULL_ERR.throwErr();
@@ -145,7 +140,7 @@ public class TspVehicleModelService extends TspBaseService {
     }
 
     public JsonResult edit(TspVehicleModelAddVO vo) {
-        log.info("车辆编辑------{}", vo);
+        log.info("车辆编辑------------TspVehicleModelAddVO={}", vo);
         if (null == vo.getTspVehicleModelId())
             throw new RuntimeException("车辆id不存在");
         TspVehicleModel model = tspVehicleModelRepository.getById(vo.getTspVehicleModelId());
@@ -160,7 +155,7 @@ public class TspVehicleModelService extends TspBaseService {
     }
 
     public JsonResult delete(Long tspVehicleModelId) {
-        log.info("根据车型id进行删除---------{}", tspVehicleModelId);
+        log.info("根据车型id进行删除---------tspVehicleModelId={}", tspVehicleModelId);
         TspVehicleModel model = tspVehicleModelRepository.getById(tspVehicleModelId);
         if (Objects.isNull(model))
             ErrorEnum.TSP_VEHICLE_MODEL_VEHICLE_MODEL_NULL_ERR.throwErr();
@@ -242,6 +237,86 @@ public class TspVehicleModelService extends TspBaseService {
         } catch (Throwable $ex) {
             throw $ex;
         }
+    }
+
+    @Transactional(rollbackFor = {ServiceException.class})
+    public JsonResult addStdModel(TspVehicleStdModelAddVO vo) {
+        log.info("二级车型添加----------TspVehicleStdModelAddVO={}", vo);
+        TspVehicleStdModel stdModel = tspVehicleStdModeRepository.getByStdModeNameAndModelId(vo.getStdModeName(), vo.getTspVehicleModelId());
+        if (Objects.nonNull(stdModel))
+            ErrorEnum.TSP_VEHICLE_STD_MODEL_TSP_VEHICLE_STD_MODEL_ADD_ERR.throwErr();
+        stdModel = new TspVehicleStdModel();
+        BeanUtils.copyProperties(vo, stdModel);
+        stdModel.setUpdateBy(SecurityUtils.getUsername());
+        stdModel.setCreateBy(SecurityUtils.getUsername());
+        stdModel.setCreateTime(DateUtils.getCurrentTime());
+        tspVehicleStdModeRepository.save(stdModel);
+        if (null != vo.getStdModelExtraAddVO()) {
+            TspVehicleStdModelExtraAddVO extraAddVO = vo.getStdModelExtraAddVO();
+            extraAddVO.setTspVehicleStdModelId(stdModel.getId());
+            tspVehicleStdModelExtraService.add(extraAddVO);
+        }
+        return JsonResult.getResult(true);
+    }
+
+    @Transactional(rollbackFor = {ServiceException.class})
+    public JsonResult editStdModel(TspVehicleStdModelAddVO vo) {
+        log.info("车辆车型-二级编辑入参---------TspVehicleStdModelAddVO={}", vo);
+        if (null == vo.getTspVehicleStdModelId())
+            throw new RuntimeException("型号ID不能为空!");
+        TspVehicleStdModel stdModel = tspVehicleStdModeRepository.getById(vo.getTspVehicleStdModelId());
+        if (Objects.isNull(stdModel))
+            ErrorEnum.TSP_VEHICLE_STD_MODEL_NULL_ERR.throwErr();
+        TspVehicleStdModel stdModelName = tspVehicleStdModeRepository.getByStdModeNameAndModelId(vo.getStdModeName(), vo.getTspVehicleModelId());
+        if (null != stdModelName && !vo.getTspVehicleStdModelId().equals(stdModelName.getId()))
+            ErrorEnum.TSP_VEHICLE_STD_MODEL_NULL_ERR.throwErr();
+        BeanUtils.copyProperties(vo, stdModel);
+        stdModel.setUpdateBy(SecurityUtils.getUsername());
+        tspVehicleStdModeRepository.updateById(stdModel);
+        if (null != vo.getStdModelExtraAddVO()) {
+            TspVehicleStdModelExtraAddVO extraAddVO = vo.getStdModelExtraAddVO();
+            extraAddVO.setTspVehicleStdModelId(stdModel.getId());
+            tspVehicleStdModelExtraService.edit(extraAddVO);
+        }
+        return JsonResult.getResult(true);
+    }
+
+    public JsonResult deleteStdModel(Long tspVehicleStdModelId) {
+        log.info("根据二级车型ID进行删除---------tspVehicleStdModelId={}", tspVehicleStdModelId);
+        TspVehicleStdModel stdModel = tspVehicleStdModeRepository.getById(tspVehicleStdModelId);
+        if (Objects.isNull(stdModel))
+            ErrorEnum.TSP_VEHICLE_STD_MODEL_NULL_ERR.throwErr();
+        return JsonResult.getResult(tspVehicleStdModeRepository.removeById(tspVehicleStdModelId));
+    }
+
+    public TspVehicleStdModelInfoDTO getByTspStdModelId(Long tspVehicleStdModelId) {
+        log.info("根据二级车型ID查详情---------tspVehicleStdModelId={}", tspVehicleStdModelId);
+        TspVehicleStdModel stdModel = tspVehicleStdModeRepository.getById(tspVehicleStdModelId);
+        if (Objects.isNull(stdModel))
+            ErrorEnum.TSP_VEHICLE_STD_MODEL_NULL_ERR.throwErr();
+        TspVehicleStdModelInfoDTO dto = new TspVehicleStdModelInfoDTO();
+        BeanUtils.copyProperties(stdModel, dto);
+        TspVehicleStdModelExtra stdModelExtra = tspVehicleStdModelExtraService.getByTspStdModelId(tspVehicleStdModelId);
+        if (Objects.isNull(stdModelExtra))
+            stdModelExtra = new TspVehicleStdModelExtra();
+        dto.setStdModelExtra(stdModelExtra);
+        return dto;
+    }
+
+    public List<TspVehicleStdModelSelectListDTO> select() {
+        log.info("车辆二级型号下来列表---------------");
+        QueryWrapper<TspVehicleStdModel> ew = new QueryWrapper();
+        List<TspVehicleStdModelSelectListDTO> dtos = new ArrayList<>();
+        tspVehicleStdModeRepository.list((Wrapper) ew).forEach(item -> {
+            TspVehicleStdModelSelectListDTO dto = new TspVehicleStdModelSelectListDTO();
+            BeanUtils.copyProperties(item, dto);
+            dtos.add(dto);
+        });
+        return dtos;
+    }
+
+    public TspVehicleStdModelLabelMapDTO getLabelMap() {
+        return tspVehicleStdModeRepository.getLabelMap();
     }
 
     public String importVehicleModelStd(MultipartFile multipartFile, Boolean isUpdateSupport) throws IOException {

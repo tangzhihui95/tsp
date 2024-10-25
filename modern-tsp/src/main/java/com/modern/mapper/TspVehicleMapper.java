@@ -30,6 +30,9 @@ public interface TspVehicleMapper extends BaseMapperPlus<TspVehicle> {
     @Select({"SELECT id FROM tsp_vehicle where tsp_equipment_id = #{tspEquipmentId} limit 1"})
     Long getByEquipmentId(Long paramLong);
 
+    @Select({"SELECT tsp_equipment_id FROM tsp_vehicle where id = #{id} limit 1"})
+    Long getByVehicleId(Long paramLong);
+
     /*@Select({"SELECT CONCAT('{',`name`,',','\"date\":','\"',date,'\"',',','\"count\":','\"',count,'\"','}') AS str  FROM (SELECT CONCAT(GROUP_CONCAT( '\"',std_mode_name, '\":\"', count,'\"' )) AS name,date,SUM( count ) AS count                     FROM (SELECT  DATE_FORMAT( t.create_time, '%Y-%m-%d' ) AS date, COUNT(*)AS count,  a.std_mode_name FROM                      tsp_vehicle t LEFT JOIN tsp_vehicle_std_model a ON t.tsp_vehicle_std_model_id = a.id                      WHERE t.create_time <= #{endTime} AND t.create_time >= #{startTime} GROUP BY date,a.std_mode_name ORDER BY t.update_time ASC) AS cr                      GROUP BY date,count) AS rs"})
     List<TspVehicleVolumeDataDTO> dataStartTimeAndEndTime(@Param("startTime") String paramString1, @Param("endTime") String paramString2);
 

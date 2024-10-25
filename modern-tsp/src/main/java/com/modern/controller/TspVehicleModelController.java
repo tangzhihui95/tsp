@@ -8,13 +8,11 @@ import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.TspVehicleModel;
-import com.modern.model.dto.TspVehicleModelPageListDTO;
-import com.modern.model.dto.TspVehicleModelSelectDTO;
-import com.modern.model.dto.TspVehicleStdModelExListDTO;
-import com.modern.model.dto.TspVehicleStdModelExportListDTO;
+import com.modern.model.dto.*;
 import com.modern.model.vo.TspVehicleModelAddVO;
 import com.modern.model.vo.TspVehicleModelPageListVO;
 import com.modern.model.vo.TspVehiclePageListVO;
+import com.modern.model.vo.TspVehicleStdModelAddVO;
 import com.modern.service.TspVehicleModelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -110,6 +108,50 @@ public class TspVehicleModelController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:stdModel:addStdModel')")
+    @ApiOperation("车辆车型二级车型-添加")
+    @Log(title = "车辆车型二级车型- 添加", businessType = BusinessType.INSERT)
+    @PostMapping({"/addStdModel"})
+    public JsonResult addStdModel(@RequestBody @Valid TspVehicleStdModelAddVO vo) {
+        return JsonResult.getResult(tspVehicleModelService.addStdModel(vo));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:stdModel:edit')")
+    @ApiOperation("车辆车型二级车型-编辑")
+    @Log(title = "车辆车型二级车型-编辑", businessType = BusinessType.UPDATE)
+    @PutMapping({"/editStdModel"})
+    public JsonResult editStdModel(@RequestBody @Valid TspVehicleStdModelAddVO vo) {
+        return JsonResult.getResult(tspVehicleModelService.editStdModel(vo));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:stdModel:remove')")
+    @ApiOperation("车辆车型二级车型-删除")
+    @Log(title = "车辆车型二级车型-删除", businessType = BusinessType.DELETE)
+    @DeleteMapping({"/deleteStdModel/{tspVehicleStdModelId}"})
+    public JsonResult deleteStdModel(@PathVariable("tspVehicleStdModelId") Long tspVehicleStdModelId) {
+        return JsonResult.getResult(tspVehicleModelService.deleteStdModel(tspVehicleStdModelId));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:stdModel:get')")
+    @ApiOperation("车辆车型二级车型-详情")
+    @GetMapping({"/getByTspStdModelId/{tspVehicleStdModelId}"})
+    public JsonResult getByTspStdModelId(@PathVariable("tspVehicleStdModelId") Long tspVehicleStdModelId) {
+        return JsonResult.getResult(tspVehicleModelService.getByTspStdModelId(tspVehicleStdModelId));
+    }
+
+    @ApiOperation("车辆车型二级车型-下拉列表")
+    @GetMapping({"/select"})
+    public Result<List<TspVehicleStdModelSelectListDTO>> select(@RequestParam(value = "tspVehicleStdModelId", required = false) Long tspVehicleStdModelId) {
+        return Result.ok(tspVehicleModelService.select());
+    }
+
+
+    @ApiOperation("车辆车型二级车型-统计车型标签")
+    @GetMapping({"/getLabelMap"})
+    public Result<TspVehicleStdModelLabelMapDTO> getLabelMap() {
+        return Result.ok(tspVehicleModelService.getLabelMap());
     }
 
     @ApiOperation("车辆车型二级车型-下载模版")
