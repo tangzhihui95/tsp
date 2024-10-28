@@ -240,7 +240,7 @@
           <el-form-item label="选择能源类型" prop="dataKey" :required="true">          
             <el-select v-model="form2.dataKey" placeholder="请选择能源类型" :disabled="!this.isEditMode" clearable>
             <el-option
-              v-for="dict1 in dict.type.energy_type"
+              v-for="dict1 in dict.type.data_type"
               :key="dict1.value"
               :label="dict1.label"
               :value="dict1.label"
@@ -282,7 +282,7 @@
            <el-form-item label="环保标准" prop="environmentalProtection" :required="true">          
             <el-select v-model="form2.environmentalProtection" placeholder="请选择环保标准" :disabled="!this.isEditMode" clearable>
             <el-option
-              v-for="dict2 in dict.type.environmental_type"
+              v-for="dict2 in dict.type.environmental_protection"
               :key="dict2.value"
               :label="dict2.label"
               :value="dict2.label"
@@ -377,7 +377,7 @@
             <el-form-item label="变速箱" prop="transmissionCase" :required="true">          
             <el-select v-model="form2.transmissionCase" placeholder="请选择变速箱" :disabled="!this.isEditMode" clearable>
             <el-option
-              v-for="dict3 in dict.type.transmissionCase_type"
+              v-for="dict3 in dict.type.transmission_case"
               :key="dict3.value"
               :label="dict3.label"
               :value="dict3.label"
@@ -439,24 +439,7 @@ import { listVehicleType, addVehicleType,updateVehicleType,delVehicleType,batchD
 
 export default {
   name: "listVehicleType",
-  dicts: {
-    type: {
-      energy_type: [
-        { value: "电动", label: "电动" },
-        { value: "燃油", label: "燃油" },
-        { value: "混合动力", label: "混合动力" },
-      ],
-      environmental_type: [
-        { value: "非标", label: "非标" },
-        { value: "两者兼顾", label: "两者兼顾" },
-      ],
-      transmissionCase_type: [
-        { value: "自动", label: "自动" },
-        { value: "手动", label: "手动" },
-        { value: "半自动", label: "半自动" },
-      ],
-    },
-  },
+  dicts:['transmission_case','environmental_protection','data_type'],
   data() {
     return {
     //遮罩层

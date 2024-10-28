@@ -23,7 +23,7 @@
         <el-form-item label="车辆状态" prop="state" label-width="120px">
           <el-select v-model="queryParams.state" placeholder="请选择车辆状态" clearable>
             <el-option
-              v-for="dict2 in dict.type.vehicle_vehicle_status"
+              v-for="dict2 in dict.type.vehicle_state"
               :key="dict2.value"
               :label="dict2.label"
               :value="dict2.value"
@@ -33,16 +33,16 @@
         <el-form-item label="设备绑定状态" prop="bindStatus" label-width="120px">
           <el-select v-model="queryParams.bindStatus" placeholder="请选择绑定状态" clearable>
             <el-option
-              v-for="dict3 in dict.type.vehicle_binding_status"
+              v-for="dict3 in dict.type.bind_status"
               :key="dict3.value"
               :label="dict3.label"
               :value="dict3.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="二级车型" prop="typeModelValue" label-width="120px">
+        <el-form-item label="二级车型" prop="vehicleTypeModel" label-width="120px">
       <el-cascader
-        v-model="queryParams.typeModelValue"
+        v-model="queryParams.vehicleTypeModel"
         style="width:200px"
         size="small"
         :options="option"
@@ -67,7 +67,7 @@
         <el-form-item label="认证状态" prop="certificationState" label-width="120px">
           <el-select v-model="queryParams.certificationState" placeholder="请选择认证状态" clearable>
             <el-option
-              v-for="dict4 in dict.type.vehicle_certified_status"
+              v-for="dict4 in dict.type.vehicle_enum_certification_state"
               :key="dict4.value"
               :label="dict4.label"
               :value="dict4.value"
@@ -77,7 +77,7 @@
         <el-form-item label="推送状态" prop="sendStatus" label-width="120px">
           <el-select v-model="queryParams.sendStatus" placeholder="请选择推送状态" clearable>
             <el-option
-              v-for="dict5 in dict.type.vehicle_push_status"
+              v-for="dict5 in dict.type.send_status"
               :key="dict5.value"
               :label="dict5.label"
               :value="dict5.value"
@@ -193,7 +193,7 @@
        <el-table-column label="车型" align="center" prop="vehicleType"></el-table-column>
        <el-table-column label="设备绑定状态" align="center" prop="bindStatus">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_binding_status" :value="scope.row.bindStatus"/>
+          <dict-tag :options="dict.type.bind_status" :value="scope.row.bindStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="关联账号" align="center" prop="mobile">
@@ -203,17 +203,17 @@
       </el-table-column>
       <el-table-column label="认证状态" align="center" prop="certificationState">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_certified_status" :value="scope.row.certificationState"/>
+          <dict-tag :options="dict.type.vehicle_enum_certification_state" :value="scope.row.certificationState"/>
         </template>
       </el-table-column>
        <el-table-column label="车辆状态" align="center" prop="state">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_vehicle_status" :value="scope.row.state"/>
+          <dict-tag :options="dict.type.vehicle_state" :value="scope.row.state"/>
         </template>
       </el-table-column>
       <el-table-column label="推送状态" align="center" prop="sendStatus">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_push_status" :value="scope.row.sendStatus"/>
+          <dict-tag :options="dict.type.send_status" :value="scope.row.sendStatus"/>
         </template>
       </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -228,49 +228,49 @@
             type="text"
             icon="el-icon-view"
             @click="handleDetail(scope.row)"
-            v-hasPermi="['system:deviceModel:add']"
+            v-hasPermi="['vehicle:vehicleDetail:view']"
           >详情</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:deviceType:detail']"
+              v-hasPermi="['vehicle:vehicleMessage:edit']"
             >编辑</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-connection"
               @click="handleRecord(scope.row)"
-              v-hasPermi="['system:deviceType:detail']"
+              v-hasPermi="['vehicle:vehicleBind:detail']"
             >绑定记录</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              v-hasPermi="['vehicle:vehicleMessage:remove']"
             >删除</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-d-arrow-right"
               @click="handlePush(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              v-hasPermi="['vehicle:vehicleMessage:send']"
             >推送</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-refresh"
               @click="handlePush(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              v-hasPermi="['vehicle:vehicleMessage:change']"
             >更换车卡信息</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-s-claim"
               @click="handlePush(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              v-hasPermi="['vehicle:vehicleMessage:check']"
             >实名查询</el-button>
           </template>
         </el-table-column>
@@ -295,17 +295,17 @@
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
-        <el-form-item label="车辆厂商" prop="manufacturer":required="true" >
+        <el-form-item label="车辆厂商" prop="providerName":required="true" >
           <el-input
-            v-model="form.manufacturer"
+            v-model="form.providerName"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item>
-        <el-form-item label="车辆型号" prop="typeModelValue" label-width="120px">
+        <el-form-item label="车辆型号" prop="vehicleTypeModel" label-width="120px">
       <el-cascader
-        v-model="form.typeModelValue"
+        v-model="form.vehicleTypeModel"
         style="width:100%"
         :options="option"
         @change="handleChange"
@@ -313,9 +313,9 @@
         clerable
       /> 
        </el-form-item>
-        <el-form-item label="CDU序列号" prop="cdu" >
+        <el-form-item label="CDU序列号" prop="cduNum" >
           <el-input
-            v-model="form.cdu"
+            v-model="form.cduNum"
             placeholder="请输入CDU序列号"
             style="width: 100%"
             :disabled="true"
@@ -324,9 +324,9 @@
         </el-form-item>
         </div>
         <div class="itemInline">
-        <el-form-item label="车辆配置名称" prop="configName" :required="true">
+        <el-form-item label="车辆配置名称" prop="configureName" :required="true">
           <el-input
-            v-model="form.configName"
+            v-model="form.configureName"
             placeholder="请输入车辆配置名称"
             style="width:100%"
             :disabled="true"
@@ -354,47 +354,47 @@
         </el-form-item>      
         </div>
         <div class="itemInline">
-          <el-form-item label="批次号" prop="batchNumber" :required="true">
+          <el-form-item label="批次号" prop="batchNo" :required="true">
           <el-input
-            v-model="form.batchNumber"
+            v-model="form.batchNo"
             placeholder="请输入批次号"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item>
-        <el-form-item label="出厂日期" prop="manufactureDate">
-        <el-date-picker v-model="form.manufactureDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-form-item label="出厂日期" prop="exFactoryDate">
+        <el-date-picker v-model="form.exFactoryDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" :disabled="true" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
-      <el-form-item label="下线日期" prop="offlineDate">
-        <el-date-picker v-model="form.offlineDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+      <el-form-item label="下线日期" prop="operateDate">
+        <el-date-picker v-model="form.operateDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" :disabled="true" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
     </div>
     <div class="itemInline">
-        <el-form-item label="电池包规格" prop="batterySpec" :required="true">          
-            <el-select v-model="form.batterySpec" :disabled="true" placeholder="请选择电池包规格" clearable>
+        <el-form-item label="电池包规格" prop="essModel" :required="true">          
+            <el-select v-model="form.essModel" :disabled="true" placeholder="请选择电池包规格" clearable>
             <el-option
-              v-for="dict2 in dict.type.battery_spec"
+              v-for="dict2 in dict.type.ess_model"
               :key="dict2.value"
               :label="dict2.label"
               :value="dict2.label"
             />
           </el-select>
           </el-form-item>
-        <el-form-item label="电池包编号" prop="batteryPackNumber" :required="true">
+        <el-form-item label="电池包编号" prop="essNum" :required="true">
           <el-input
-            v-model="form.batteryPackNumber"
+            v-model="form.essNum"
             placeholder="请输入电池包序列号"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item>
-        <el-form-item label="发动机序列号" prop="engineNumber">
+        <el-form-item label="发动机序列号" prop="engineNum">
           <el-input
-            v-model="form.engineNumber"
+            v-model="form.engineNum"
             placeholder="请输入发动机序列号"
             style="width: 100%"
             :disabled="true"
@@ -403,19 +403,19 @@
         </el-form-item>
     </div>
     <div class="itemInline">
-        <el-form-item label="电动机品牌" prop="electricMotorBrand" :required="true">          
-            <el-select v-model="form.electricMotorBrand" :disabled="true" placeholder="请选择电动机品牌" clearable>
+        <el-form-item label="电动机品牌" prop="motorBrand" :required="true">          
+            <el-select v-model="form.motorBrand" :disabled="true" placeholder="请选择电动机品牌" clearable>
             <el-option
-              v-for="dict3 in dict.type.electric_motor_brand"
+              v-for="dict3 in dict.type.motor_brand"
               :key="dict3.value"
               :label="dict3.label"
               :value="dict3.label"
             />
           </el-select>
           </el-form-item>
-        <el-form-item label="电动机序列号" prop="electricMotorNumber" :required="true">
+        <el-form-item label="电动机序列号" prop="motorNum" :required="true">
           <el-input
-            v-model="form.electricMotorNumber"
+            v-model="form.motorNum"
             placeholder="请输入电动机序列号"
             style="width: 100%"
             :disabled="true"
@@ -428,6 +428,7 @@
       <el-table-column label="设备ID" align="center" v-if="false" prop="tspEquipmentId"/>
       <el-table-column label="设备型号ID" align="center" v-if="false" prop="tspEquipmentModelId"/>
       <el-table-column label="设备类型ID" align="center" v-if="false" prop="tspEquipmentTypeId"/>
+      <el-table-column label="车辆ID" align="center" v-if="false" prop="tspvehicleId"/>
       <el-table-column label="序号" type="index" align="center">
           <template slot-scope="scope">
             <span>{{ scope.$index + 1}}</span>
@@ -438,11 +439,6 @@
        <el-table-column label="车联网卡" align="center" prop="sim"></el-table-column>
        <el-table-column label="ICCID" align="center" prop="iccid"></el-table-column>
        <el-table-column label="IMEI" align="center" prop="imei"></el-table-column>
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createTime) }}</span>
-          </template> 
-        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
@@ -450,14 +446,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleSelect(scope.row)"
-            v-hasPermi="['system:deviceModel:add']"
+            v-hasPermi="['vehicle:deviceModel:add']"
           >选择设备</el-button>
           <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              v-hasPermi="['vehicle:deviceModel:remove']"
             >解绑设备</el-button>
           </template>
         </el-table-column>
@@ -465,6 +461,7 @@
         <h4 class="form-header h4" content-position="left">历史绑定设备</h4>
         <el-table ref="refTable2" v-loading="loading" :data="listHistoryEquipment">
       <el-table-column label="设备ID" align="center" v-if="false" prop="tspEquipmentId"/>
+      <el-table-column label="车辆ID" align="center" v-if="false" prop="tspvehicleId"/>
       <el-table-column label="设备型号ID" align="center" v-if="false" prop="tspEquipmentModelId"/>
       <el-table-column label="设备类型ID" align="center" v-if="false" prop="tspEquipmentTypeId"/>
       <el-table-column label="序号" type="index" align="center">
@@ -477,14 +474,14 @@
        <el-table-column label="车联网卡" align="center" prop="sim"></el-table-column>
        <el-table-column label="ICCID" align="center" prop="iccid"></el-table-column>
        <el-table-column label="IMEI" align="center" prop="imei"></el-table-column>
-        <el-table-column label="绑定时间" align="center" prop="bindTime" width="180">
+        <el-table-column label="绑定时间" align="center" prop="createTime" width="180">
            <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.bindTime) }}</span>
+            <span>{{ parseTime(scope.row.createTime) }}</span>
           </template> 
         </el-table-column>
-        <el-table-column label="解绑时间" align="center" prop="unbindTime" width="180">
+        <el-table-column label="解绑时间" align="center" prop="unBindTime" width="180">
            <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.unbindTime) }}</span>
+            <span>{{ parseTime(scope.row.unBindTime) }}</span>
           </template> 
         </el-table-column>
         <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
@@ -512,14 +509,14 @@
          <el-tab-pane label="销售信息" name="second">
           <h4 class="form-header h4" content-position="left">销售信息</h4>
         <div class="itemInline">  
-        <el-form-item label="购买领域" prop="buyArea" label-width="120px" >
-            <el-radio-group v-model="form.buyArea" :disabled="true" ref="radioGroup">
+        <el-form-item label="购买领域" prop="purchaserState" label-width="120px" >
+            <el-radio-group v-model="form.purchaserState" :disabled="true" ref="radioGroup">
               <el-radio :label="1">私人用车</el-radio>
               <el-radio :label="0">单位用车</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="车辆用途" prop="useType" :required="true">          
-            <el-select v-model="form.useType" :disabled="true" placeholder="请选择车辆用途" clearable>
+          <el-form-item label="车辆用途" prop="purpose" :required="true">          
+            <el-select v-model="form.purpose" :disabled="true" placeholder="请选择车辆用途" clearable>
             <el-option
               v-for="dict5 in dict.type.use_type"
               :key="dict5.value"
@@ -528,8 +525,8 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="是否是新车" prop="isNewCar" :required="true">          
-            <el-select v-model="form.isNewCar" :disabled="true" placeholder="是否是新车" clearable>
+          <el-form-item label="是否是新车" prop="newVehicleFlag" :required="true">          
+            <el-select v-model="form.newVehicleFlag" :disabled="true" placeholder="是否是新车" clearable>
             <el-option
               v-for="dict6 in dict.type.is_new_car"
               :key="dict6.value"
@@ -540,9 +537,9 @@
           </el-form-item>
         </div>
         <div class="itemInline">  
-          <el-form-item label="购买方名称" prop="buyName" :required="true">
+          <el-form-item label="购买方名称" prop="purchaser" :required="true">
           <el-input
-            v-model="form.buyName"
+            v-model="form.purchaser"
             placeholder="请输入购买方名称"
             style="width: 100%"
             :disabled="true"
@@ -558,34 +555,34 @@
             clearable
           />
         </el-form-item>   
-        <el-form-item label="价税合计(小写)" prop="counter">
-        <el-input-number v-model="form.counter" :disabled="true"></el-input-number>
+        <el-form-item label="价税合计(小写)" prop="priceTax">
+        <el-input-number v-model="form.priceTax" :disabled="true"></el-input-number>
         </el-form-item>
         </div>
         <div class="itemInline">  
-          <el-form-item label="发票号码" prop="invoiceNumber" :required="true">
+          <el-form-item label="发票号码" prop="invoiceNo" :required="true">
           <el-input
-            v-model="form.invoiceNumber"
+            v-model="form.invoiceNo"
             placeholder="请输入发票号码"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item> 
-        <el-form-item label="开票日期" prop="invoiceDate">
-        <el-date-picker v-model="form.invoiceDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-form-item label="开票日期" prop="invoicingDate">
+        <el-date-picker v-model="form.invoicingDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" :disabled="true" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
-      <el-form-item label="是否三包" prop="isThreePackage" label-width="120px" >
-            <el-radio-group v-model="form.isThreePackage" :disabled="true" ref="radioGroup">
+      <el-form-item label="是否三包" prop="isSanBao" label-width="120px" >
+            <el-radio-group v-model="form.isSanBao" :disabled="true" ref="radioGroup">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </div>
         <div class="itemInline">  
-          <el-form-item label="销货单位名称" prop="saleName">          
-            <el-select v-model="form.saleName" :disabled="true" placeholder="请选择销货单位名称" clearable>
+          <el-form-item label="销货单位名称" prop="salesUnitName">          
+            <el-select v-model="form.salesUnitName" :disabled="true" placeholder="请选择销货单位名称" clearable>
             <el-option
               v-for="dict7 in dict.type.sale_name"
               :key="dict7.value"
@@ -594,16 +591,16 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="销货单位地址" prop="saleAddress" >
+          <el-form-item label="销货单位地址" prop="salesUnitAddress" >
           <el-input
-            v-model="form.saleAddress"
+            v-model="form.salesUnitAddress"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item>
-        <el-form-item label="车辆状态" prop="state">          
-            <el-select v-model="form.state" :disabled="true" placeholder="请选择车辆状态" clearable>
+        <el-form-item label="车辆状态" prop="vehicleStatus">          
+            <el-select v-model="form.vehicleStatus" :disabled="true" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict8 in dict.type.vehicle_status"
               :key="dict8.value"
@@ -614,26 +611,26 @@
           </el-form-item>
         </div>
         <div class="itemInline"> 
-          <el-form-item label="销售渠道名称" prop="saleChannelName" :required="true">
+          <el-form-item label="销售渠道名称" prop="salesChannel" :required="true">
           <el-input
-            v-model="form.saleChannelName"
+            v-model="form.salesChannel"
             placeholder="请输入销售渠道名称"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item> 
-        <el-form-item label="办理员工姓名" prop="clerkName" :required="true">
+        <el-form-item label="办理员工姓名" prop="employeeName" :required="true">
           <el-input
-            v-model="form.clerkName"
+            v-model="form.employeeName"
             placeholder="请输入办理员工姓名"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item> 
-        <el-form-item label="销售渠道类型" prop="saleChannelType" :required="true">          
-            <el-select v-model="form.saleChannelType" :disabled="true" placeholder="请选择销售渠道类型" clearable>
+        <el-form-item label="销售渠道类型" prop="channelType" :required="true">          
+            <el-select v-model="form.channelType" :disabled="true" placeholder="请选择销售渠道类型" clearable>
             <el-option
               v-for="dict9 in dict.type.sale_channel_type"
               :key="dict9.value"
@@ -644,8 +641,8 @@
           </el-form-item>
         </div>
         <div class="itemInline">  
-          <el-form-item label="经销商省份" prop="selectProvince">          
-            <el-select v-model="form.selectProvince" :disabled="true" placeholder="请选择省" clearable>
+          <el-form-item label="经销商省份" prop="awardProvince">          
+            <el-select v-model="form.awardProvince" :disabled="true" placeholder="请选择省" clearable>
             <el-option
               v-for="item in provinces"
               :key="item.value"
@@ -655,8 +652,8 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="经销商城市" prop="selectCity">          
-            <el-select v-model="form.selectCity" :disabled="true" placeholder="请选择市" clearable>
+          <el-form-item label="经销商城市" prop="awardCity">          
+            <el-select v-model="form.awardCity" :disabled="true" placeholder="请选择市" clearable>
             <el-option
               v-for="item in cities"
               :key="item.value"
@@ -666,8 +663,8 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="经销商区县" prop="selectArea">          
-            <el-select v-model="form.selectArea" :disabled="true" placeholder="请选择区" clearable>
+          <el-form-item label="经销商区县" prop="awardArea">          
+            <el-select v-model="form.awardArea" :disabled="true" placeholder="请选择区" clearable>
             <el-option
               v-for="item in area"
               :key="item.value"
@@ -676,8 +673,8 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="经销商" prop="dealerName" :required="true">          
-            <el-select v-model="form.dealerName" :disabled="true" placeholder="请选择经销商" clearable>
+          <el-form-item label="经销商" prop="dealerId" :required="true">          
+            <el-select v-model="form.dealerId" :disabled="true" placeholder="请选择经销商" clearable>
             <el-option
               v-for="dict7 in dict.type.sale_name"
               :key="dict7.value"
@@ -687,7 +684,7 @@
           </el-select>
           </el-form-item>
         </div>
-        <el-form-item label="发票" prop="invoiceUrl">
+        <el-form-item label="发票" prop="invoiceImgUrls">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -786,9 +783,9 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="车主身份证号" prop="ownerIdCard" :required="true">
+        <el-form-item label="车主身份证号" prop="idCard" :required="true">
           <el-input
-            v-model="form.ownerIdCard"
+            v-model="form.idCard"
             placeholder="请输入车主身份证号"
             style="width: 100%"
             :disabled="true"
@@ -850,7 +847,7 @@
         <el-table-column label="车主ID" align="center" v-if="false" prop="ownerId"/>
         <el-table-column label="手机号" align="center" prop="ownerPhone"></el-table-column>
         <el-table-column label="车主姓名" align="center" prop="ownerName"></el-table-column>
-        <el-table-column label="身份证号" align="center" prop="ownerIdCard"></el-table-column>
+        <el-table-column label="身份证号" align="center" prop="idCard"></el-table-column>
         <el-table-column label="操作用户" align="center" prop="operatorName"></el-table-column>
         <el-table-column label="操作时间" align="center" prop="operateTime" width="180">
            <template slot-scope="scope">
@@ -953,18 +950,12 @@
 <script>
 import { getToken } from "@/utils/auth";
 import { listVehicleMessage } from "../../../api/vehicle/vehicleMessage";
+import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
+
 
 export default {
   name: "vehicleModel",
-  dicts: {
-    type: {
-      vehicle_binding_status: [],
-      vehicle_relation_no: [],
-      vehicle_certified_status: [],
-      vehicle_vehicle_status: [],
-      vehicle_push_status: [],
-    }
-  },
+  dicts:['vehicle_state','bind_status','vehicle_enum_certification_state','send_status','vehicle_color','ess_model','motor_brand'],
   data() {
     return {
       // 遮罩层
@@ -978,7 +969,7 @@ export default {
      // 显示搜索条件
      showSearch: true,
      //查询二级型号下拉框
-     typeModelValue: [],
+     vehicleTypeModel: [],
       option: [],
      //列表数据
      listVehicle: [],
@@ -999,7 +990,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         search: undefined,
-        typeModelValue: [],
+        vehicleTypeModel: [],
         tspVehicleModelId: undefined,
         tspVehicleStdModelId: undefined,
         bindStatus: undefined,
@@ -1044,6 +1035,7 @@ export default {
         password: [ 
           { required: true, message: "请输入登录密码", trigger: "blur" }  
         ],
+
       },
     };
   },
@@ -1063,37 +1055,12 @@ export default {
     },
     //设置树数据
     setTreeData() {
-      this.typeModelValue = []
-      this.option = [
-        {
-          label: "客车",
-          value: "1",
-          children: [
-            {
-              label: "客车型号1",
-              value: "11",
-            },
-            {
-              label: "客车型号2",
-              value: "12",
-            },
-          ],
-        },
-        {
-          label: "货车",
-          value: "2",
-          children: [
-            {
-              label: "货车型号1",
-              value: "21",
-            },
-            {
-              label: "货车型号2",
-              value: "22",
-            },
-          ],  
-        },
-      ];
+      
+      this.vehicleTypeModel = []
+      vehicleTypeModel(this.queryParams).then(response => {
+        this.option = response.data;
+      });
+
     },
     //获取树值
      handleChange(value) {
@@ -1122,7 +1089,7 @@ export default {
     /** 重置按钮操作 */
      resetQuery() {
         this.resetForm("queryForm");
-        this.queryParams.typeModelValue ='-1';
+        this.queryParams.vehicleTypeModel ='-1';
         this.queryParams.tspVehicleStdModelId = undefined;
         this.queryParams.tspVehicleModelId = undefined;
         this.handleQuery();

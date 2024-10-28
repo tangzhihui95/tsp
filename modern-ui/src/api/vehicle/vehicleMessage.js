@@ -10,3 +10,10 @@ export function listVehicleMessage(query) {
   }
 
 //新增车辆信息
+export function addVehicleMessage(data) {
+  return request({
+    url: '/tsp/vehicle/add',
+    method: 'post',
+    data: data
+  })
+}
