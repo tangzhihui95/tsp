@@ -74,7 +74,7 @@ public class TspVehicleAddVO {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty("运营日期")
+    @ApiModelProperty("下线日期")
     private LocalDate operateDate;
 
     @ApiModelProperty("标签")
