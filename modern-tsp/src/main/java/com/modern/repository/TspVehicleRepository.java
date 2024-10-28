@@ -103,5 +103,11 @@ public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspV
         }
     }
 
+    public List<TspVehicle> findByTspUserId(Long userId) {
+        QueryWrapper<TspVehicle> ew = new QueryWrapper();
+        ew.eq("tsp_user_id", userId);
+        return list((Wrapper)ew);
+    }
+
 
 }

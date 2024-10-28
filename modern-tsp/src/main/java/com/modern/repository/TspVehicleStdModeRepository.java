@@ -1,14 +1,19 @@
 package com.modern.repository;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.modern.common.core.ServicePlusImpl;
 import com.modern.domain.TspVehicleStdModel;
 import com.modern.mapper.TspVehicleStdModeMapper;
+import com.modern.model.dto.TspVehicleStdModelLabelMapDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author：tzh
@@ -21,6 +26,8 @@ import java.util.List;
 @Service
 public class TspVehicleStdModeRepository extends ServicePlusImpl<TspVehicleStdModeMapper, TspVehicleStdModel, TspVehicleStdModel> {
 
+    @Autowired
+    private TspVehicleStdModeMapper tspVehicleStdModeMapper;
     public List<TspVehicleStdModel> getByTspVehicleModelId(Long id) {
         LambdaQueryWrapper<TspVehicleStdModel> ew = new LambdaQueryWrapper();
         ew.eq(TspVehicleStdModel::getTspVehicleModelId, id);
@@ -47,8 +54,8 @@ public class TspVehicleStdModeRepository extends ServicePlusImpl<TspVehicleStdMo
         return (TspVehicleStdModel) getOne((Wrapper) ew);
     }
 
-   /* public TspVehicleStdModelLabelMapDTO getLabelMap() {
-        List<String> labelMap = this.tspVehicleStdModeMapper.getLabelMap();
+    public TspVehicleStdModelLabelMapDTO getLabelMap() {
+        List<String> labelMap = tspVehicleStdModeMapper.getLabelMap();
         Map<String, String> map = new HashMap<>();
         String jsonStr = "";
         for (String s : labelMap) {
@@ -62,12 +69,5 @@ public class TspVehicleStdModeRepository extends ServicePlusImpl<TspVehicleStdMo
         return dto;
     }
 
-    public Wrapper<TspVehicleStdModel> getAllStdCount(String date) {
-        QueryWrapper<TspVehicleStdModel> ew = new QueryWrapper();
-        ew.groupBy("DATE_FORMAT( t.create_time, '%Y-%m-%d' )", (Object[]) new String[0]);
-        ew.le("t.create_time", date + " 00:00:00");
-        ew.ge("t.create_time", date + " 23:59:59");
-        return (Wrapper<TspVehicleStdModel>) ew;
-    }*/
 
 }

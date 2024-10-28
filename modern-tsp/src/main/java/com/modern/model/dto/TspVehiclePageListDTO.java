@@ -33,11 +33,11 @@ public class TspVehiclePageListDTO extends BaseDto {
     @ApiModelProperty("车牌号")
     private String plateCode;
 
-    @ApiModelProperty("一级车型ID")
+    @ApiModelProperty("二级车型ID")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long tspVehicleStdModelId;
 
-    @ApiModelProperty("二级车型ID")
+    @ApiModelProperty("一级车型ID")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long tspVehicleModelId;
 
@@ -98,4 +98,7 @@ public class TspVehiclePageListDTO extends BaseDto {
     @ApiModelProperty("设备ID")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long tspEquipmentId;
+
+    @ApiModelProperty("车型")
+    private String vehicleType;
 }
