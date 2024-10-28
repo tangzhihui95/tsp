@@ -92,20 +92,20 @@ public class PageInfo<T> implements Serializable {
     public PageInfo() {
     }
 
-    public static <T> com.modern.common.core.page.PageInfo<T> of(List<T> list, long pageNum, long pageSize, long total) {
-        return new com.modern.common.core.page.PageInfo<>(list, pageNum, pageSize, total, Long.valueOf(0L));
+    public static <T> PageInfo<T> of(List<T> list, long pageNum, long pageSize, long total) {
+        return new PageInfo<>(list, pageNum, pageSize, total, Long.valueOf(0L));
     }
 
-    public static <T> com.modern.common.core.page.PageInfo<T> of(List<T> list, long pageNum, long pageSize, Long total, Long nextSeq) {
-        return new com.modern.common.core.page.PageInfo<>(list, pageNum, pageSize, total.longValue(), nextSeq);
+    public static <T> PageInfo<T> of(List<T> list, long pageNum, long pageSize, Long total, Long nextSeq) {
+        return new PageInfo<>(list, pageNum, pageSize, total.longValue(), nextSeq);
     }
 
-    public static <T> com.modern.common.core.page.PageInfo<T> of(IPage<T> page) {
-        return new com.modern.common.core.page.PageInfo<>(page.getRecords(), page.getCurrent(), page.getSize(), page.getTotal(), Long.valueOf(0L));
+    public static <T> PageInfo<T> of(IPage<T> page, Long total) {
+        return new PageInfo<>(page.getRecords(), page.getCurrent(), page.getSize(), total.longValue(), Long.valueOf(0L));
     }
 
-    public static <T> com.modern.common.core.page.PageInfo<T> physicalPage(List<T> list, int pageNum, int pageSize, long total) {
-        return new com.modern.common.core.page.PageInfo<>(list, pageNum, pageSize, Long.valueOf(total));
+    public static <T> PageInfo<T> physicalPage(List<T> list, int pageNum, int pageSize, long total) {
+        return new PageInfo<>(list, pageNum, pageSize, Long.valueOf(total));
     }
 
 

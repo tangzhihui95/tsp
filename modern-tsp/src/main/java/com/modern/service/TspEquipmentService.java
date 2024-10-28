@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -60,7 +61,7 @@ import java.util.*;
 public class TspEquipmentService extends TspBaseService {
     private static final Logger log = LoggerFactory.getLogger(TspEquipmentService.class);
 
-    @Autowired
+    @Resource
     private TspEquipmentMapper tspEquipmentMapper;
 
     @Autowired
@@ -129,7 +130,7 @@ public class TspEquipmentService extends TspBaseService {
             }
             record.setIsOnline(Boolean.valueOf(false));
         }
-        return PageInfo.of(pageList);
+        return PageInfo.of(pageList, (long) pageList.getRecords().size());
     }
 
     public JsonResult add(TspEquipmentAddVO vo) {

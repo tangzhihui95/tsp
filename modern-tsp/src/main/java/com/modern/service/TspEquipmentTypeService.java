@@ -14,7 +14,6 @@ import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.TspEquipmentModel;
 import com.modern.domain.TspEquipmentType;
-import com.modern.mapper.TspEquipmentModelMapperNew;
 import com.modern.mapper.TspEquipmentTypeMapper;
 import com.modern.model.dto.*;
 import com.modern.model.vo.FrontQuery;
@@ -29,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,27 +50,12 @@ public class TspEquipmentTypeService extends TspBaseService {
     @Autowired
     private TspEquipmentTypeRepository tspEquipmentTypeRepository;
 
-    @Autowired
+    @Resource
     private TspEquipmentTypeMapper tspEquipmentTypeMapper;
-    @Autowired
-    private TspEquipmentModelMapperNew tspEquipmentModelMapperNew;
 
     @Autowired
     private TspEquipmentModelService tspEquipmentModelService;
 
-    /**
-     * 设备分类-列表查询
-     *
-     * @param vo
-     * @return
-     */
-    public PageInfo<TspEquipmentTypePageListDTO> getList(FrontQuery vo) {
-
-        if (Objects.nonNull(vo.getTspEquipmentModelId())) {
-            TspEquipmentModel tspEquipmentModel = tspEquipmentModelMapperNew.getById(vo.getTspEquipmentModelId());
-        }
-        return null;
-    }
 
     /**
      * 设备分类-列表查询
