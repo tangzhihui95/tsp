@@ -170,10 +170,10 @@ public class TspVehicleModelController {
     }
 
     @ApiOperation("二级车型列表")
-    @Log(title = "二级车型-下来列表")
+    @Log(title = "二级车型-下拉列表")
     @PostMapping({"/selectChildrenList"})
     public Result<List<TspVehicleModelSelectDTO>> selectChildrenList(@RequestBody @Valid TspVehiclePageListVO vo) {
-        return Result.ok(this.tspVehicleModelService.selectChildrenList(vo));
+        return Result.ok(tspVehicleModelService.selectChildrenList(vo));
     }
 
 
