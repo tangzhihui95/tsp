@@ -518,7 +518,7 @@
           <el-form-item label="车辆用途" prop="purpose" :required="true">          
             <el-select v-model="form.purpose" :disabled="true" placeholder="请选择车辆用途" clearable>
             <el-option
-              v-for="dict5 in dict.type.use_type"
+              v-for="dict5 in dict.type.purpose"
               :key="dict5.value"
               :label="dict5.label"
               :value="dict5.label"
@@ -528,7 +528,7 @@
           <el-form-item label="是否是新车" prop="newVehicleFlag" :required="true">          
             <el-select v-model="form.newVehicleFlag" :disabled="true" placeholder="是否是新车" clearable>
             <el-option
-              v-for="dict6 in dict.type.is_new_car"
+              v-for="dict6 in dict.type.is_new_vehicle"
               :key="dict6.value"
               :label="dict6.label"
               :value="dict6.label"
@@ -602,7 +602,7 @@
         <el-form-item label="车辆状态" prop="vehicleStatus">          
             <el-select v-model="form.vehicleStatus" :disabled="true" placeholder="请选择车辆状态" clearable>
             <el-option
-              v-for="dict8 in dict.type.vehicle_status"
+              v-for="dict8 in dict.type.state"
               :key="dict8.value"
               :label="dict8.label"
               :value="dict8.label"
@@ -632,7 +632,7 @@
         <el-form-item label="销售渠道类型" prop="channelType" :required="true">          
             <el-select v-model="form.channelType" :disabled="true" placeholder="请选择销售渠道类型" clearable>
             <el-option
-              v-for="dict9 in dict.type.sale_channel_type"
+              v-for="dict9 in dict.type.channel_type"
               :key="dict9.value"
               :label="dict9.label"
               :value="dict9.label"
@@ -698,9 +698,9 @@
          <el-tab-pane label="上牌信息" name="third">
           <h4 class="form-header h4" content-position="left">上牌信息</h4>
         <div class="itemInline">  
-          <el-form-item label="车管所名称" prop="vehicleLicenseOffice" :required="true">
+          <el-form-item label="车管所名称" prop="awardPlaceName" :required="true">
           <el-input
-            v-model="form.vehicleLicenseOffice"
+            v-model="form.awardPlaceName"
             placeholder="请输入车管所名称"
             style="width: 100%"
             :disabled="true"
@@ -720,38 +720,50 @@
          >
 	     </el-cascader>
      </el-form-item>
-     <el-form-item label="注册详细地址" prop="registerAddress">
-        <el-input v-model="form.registerAddress" type="textarea" placeholder="请输入注册详细地址"
+     <el-form-item label="注册详细地址" prop="awardPlaceAddress">
+        <el-input v-model="form.awardPlaceAddress" type="textarea" placeholder="请输入注册详细地址"
           :autosize="{minRows: 2, maxRows: 2}" :disabled="true" :style="{width: '100%'}"></el-input>
       </el-form-item>      
         </div>
         <div class="itemInline">
-          <el-form-item label="上牌日期" prop="resgisterDate">
-        <el-date-picker v-model="form.resgisterDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+          <el-form-item label="上牌日期" prop="currentUpPlaceDate">
+        <el-date-picker v-model="form.currentUpPlaceDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '95%'}" :disabled="true" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>  
-      <el-form-item label="车牌颜色" prop="carColor" :required="true">          
-            <el-select v-model="form.carColor" :disabled="true" placeholder="请选择车牌颜色" clearable>
+      <el-form-item label="车牌颜色" prop="plateColour" :required="true">          
+            <el-select v-model="form.plateColour" :disabled="true" placeholder="请选择车牌颜色" clearable>
             <el-option
-              v-for="dict8 in dict.type.carColor"
+              v-for="dict8 in dict.type.plate_colour"
               :key="dict8.value"
               :label="dict8.label"
               :value="dict8.label"
             />
           </el-select>
         </el-form-item>
-      <el-form-item label="车牌号" prop="searchInput">
-        <div class="dropdown-menu">
-            <input type="text" placeholder="请输入车牌号" :disabled="true" v-model="form.searchInput" @focus="showList = true" @blur="showList = false">
-              <ul v-if="showList">
-                <li v-for="(item, index) in filteredItems" :key="index" @click="selectItem(item)">
-                 {{ item }}
-                </li>
-              </ul>
-          </div>
+        <div class="join1" style="margin-right: 0px;">
+      <el-form-item label="车牌号" prop="plateCodeName">
+            <el-select v-model="form.plateCodeName" placeholder="地区" style="width: 35%" clearable>
+            <el-option
+              v-for="item in plateCodeItems"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
+            />
+          </el-select>
       </el-form-item>
+      </div>
+      <div class="join2" style="margin-left: 0px;">
+      <el-form-item  prop="plateCode">
+        <el-input
+            v-model="form.plateCode"
+            placeholder="请输入车牌号"
+            style="width: 80%"
+            clearable
+          />
+      </el-form-item>
+    </div>
         </div>
-        <el-form-item label="上传车辆照片" prop="vehicleUrl">
+        <el-form-item label="上传车辆照片" prop="plateImgUrls">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -765,18 +777,18 @@
          <el-tab-pane label="绑定信息" name="fourth">
           <h4 class="form-header h4" content-position="left">车主绑定信息</h4>
       <div class="itemInline"> 
-        <el-form-item label="车主手机号" prop="ownerPhone" :required="true">
+        <el-form-item label="车主手机号" prop="mobile" :required="true">
           <el-input
-            v-model="form.ownerPhone"
+            v-model="form.mobile"
             placeholder="请输入车主手机号"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item> 
-        <el-form-item label="车主姓名" prop="ownerName" :required="true">
+        <el-form-item label="车主姓名" prop="realName" :required="true">
           <el-input
-            v-model="form.ownerName"
+            v-model="form.realName"
             placeholder="请输入车主姓名"
             style="width: 100%"
             :disabled="true"
@@ -794,7 +806,7 @@
         </el-form-item>
       </div>
       <div class="itemInline">
-      <el-form-item label="请上传手持身份证正面照片"  prop="idCardUrl">
+      <el-form-item label="请上传手持身份证正面照片"  prop="cardFrontImg">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -804,7 +816,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
         </el-form-item>
-        <el-form-item label="请上传手持身份证反面照片" prop="idCardUrl1">
+        <el-form-item label="请上传手持身份证反面照片" prop="cardBackImg">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -816,7 +828,7 @@
         </el-form-item>
       </div>
       <div class="itemInline">
-        <el-form-item  prop="idCardUrl">
+        <el-form-item  prop="cardFrontImg">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -826,11 +838,11 @@
           <i class="el-icon-plus"></i>
         </el-upload>
         </el-form-item>
-        <el-form-item  prop="idCardUrl1">
+        <el-form-item  prop="cardBackImg">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
-            :on-preview="handlePictureCardPreview""
+            :on-preview="handlePictureCardPreview"
             :disabled="true"
           >
           <i class="el-icon-plus"></i>
@@ -844,9 +856,9 @@
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="车主ID" align="center" v-if="false" prop="ownerId"/>
-        <el-table-column label="手机号" align="center" prop="ownerPhone"></el-table-column>
-        <el-table-column label="车主姓名" align="center" prop="ownerName"></el-table-column>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="手机号" align="center" prop="mobile"></el-table-column>
+        <el-table-column label="车主姓名" align="center" prop="realName"></el-table-column>
         <el-table-column label="身份证号" align="center" prop="idCard"></el-table-column>
         <el-table-column label="操作用户" align="center" prop="operatorName"></el-table-column>
         <el-table-column label="操作时间" align="center" prop="operateTime" width="180">
@@ -955,7 +967,8 @@ import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 export default {
   name: "vehicleModel",
-  dicts:['vehicle_state','bind_status','vehicle_enum_certification_state','send_status','vehicle_color','ess_model','motor_brand'],
+  dicts:['vehicle_state','bind_status','vehicle_enum_certification_state','purpose','state','channel_type','plate_colour',
+  'send_status','vehicle_color','ess_model','motor_brand','is_new_vehicle'],
   data() {
     return {
       // 遮罩层
@@ -1028,8 +1041,26 @@ export default {
       //省市区下拉框
       options: [],
       //车牌号参数
-      showList: false,
-      filteredItems: [],
+      plateCodeItems: [
+           {value: '京', label: '京'},{value: '津', label: '津'},
+           {value: '沪', label: '沪'},{value: '渝', label: '渝'},
+           {value: '桂', label: '桂'},{value: '宁', label: '宁'},
+           {value: '蒙', label: '蒙'},{value: '新', label: '新'},
+           {value: '藏', label: '藏'},{value:'港',label:'港'},
+           {value: '澳',label:'澳'},{value: '粤', label: '粤'},
+           {value: '湘', label: '湘'},{value: '鄂', label: '鄂'},
+           {value: '冀', label: '冀'},{value: '豫', label: '豫'},
+           {value: '黑',label:'黑'},{value: '吉', label: '吉'},
+           {value: '辽', label: '辽'},{value: '晋', label: '晋'},
+           {value: '陕', label: '陕'},{value: '青', label: '青'},
+           {value: '鲁', label: '鲁'},{value: '苏', label: '苏'},
+           {value: '皖', label: '皖'},{value: '浙', label: '浙'},
+           {value: '闽', label: '闽'},{value: '赣', label: '赣'},
+           {value: '琼', label: '琼'},{value: '甘', label: '甘'},
+           {value: '贵', label: '贵'},{value: '川', label: '川'},
+           {value: '云', label: '云'},{value: '台', label: '台'},
+
+      ],
       //报废表单验证规则
       rules: {
         password: [ 
@@ -1313,4 +1344,16 @@ export default {
   font-size: 32px;
   font-weight: 600;
 }
+
+.join1{
+   display: inline-block;
+   margin-right: 0;
+   font-size: 0;
+ }
+ .join2{
+   display:inline-block;
+   margin-left: 0;
+   font-size: 0;
+   
+ }
 </style>
