@@ -638,7 +638,7 @@ export default {
     submitForm2: function() {
         this.$refs["form2"].validate(valid => {
           if (valid) {
-            if (this.form2.tspVehicleModelId != undefined) {  
+            if (this.form2.tspVehicleStdModelId != undefined) {  
               updateVehicleModel(this.form2).then(response => {          
                 this.$modal.msgSuccess("修改型号成功");
                 this.open2 = false;

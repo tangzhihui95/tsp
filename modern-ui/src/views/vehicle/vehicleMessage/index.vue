@@ -546,9 +546,9 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="身份证号" prop="idCard" :required="true">
+        <el-form-item label="身份证号" prop="vehicleIdCard" :required="true">
           <el-input
-            v-model="form.idCard"
+            v-model="form.vehicleIdCard"
             placeholder="请输入身份证号"
             style="width: 100%"
             :disabled="true"
