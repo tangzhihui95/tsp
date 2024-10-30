@@ -25,4 +25,13 @@ public class TspVehicleEquipmentRepository extends ServicePlusImpl<TspVehicleEqu
         ew.orderByDesc("create_time", new String[0]);
         return list((Wrapper)ew);
     }
+
+
+    public List<TspVehicleEquipment> getByEquipmentId(Long vehicleId, Long equipmentId) {
+        QueryWrapper<TspVehicleEquipment> ew = new QueryWrapper();
+        ew.eq("tsp_equipment_id", equipmentId);
+        ew.eq("tsp_vehicle_id", vehicleId);
+        ew.orderByDesc("create_time", new String[0]);
+        return list(ew);
+    }
 }
