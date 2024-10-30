@@ -23,10 +23,7 @@ import com.modern.mapper.TspEquipmentMapper;
 import com.modern.mapper.TspVehicleMapper;
 import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
-import com.modern.model.vo.TspUseVehicleRecordAddVO;
-import com.modern.model.vo.TspVehicleAddVO;
-import com.modern.model.vo.TspVehicleLicenseRecordAddVO;
-import com.modern.model.vo.TspVehiclePageListVO;
+import com.modern.model.vo.*;
 import com.modern.repository.*;
 import com.modern.system.service.ISysRoleService;
 import org.slf4j.Logger;
@@ -37,10 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,6 +83,8 @@ public class TspVehicleService extends TspBaseService {
     private TspVehicleAuditService tspVehicleAuditService;
     @Autowired
     private TspUserVehicleRepository tspUserVehicleRepository;
+    @Autowired
+    private TspVehicleModelRepository tspVehicleModelRepository;
 
     public PageInfo<TspVehiclePageListDTO> getPageList(TspVehiclePageListVO vo) {
         log.info("车辆信息列表查询入参--------{}", vo);
@@ -190,7 +187,7 @@ public class TspVehicleService extends TspBaseService {
         log.info("车辆编辑入参--------TspVehicleAddVO {}", vo);
         if (null == vo.getTspVehicleId())
             ErrorEnum.TSP_VEHICLE_VEHICLE_NULL_ERR.throwErr();
-        Long tspVehicleId = this.tspVehicleMapper.getByEquipmentId(vo.getTspEquipmentId());
+        Long tspVehicleId = tspVehicleMapper.getByEquipmentId(vo.getTspEquipmentId());
         if (null != tspVehicleId && !vo.getTspVehicleId().equals(tspVehicleId))
             ErrorEnum.TSP_VEHICLE_EQUIPMENT_EXIST.throwErr();
         TspVehicle vehicle = tspVehicleRepository.getById(vo.getTspVehicleId());
@@ -264,7 +261,7 @@ public class TspVehicleService extends TspBaseService {
                     market.setCreateBy(SecurityUtils.getUsername());
                     market.setUpdateBy(SecurityUtils.getUsername());
                     market.setCreateTime(DateUtils.getCurrentTime());
-                    this.tspVehicleMarketRepository.save(market);
+                    tspVehicleMarketRepository.save(market);
                 }
                 if (Objects.nonNull(other)) {
                     BeanUtils.copyProperties(vo, other);
@@ -349,7 +346,7 @@ public class TspVehicleService extends TspBaseService {
                 vehicle.setUpdateBy(SecurityUtils.getUsername());
                 vehicle.setCurrentBindTime(DateUtils.getCurrentTime());
                 vehicle.setUpdateTime(DateUtils.getCurrentTime());
-                this.tspVehicleRepository.updateById(vehicle);
+                tspVehicleRepository.updateById(vehicle);
                 break;
         }
         return Result.ok(tspVehicleRepository.updateById(vehicle));
@@ -481,5 +478,97 @@ public class TspVehicleService extends TspBaseService {
         tspUserVehicle.setCreateTime(DateUtils.getCurrentTime());
         return JsonResult.getResult(tspUserVehicleRepository.save(tspUserVehicle));
     }
+
+    public JsonResult scrap(TspVehicleScrapVO vo) {
+        log.info("车辆开始报废入参------------TspVehicleScrapVO={}", vo);
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        if (!SecurityUtils.matchesPassword(vo.getPassword(), loginUser.getPassword()))
+            ErrorEnum.TSP_VEHICLE_SCRAP_ERR.throwErr();
+        for (Long tspVehicleId : vo.getTspVehicleIds()) {
+            TspVehicle tspVehicle = tspVehicleRepository.getById(tspVehicleId);
+            if (null != tspVehicle.getTspEquipmentId())
+                ErrorEnum.TSP_EQUIPMENT_SCRAP_ERR.throwErr();
+            tspVehicle.setScrapTime(LocalDateTime.now());
+            tspVehicle.setState(TspVehicleStateEnum.SCRAPPED);
+            tspVehicle.setUpdateBy(SecurityUtils.getUsername());
+            tspVehicle.setUpdateTime(DateUtils.getCurrentTime());
+            tspVehicleRepository.updateById(tspVehicle);
+        }
+        return JsonResult.getResult(true);
+    }
+
+    public TspVehicleInfoDTO get(Long tspVehicleId) {
+        log.info("通过车辆id获取车辆信息--------------tspVehicleId={}", tspVehicleId);
+        TspVehicle vehicle = tspVehicleRepository.getById(tspVehicleId);
+        TspUser tspUser = tspUserRepository.getById(vehicle.getTspUserId());
+        TspVehicleAudit audit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
+        TspVehicleMarket market = tspVehicleMarketRepository.getByTspVehicleId(tspVehicleId);
+        TspVehicleLicense license = tspVehicleLicenseRepository.getByTspVehicleId(tspVehicleId);
+        TspVehicleOther tspVehicleOther = tspVehicleOtherRepository.getByTspVehicleId(tspVehicleId);
+        TspVehicleStdModel stdModel = tspVehicleStdModeRepository.getById(vehicle.getTspVehicleStdModelId());
+        TspVehicleModel model = null;
+        if (Objects.nonNull(stdModel))
+            model = tspVehicleModelRepository.getById(stdModel.getTspVehicleModelId());
+        TspVehicleInfoDTO dto = new TspVehicleInfoDTO();
+        if (Objects.nonNull(audit)) {
+            BeanUtils.copyProperties(audit, dto);
+            dto.setTspVehicleAuditId(audit.getId());
+        }
+        if (Objects.nonNull(tspUser))
+            BeanUtils.copyProperties(tspUser, dto);
+        if (Objects.nonNull(market))
+            BeanUtils.copyProperties(market, dto);
+        if (Objects.nonNull(license)) {
+            BeanUtils.copyProperties(license, dto);
+            if (StringUtils.isNotBlank(dto.getPlateCode())) {
+                String substring = dto.getPlateCode().substring(0, 1);
+                dto.setPlateCodeName(substring);
+                int len = dto.getPlateCode().length();
+                dto.setPlateCode(dto.getPlateCode().substring(1, len));
+            }
+        }
+        if (Objects.nonNull(tspVehicleOther))
+            BeanUtils.copyProperties(tspVehicleOther, dto);
+        if (Objects.nonNull(model))
+            BeanUtils.copyProperties(model, dto);
+        if (Objects.nonNull(stdModel))
+            BeanUtils.copyProperties(stdModel, dto);
+        BeanUtils.copyProperties(vehicle, dto);
+        String label = vehicle.getLabel();
+        if (null != label && !"".equals(label) && !"[]".equals(label)) {
+            List<String> strings = Arrays.asList(label.split(","));
+            List<Long> labelLong = new ArrayList<>();
+            for (String string : strings) {
+                if (string.contains("["))
+                    string = string.replace("[", "");
+                if (string.contains("]"))
+                    string = string.replace("]", "");
+                if (string.contains(" "))
+                    string = string.replace(" ", "");
+                labelLong.add(Long.valueOf(string));
+            }
+            dto.setLabel(labelLong);
+        }
+        dto.setTspVehicleId(tspVehicleId);
+        return dto;
+    }
+
+    public int dealEquipment(Long tspEquipmentId) {
+        log.info("根据设备ID进行设备解绑--------------TspEquipmentId={}", tspEquipmentId);
+        Long tspVehicleId = tspVehicleMapper.getByEquipmentId(tspEquipmentId);
+        if (null == tspVehicleId)
+            ErrorEnum.TSP_VEHICLE_VEHICLE_NULL_ERR.throwErr();
+        List<TspVehicleEquipment> tspVehicleEquipments = tspVehicleEquipmentRepository.getByEquipmentId(tspVehicleId, tspEquipmentId);
+        if (null != tspVehicleEquipments && tspVehicleEquipments.size() != 0) {
+            TspVehicleEquipment tspVehicleEquipment = tspVehicleEquipments.get(0);
+            tspVehicleEquipment.setUnBindTime(DateUtils.getCurrentTime());
+            tspVehicleEquipment.setUpdateTime(DateUtils.getCurrentTime());
+            tspVehicleEquipmentRepository.updateById(tspVehicleEquipment);
+        }
+        Integer state = TspVehicleStateEnum.UNBOUND.getValue();
+        tspVehicleMapper.updateSetState(state, tspVehicleId);
+        return tspVehicleMapper.updateSetNull(tspVehicleId);
+    }
+
 
 }

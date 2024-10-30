@@ -9,6 +9,7 @@ import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
+import com.modern.model.vo.TspVehicleScrapVO;
 import com.modern.service.TspVehicleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,5 +81,26 @@ public class TspVehicleController {
     @PatchMapping({"/bind/{tspVehicleId}/{tspUserId}"})
     public JsonResult bind(@PathVariable Long tspVehicleId, @PathVariable Long tspUserId) {
         return JsonResult.getResult(tspVehicleService.bind(tspVehicleId, tspUserId));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:scrap')")
+    @ApiOperation("车辆信息- 报废")
+    @Log(title = "车辆信息- 报废", businessType = BusinessType.UPDATE)
+    @PutMapping({"/scrap"})
+    public JsonResult scrap(@RequestBody @Valid TspVehicleScrapVO vo) {
+        return JsonResult.getResult(tspVehicleService.scrap(vo));
+    }
+
+    @ApiOperation("车辆信息- 详情")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:get')")
+    @GetMapping({"/get/{tspVehicleId}"})
+    public Result<TspVehicleInfoDTO> get(@PathVariable Long tspVehicleId) {
+        return Result.ok(tspVehicleService.get(tspVehicleId));
+    }
+
+    @ApiOperation("车辆信息- 解绑")
+    @GetMapping({"/dealEquipment/{tspEquipmentId}"})
+    public Result dealEquipment(@PathVariable Long tspEquipmentId) {
+        return Result.ok(tspVehicleService.dealEquipment(tspEquipmentId));
     }
 }
