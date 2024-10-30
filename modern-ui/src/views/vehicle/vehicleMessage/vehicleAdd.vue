@@ -11,6 +11,7 @@
         <el-form ref="form" :model="form" :rules="rules" label-width="180px">
         <div v-show="active == 1">
         <h4 class="form-header h4" content-position="left">基本信息</h4>
+        <el-form-item label="信息进度" prop="progress" v-if="false" :disabled="true"/>
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
@@ -256,9 +257,9 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="身份证号" prop="idCard" :required="true">
+        <el-form-item label="身份证号" prop="vehicleIdCard" :required="true">
           <el-input
-            v-model="form.idCard"
+            v-model="form.vehicleIdCard"
             placeholder="请输入身份证号"
             style="width: 100%"
             clearable
@@ -390,7 +391,7 @@
           </el-select>
           </el-form-item>
         </div>
-        <el-form-item label="发票" prop="invoiceUrl">
+        <el-form-item label="发票" prop="invoiceImgUrls">
         <el-upload
             :action="'/tsp/equipmentType/export'"
             list-type="picture-card"
@@ -617,9 +618,9 @@
      </el-form>
     <!-- 设置页面按钮 -->
      <div  class="button-footer">
-    <el-button v-if="active < 5" type="primary" style="margin-top: 12px" @click="next">保存</el-button> 
-    <el-button v-if="active > 1" type="primary" style="margin-top: 12px" @click="pre">上一步</el-button>
-    <el-button v-if="active < 5" type="warning" style="margin-top: 12px" @click="next">下一步</el-button>
+    <el-button v-if="active < 5" type="primary" :disabled="isEdit" style="margin-top: 12px" @click="next">保存</el-button> 
+    <el-button v-if="active > 1" type="primary"  style="margin-top: 12px" @click="pre">上一步</el-button>
+    <el-button v-if="active < 5" type="warning" :disabled="isEdit" style="margin-top: 12px" @click="next">下一步</el-button>
     <el-button v-if="active < 5" style="margin-top: 12px" @click="cancel">取消</el-button>
     <el-button v-if="active > 4" style="margin-top: 12px" @click="submit">完成</el-button>
      </div>
@@ -630,10 +631,11 @@
 import { regionData } from 'element-china-area-data';
 import { addVehicleMessage } from '../../../api/vehicle/vehicleMessage';
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
+import { Progress } from 'element-ui';
 
 export default {
   name: "vehicleAdd",
-  dicts:['vehicle_color','battery_spec','motor_brand','is_new_vehicle','purpose','state','channel_type','plate_colour'],
+  dicts:['vehicle_color','battery_spec','motor_brand','is_new_vehicle','purpose','state','channel_type','plate_colour','ess_model'],
 
   data() {
     return {
@@ -641,8 +643,11 @@ export default {
       form: {
         pageNum: 1,
         pageSize:10,
+        providerName: '摩登汽车有限公司',
       },
       active: 1,
+      //是否编辑
+      isEdit: true,
       //历史绑定设备
       listHistoryEquipment: [],
       //当前绑定设备
@@ -696,10 +701,6 @@ export default {
       options:regionData,
       selectedOptions: [],
       rules: {
-        providerName: [
-          { required: true, message: "请输入厂商", trigger: "blur" },
-          { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
-        ],
         vehicleTypeModel: [
           { required: true, message: "请选择车型", trigger: "change" }
         ],
@@ -735,10 +736,6 @@ export default {
           { required: true, message: "请输入电池包序列号", trigger: "blur" },
           { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" }
         ],
-        engineNum: [
-          { required: true, message: "请输入发动机序列号", trigger: "blur" },
-          { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" }
-        ],
         motorBrand: [
           { required: true, message: "请选择电动机品牌", trigger: "change" }
         ],
@@ -747,47 +744,36 @@ export default {
           { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" }
         ],
         purpose: [
-          { required: true, message: "请输入用途", trigger: "blur" },
+          { required: true, message: "请选择车辆用途", trigger: "blur" },
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
         ],
         newVehicleFlag: [
-          { required: true, message: "请选择是否新车", trigger: "change" }
+          { required: true, message: "请选择是否是新车", trigger: "change" }
         ],
         purchaser: [
-          { required: true, message: "请选择购买领域", trigger: "change" }
-        ],
-        priceTax: [
-          { required: true, message: "请输入价格含税", trigger: "blur" },
-          { type: "number", message: "请输入数字", trigger: "blur" }
+          { required: true, message: "请输入购买方名称", trigger: "change" }
         ],
         invoiceNo: [
-          { required: true, message: "请输入发票号", trigger: "blur" },
+          { required: true, message: "请输入发票号码", trigger: "blur" },
           { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" }
         ],
         invoicingDate: [
           { required: true, message: "请选择开票日期", trigger: "change" }
         ],
-        isSanBao: [
-          { required: true, message: "请选择是否三包", trigger: "change" }
-        ],
         salesUnitName: [
-          { required: true, message: "请输入销售单位名称", trigger: "blur" },
+          { required: true, message: "请选择销货单位名称", trigger: "blur" },
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
         ],
-        salesUnitAddress: [
-          { required: true, message: "请输入销售单位地址", trigger: "blur" },
-          { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" } 
-        ],
         salesChannel: [
-          { required: true, message: "请输入销售渠道", trigger: "blur" },
+          { required: true, message: "请输入销售渠道名称", trigger: "blur" },
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
         ],
         employeeName: [
-          { required: true, message: "请输入销售人员姓名", trigger: "blur" },
+          { required: true, message: "请输入办理员工姓名", trigger: "blur" },
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
         ],
         channelType: [
-          { required: true, message: "请选择渠道类型", trigger: "change" }
+          { required: true, message: "请选择销售渠道类型", trigger: "change" }
         ],
         dealerId: [
           { required: true, message: "请选择经销商", trigger: "blur" },
@@ -807,6 +793,13 @@ export default {
         realName: [
           { required: true, message: "请输入车主姓名", trigger: "blur" },
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
+        ],
+        vehicleIdCard:[
+          { required: true,min: 18, max: 18,
+            message: "身份证长度为18位,由数值或数值加X组成", trigger: "blur" },
+        ],
+        vehicleStatus:[
+          { required: true, message: "请选择车辆状态", trigger: "change" }
         ],
 
       }
@@ -895,13 +888,33 @@ selectItem(item) {
         console.log(value)
 			
       },
+//判断信息完成进度
+    checkProgress() {
+      // if(this.form.tspVehicleModelId!=undefined && this.form.tspVehicleStdModelId!=undefined && this.form.vin!=undefined
+      //  && this.form.configureName!=undefined && this.form.color!=undefined && this.form.operateDate!=undefined 
+      //  && this.form.batchNo!=undefined && this.form.exFactoryDate!=undefined && this.form.essModel!=undefined
+      // && this.form.essNum!=undefined && this.form.motorBrand!=undefined && this.form.motorNum!=undefined ){
+        
+      //   this.form.progress = 0;
+      //   this.form.isEdit = false;
+      //  }
+      // else if(this.form.purpose!=undefined && this.form.newVehicleFlag!=undefined && this.form.purchaser!=undefined 
+      //        && this.form.invoiceNo!=undefined ){
+
+      // }
+      // else if(){
+
+      // }
+
+    },
 //下一步/保存按钮
     next() {
               if (this.active++ > 5) this.active = 1
-              this.$refs["form"].validate(valid => {
+
+        this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.tspVehicleModelId != undefined) {
-              updateVehicleType(this.form).then(response => {
+            if (this.form.tspVehicleStdModelId != undefined) {
+              addVehicleMessage(this.form).then(response => {
                 this.$modal.msgSuccess("保存成功");
                 this.open = false;
                 this.getList();
@@ -915,7 +928,7 @@ selectItem(item) {
             }
           }
         });
-            this.$modal.msgSuccess("保存成功");   
+              
           },
 // 上一步按钮
     pre() {
