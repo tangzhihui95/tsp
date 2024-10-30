@@ -9,13 +9,13 @@ import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
-import com.modern.model.vo.TspVehicleScrapVO;
 import com.modern.service.TspVehicleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -42,6 +42,7 @@ public class TspVehicleController {
     public Result<PageInfo<TspVehiclePageListDTO>> list(TspVehiclePageListVO vo) {
         return Result.ok(tspVehicleService.getPageList(vo));
     }
+
 
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:add')")
     @ApiOperation("车辆信息-新增")
@@ -83,13 +84,13 @@ public class TspVehicleController {
         return JsonResult.getResult(tspVehicleService.bind(tspVehicleId, tspUserId));
     }
 
-    @PreAuthorize("@ss.hasPermi('tsp:vehicle:scrap')")
+   /* @PreAuthorize("@ss.hasPermi('tsp:vehicle:scrap')")
     @ApiOperation("车辆信息- 报废")
     @Log(title = "车辆信息- 报废", businessType = BusinessType.UPDATE)
     @PutMapping({"/scrap"})
     public JsonResult scrap(@RequestBody @Valid TspVehicleScrapVO vo) {
         return JsonResult.getResult(tspVehicleService.scrap(vo));
-    }
+    }*/
 
     @ApiOperation("车辆信息- 详情")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:get')")
@@ -103,4 +104,20 @@ public class TspVehicleController {
     public Result dealEquipment(@PathVariable Long tspEquipmentId) {
         return Result.ok(tspVehicleService.dealEquipment(tspEquipmentId));
     }
+
+    @ApiOperation("车辆管理-导入出厂信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:importVehicle')")
+    @Log(title = "车辆管理- 导入出厂信息", businessType = BusinessType.IMPORT)
+    @PostMapping({"/importVehicle"})
+    public JsonResult importVehicle(@RequestParam("file") MultipartFile multipartFile, Boolean isUpdateSupport) {
+        return JsonResult.getResult(tspVehicleService.importVehicle(multipartFile, isUpdateSupport));
+    }
+
+    /*@ApiOperation("车辆管理-导入汽车销售信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:importSales')")
+    @Log(title = "车辆管理-导入汽车销售信息", businessType = BusinessType.IMPORT)
+    @PostMapping({"/importSales"})
+    public JsonResult importSales(@RequestParam("file") MultipartFile multipartFile, Boolean isUpdateSupport) {
+        return JsonResult.getResult(tspVehicleService.importSales(multipartFile, isUpdateSupport));
+    }*/
 }

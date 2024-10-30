@@ -17,10 +17,13 @@ import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.bean.BeanUtils;
+import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.*;
 import com.modern.enums.TspVehicleStateEnum;
 import com.modern.mapper.TspEquipmentMapper;
 import com.modern.mapper.TspVehicleMapper;
+import com.modern.mapper.TspVehicleStdModeMapper;
+import com.modern.model.dto.TspVehicleExFactoryTemplateDTO;
 import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
 import com.modern.model.vo.*;
@@ -31,10 +34,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,6 +92,10 @@ public class TspVehicleService extends TspBaseService {
     private TspUserVehicleRepository tspUserVehicleRepository;
     @Autowired
     private TspVehicleModelRepository tspVehicleModelRepository;
+    @Autowired
+    private TspEquipmentRepository tspEquipmentRepository;
+    @Resource
+    private TspVehicleStdModeMapper tspVehicleStdModeMapper;
 
     public PageInfo<TspVehiclePageListDTO> getPageList(TspVehiclePageListVO vo) {
         log.info("车辆信息列表查询入参--------{}", vo);
@@ -569,6 +580,300 @@ public class TspVehicleService extends TspBaseService {
         tspVehicleMapper.updateSetState(state, tspVehicleId);
         return tspVehicleMapper.updateSetNull(tspVehicleId);
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public String importVehicle(MultipartFile multipartFile, Boolean isUpdateSupport) {
+        try {
+            log.info("正在开始导入出厂信息--------------MultipartFile= {}", multipartFile);
+            ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
+            List<TspVehicleExFactoryTemplateDTO> dtos = util.importExcel(multipartFile.getInputStream());
+            if (StringUtils.isNull(dtos) || dtos.size() == 0)
+                throw new ServiceException("导入数据不能为空！");
+            int successNum = 0;
+            int failureNum = 0;
+            StringBuilder successMsg = new StringBuilder();
+            StringBuilder failureMsg = new StringBuilder();
+            for (TspVehicleExFactoryTemplateDTO dto : dtos) {
+                try {
+                    log.info("数据校验开始--------------");
+                    Map<String, Object> checkMap = toCheckExport(dto, failureMsg, failureNum);
+                    failureNum = ((Integer) checkMap.get("failureNum")).intValue();
+                    failureMsg = (StringBuilder) checkMap.get("failureMsg");
+                    if (failureNum == 0) {
+                        TspEquipment tspEquipment = tspEquipmentRepository.getByName(dto.getSn());
+                        if (Objects.isNull(tspEquipment) && null != dto.getSn() && !dto.getSn().equals("")) {
+                            failureNum++;
+                            failureMsg.append("<br/>").append(failureNum).append("出厂信息设备").append(dto.getSn()).append("不存在");
+                            continue;
+                        }
+                        if (Objects.nonNull(tspEquipment)) {
+                            List<TspVehicle> byTspEquipmentId = tspVehicleRepository.findByTspEquipmentId(tspEquipment.getId());
+                            if (CollectionUtil.isNotEmpty(byTspEquipmentId) && byTspEquipmentId.size() != 0) {
+                                failureNum++;
+                                failureMsg.append("<br/>").append(failureNum).append("、该设备").append(dto.getSn()).append("已被车辆绑定");
+                            }
+                            if (tspEquipment.getIsScrap().booleanValue() == true) {
+                                failureNum++;
+                                failureMsg.append("<br/>").append(failureNum).append("、该设备").append(dto.getSn()).append("为报废状态，不可绑定");
+                            }
+                        }
+                        TspVehicle tspVehicle = tspVehicleRepository.getByVin(dto.getVin());
+                        QueryWrapper queryWrapper = tspVehicleStdModeRepository.getByStdModeName(dto.getStdModelName(), dto.getVehicleModelName());
+                        TspVehicleStdModel stdModel = tspVehicleStdModeMapper.getByStdModeName(queryWrapper);
+                        if (Objects.isNull(stdModel)) {
+                            failureNum++;
+                            failureMsg.append("<br/>").append(failureNum).append("、无法匹配到已有二级车型");
+                            continue;
+                        }
+                        if (Objects.isNull(tspVehicle)) {
+                            tspVehicle = new TspVehicle();
+                            BeanUtils.copyProperties(dto, tspVehicle);
+                            if (null != dto.getLabel() && !"".equals(dto.getLabel())) {
+                                TspTag tag = tspTagRepository.getByDealerName(dto.getLabel());
+                                List<Long> label = new ArrayList<>();
+                                if (Objects.nonNull(tag)) {
+                                    tag.setTagCount(Integer.valueOf(tag.getTagCount().intValue() + 1));
+                                    tspTagRepository.updateById(tag);
+                                    label.add(tag.getId());
+                                    tspVehicle.setLabel(label.toString());
+                                } else {
+                                    tspVehicle.setLabel(null);
+                                }
+                            }
+                            tspVehicle.setCreateBy(SecurityUtils.getUsername());
+                            tspVehicle.setUpdateBy(SecurityUtils.getUsername());
+                            LocalDate exDate = LocalDate.parse(dto.getExFactoryDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            LocalDate operateDate = LocalDate.parse(dto.getOperateDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            tspVehicle.setExFactoryDate(exDate);
+                            tspVehicle.setOperateDate(operateDate);
+                            tspVehicle.setProgress(Integer.valueOf(1));
+                            if (Objects.nonNull(tspEquipment))
+                                tspVehicle.setTspEquipmentId(tspEquipment.getId());
+                            tspVehicle.setTspVehicleStdModelId(stdModel.getId());
+                            tspVehicleRepository.save(tspVehicle);
+                            if (Objects.nonNull(tspEquipment)) {
+                                TspVehicleEquipment tspVehicleEquipment = new TspVehicleEquipment();
+                                tspVehicleEquipment.setTspEquipmentId(tspEquipment.getId());
+                                tspVehicleEquipment.setTspVehicleId(tspVehicle.getId());
+                                tspVehicleEquipment.setCreateTime(DateUtils.getCurrentTime());
+                                tspVehicleEquipmentRepository.save(tspVehicleEquipment);
+                            }
+                            successNum++;
+                            successMsg.append("<br/>").append(successNum).append("、出厂信息").append(dto.getVin()).append("新增成功");
+                            continue;
+                        }
+                        failureNum++;
+                        failureMsg.append("<br/>").append(failureNum).append("、车辆信息").append(dto.getVin()).append("已存在");
+                    }
+                } catch (Exception e) {
+                    failureNum++;
+                    String msg = "<br/>" + failureNum + "、出厂信息" + dto.getVin() + "导入失败";
+                    failureMsg.append(msg).append(e.getMessage());
+                    log.error(msg, e);
+                }
+            }
+            if (failureNum > 0) {
+                failureMsg.insert(0, "很抱歉导入失败!共" + failureNum + "条数据格式不正确,错误如下:");
+                throw new ServiceException(failureMsg.toString());
+            }
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共" + successNum + "条，数据如下");
+            return successMsg.toString();
+        } catch (Throwable $ex) {
+            try {
+                throw $ex;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private Map<String, Object> toCheckExport(TspVehicleExFactoryTemplateDTO dto, StringBuilder failureMsg, int failureNum) {
+        log.info("正好校验导入信息--------------------------TspVehicleExFactoryTemplateDTO={}", dto);
+        Map<String, Object> checkMap = new HashMap<>();
+        String versionRegexp = "^([a-zA-Z0-9]){17}$";
+        if (null == dto.getVin() || !dto.getVin().matches(versionRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、出厂信息VIN").append(dto.getVin()).append("格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getProviderName() || dto.getProviderName().equals("") || !dto.getProviderName().equals("摩登汽车有限公司")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆厂商").append(dto.getProviderName()).append("名称异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getVehicleModelName() || dto.getVehicleModelName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆一级型号").append(dto.getVehicleModelName()).append("不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getStdModelName() || dto.getStdModelName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆二级型号").append(dto.getStdModelName()).append("不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getConfigureName() || dto.getConfigureName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆配置名称").append(dto.getConfigureName()).append("不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getColor() || dto.getColor().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、外观颜色").append(dto.getColor()).append("不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getBatchNo() || dto.getBatchNo().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆批次号").append(dto.getBatchNo()).append("不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String dateRegexp = "^([0-9]{4})(-([0-1][0-9]))(-[0-3][0-9])$";
+        if (null == dto.getExFactoryDate() || !dto.getExFactoryDate().matches(dateRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、出厂日期").append(dto.getExFactoryDate()).append("格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getOperateDate() || !dto.getOperateDate().matches(dateRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、下线日期").append(dto.getOperateDate()).append("格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getEssModel() || dto.getEssModel().equals("") || (!dto.getEssModel().equals("73") && !dto.getEssModel().equals("80") && !dto.getEssModel().equals("53"))) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、电池包规格").append(dto.getEssModel()).append("值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+
+        String essRegexp = "^([a-zA-Z0-9]){24}$";
+        if (null == dto.getEssNum() || !dto.getEssNum().matches(essRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("电池包编号").append(dto.getEssNum()).append("、格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getMotorBrand() || dto.getMotorBrand().equals("") || (!dto.getMotorBrand().equals("青山") && !dto.getMotorBrand().equals("上汽齿"))) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、电动机品牌").append(dto.getMotorBrand()).append("值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+
+        String motorRegexp = "^.{1,27}$";
+        if (null == dto.getMotorNum() || !dto.getMotorNum().matches(motorRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、电动机序列号").append(dto.getMotorNum()).append("格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        checkMap.put("failureNum", Integer.valueOf(failureNum));
+        checkMap.put("failureMsg", failureMsg);
+        return checkMap;
+    }
+
+    /*@Transactional(rollbackFor = {Exception.class})
+    public String importSales(MultipartFile multipartFile, Boolean isUpdateSupport) {
+        try {
+            log.info("导入车辆销售信息中----------------------MultipartFile={}",multipartFile);
+            ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
+            List<TspVehicleSaleTemplateDTO> dtos = util.importExcel(multipartFile.getInputStream());
+            if (StringUtils.isNull(dtos) || dtos.size() == 0)
+                throw new ServiceException("");
+            int successNum = 0;
+            int failureNum = 0;
+            StringBuilder successMsg = new StringBuilder();
+            StringBuilder failureMsg = new StringBuilder();
+            for (TspVehicleSaleTemplateDTO dto : dtos) {
+                try {
+                    Map<String, Object> checkMap = toCheckSales(dto, failureMsg, failureNum);
+                    failureNum = ((Integer) checkMap.get("failureNum")).intValue();
+                    failureMsg = (StringBuilder) checkMap.get("failureMsg");
+                    if (failureNum == 0) {
+                        if (dto.getPurchaser() == null || dto.getChannelType() == null) {
+                            failureNum++;
+                            failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                            return failureMsg.toString();
+                        }
+                        TspVehicle tspVehicle = this.tspVehicleRepository.getByVin(dto.getVin());
+                        if (tspVehicle == null) {
+                            failureNum++;
+                            failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                            continue;
+                        }
+                        if (tspVehicle.getProgress().intValue() == 1) {
+                            tspVehicle.setUpdateBy(SecurityUtils.getUsername());
+                            tspVehicle.setState(TspVehicleStateEnum.SOLD);
+                            tspVehicle.setPurpose(dto.getPurpose());
+                            tspVehicle.setProgress(Integer.valueOf(2));
+                            this.tspVehicleRepository.updateById(tspVehicle);
+                            TspVehicleMarket tspVehicleMarket = new TspVehicleMarket();
+                            TspVehicleOther tspVehicleOther = new TspVehicleOther();
+                            BeanUtils.copyProperties(dto, tspVehicleMarket);
+                            BeanUtils.copyProperties(dto, tspVehicleOther);
+                            if (dto.getPurchaserState().equals(""))
+                                tspVehicleMarket.setPurchaserState(Integer.valueOf(2));
+                            if (dto.getPurchaserState().equals(""))
+                                tspVehicleMarket.setPurchaserState(Integer.valueOf(1));
+                            tspVehicleMarket.setTspVehicleId(tspVehicle.getId());
+                            tspVehicleMarket.setCreateBy(SecurityUtils.getUsername());
+                            tspVehicleMarket.setUpdateBy(SecurityUtils.getUsername());
+                            tspVehicleMarket.setInvoicingDate(LocalDate.parse(dto.getInvoicingDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                            TspVehicleMarket oneMarket = (TspVehicleMarket) ((LambdaQueryChainWrapper) this.tspVehicleMarketRepository.lambdaQuery().eq(TspVehicleMarket::getTspVehicleId, tspVehicle.getId())).one();
+                            if (Objects.nonNull(oneMarket))
+                                tspVehicleMarket.setId(oneMarket.getId());
+                            this.tspVehicleMarketRepository.saveOrUpdate(tspVehicleMarket);
+                            tspVehicleOther.setTspVehicleId(tspVehicle.getId());
+                            tspVehicleOther.setCreateBy(SecurityUtils.getUsername());
+                            tspVehicleOther.setUpdateBy(SecurityUtils.getUsername());
+                            TspVehicleOther otherOne = (TspVehicleOther) ((LambdaQueryChainWrapper) this.tspVehicleOtherRepository.lambdaQuery().eq(TspVehicleOther::getTspVehicleId, tspVehicle.getId())).one();
+                            if (Objects.nonNull(otherOne))
+                                tspVehicleOther.setId(otherOne.getId());
+                            this.tspVehicleOtherRepository.saveOrUpdate(tspVehicleOther);
+                            successNum++;
+                            successMsg.append("<br/>").append(successNum).append("").append(dto.getVin()).append(" ");
+                            continue;
+                        }
+                        failureNum++;
+                        failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                    }
+                } catch (Exception e) {
+                    failureNum++;
+                    String msg = "<br/>" + failureNum + "" + dto.getVin() + " ";
+                    failureMsg.append(msg).append(e.getMessage());
+                    log.error(msg, e);
+                }
+            }
+            if (failureNum > 0) {
+                failureMsg.insert(0, "" + failureNum + " ");
+                return failureMsg.toString();
+            }
+            successMsg.insert(0, "" + successNum + " ");
+            return successMsg.toString();
+        } catch (Throwable $ex) {
+            throw $ex;
+        }
+    }*/
 
 
 }
