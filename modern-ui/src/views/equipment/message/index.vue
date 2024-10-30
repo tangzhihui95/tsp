@@ -193,21 +193,6 @@
         @pagination="listdeviceModel"
       />
 
-      <el-form-item label="设备类型ID" prop="tspEquipmentTypeId" v-if="false" label-width="100px">
-        <el-input
-          v-model="queryParams.tspEquipmentTypeId"
-          placeholder="设备类型ID"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="设备型号ID" prop="tspEquipmentModelId" v-if="false" label-width="100px">
-        <el-input
-          v-model="queryParams.tspEquipmentModelId"
-          placeholder="设备型号ID"
-          clearable
-        />
-      </el-form-item>
-  
       <!-- 添加或修改设备类型对话框 -->
       <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
         <el-form ref="form" :model="form" :rules="rules" label-width="120px">
