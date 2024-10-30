@@ -110,7 +110,7 @@ public class TspVehicleModelController {
         }
     }
 
-    @PreAuthorize("@ss.hasPermi('tsp:stdModel:addStdModel')")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicleModel:addStdModel')")
     @ApiOperation("车辆车型二级车型-添加")
     @Log(title = "车辆车型二级车型- 添加", businessType = BusinessType.INSERT)
     @PostMapping({"/addStdModel"})
@@ -118,7 +118,7 @@ public class TspVehicleModelController {
         return JsonResult.getResult(tspVehicleModelService.addStdModel(vo));
     }
 
-    @PreAuthorize("@ss.hasPermi('tsp:stdModel:edit')")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicleModel:editStdModel')")
     @ApiOperation("车辆车型二级车型-编辑")
     @Log(title = "车辆车型二级车型-编辑", businessType = BusinessType.UPDATE)
     @PutMapping({"/editStdModel"})
@@ -126,7 +126,7 @@ public class TspVehicleModelController {
         return JsonResult.getResult(tspVehicleModelService.editStdModel(vo));
     }
 
-    @PreAuthorize("@ss.hasPermi('tsp:stdModel:remove')")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicleModel:deleteStdModel')")
     @ApiOperation("车辆车型二级车型-删除")
     @Log(title = "车辆车型二级车型-删除", businessType = BusinessType.DELETE)
     @DeleteMapping({"/deleteStdModel/{tspVehicleStdModelId}"})
@@ -134,7 +134,7 @@ public class TspVehicleModelController {
         return JsonResult.getResult(tspVehicleModelService.deleteStdModel(tspVehicleStdModelId));
     }
 
-    @PreAuthorize("@ss.hasPermi('tsp:stdModel:get')")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicleModel:getByTspStdModelId')")
     @ApiOperation("车辆车型二级车型-详情")
     @GetMapping({"/getByTspStdModelId/{tspVehicleStdModelId}"})
     public JsonResult getByTspStdModelId(@PathVariable("tspVehicleStdModelId") Long tspVehicleStdModelId) {
