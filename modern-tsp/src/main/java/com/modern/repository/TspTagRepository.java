@@ -1,5 +1,6 @@
 package com.modern.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.modern.common.core.ServicePlusImpl;
 import com.modern.domain.TspTag;
 import com.modern.mapper.TspTagMapper;
@@ -15,4 +16,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TspTagRepository extends ServicePlusImpl<TspTagMapper, TspTag, TspTag> {
+
+
+    public TspTag getByDealerName(String tagName) {
+        QueryWrapper<TspTag> ew = new QueryWrapper();
+        ew.eq("tag_name", tagName);
+        return getOne(ew);
+    }
 }

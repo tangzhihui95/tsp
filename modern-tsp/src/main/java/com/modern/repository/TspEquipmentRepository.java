@@ -74,4 +74,10 @@ public class TspEquipmentRepository extends ServicePlusImpl<TspEquipmentMapper, 
         return (TspEquipment) getOne((Wrapper) ew);
     }
 
+    public TspEquipment getByName(String sn) {
+        QueryWrapper<TspEquipment> ew = new QueryWrapper();
+        ew.eq("sn", sn);
+        return getOne(ew);
+    }
+
 }
