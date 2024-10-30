@@ -161,7 +161,35 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
-  }
+  },
+  {
+    path: '/vehicle/vehicle-add',
+    component: Layout,
+    hidden: true,
+    permissions: ['vehicle:vehicle:add'],
+    children: [
+      {
+        path: 'index/:title',
+        component: () => import('@/views/vehicle/vehicleMessage/vehicleAdd'),
+        name: 'vehicleAdd',
+        meta: { title: '车辆信息', activeMenu: '/vehicle/vehicleMessage'}
+      }
+    ]
+  },
+  {
+    path: '/vehicle/vehicle-message',
+    component: Layout,
+    hidden: true,
+    permissions: ['vehicle:vehicle:message'],
+    children: [
+      {
+        path: 'index/',
+        component: () => import('@/views/vehicle/vehicleMessage/index'),
+        name: 'vehicleMessage',
+        meta: { title: '车辆信息管理', activeMenu: '/vehicle/vehicleMessage'}
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错
