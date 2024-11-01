@@ -293,6 +293,7 @@
          <el-tab-pane label="基本信息" name="first">
           <h4 class="form-header h4" content-position="left">基本信息</h4>
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
+        <el-table-column label="车辆ID" v-if="false" prop="tspvehicleId"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
         <el-form-item label="车辆厂商" prop="providerName":required="true" >
