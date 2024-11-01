@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiModel;
  */
 @ApiModel("车辆信息-车辆状态")
 public enum TspVehicleStateEnum implements IEnum<Integer> {
-
     ALL("全部", 0),
     CREATED("已创建", 1),
     SOLD("已销售", 2),
@@ -51,12 +50,7 @@ public enum TspVehicleStateEnum implements IEnum<Integer> {
         this.key = key;
     }
 
-    @Override
     public String toString() {
-        return "TspVehicleStateEnum{" +
-                "key='" + key + '\'' +
-                ", value=" + value +
-                '}';
+        return "TspVehicleEnum{key='" + this.key + '\'' + ", value=" + this.value + '}';
     }
-
 }

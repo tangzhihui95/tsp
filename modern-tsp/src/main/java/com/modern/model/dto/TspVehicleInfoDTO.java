@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.modern.common.core.domain.dto.BaseDto;
-import com.modern.enums.TspVehicleEnumCertificationState;
-import com.modern.enums.TspVehicleStateEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -228,11 +226,11 @@ public class TspVehicleInfoDTO extends BaseDto {
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @ApiModelProperty("状态1:已创建 2:已销售 3:已绑定 4:已解绑 5:已报废 6:已注册")
-    private TspVehicleStateEnum state;
+    private Integer state;
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @ApiModelProperty("认证状态 1:未认证 2:认证中 3:认证失败 4:已认证")
-    private TspVehicleEnumCertificationState certificationState;
+    private Integer certificationState;
 
     @ApiModelProperty("信息完成进度 0:基本信息 1:出厂信息 2:销售信息 3:上牌信息 4:绑定及MNO信息 5:出入库记录")
     private Integer progress;

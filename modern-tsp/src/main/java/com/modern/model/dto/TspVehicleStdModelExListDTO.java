@@ -2,7 +2,6 @@ package com.modern.model.dto;
 
 import com.modern.common.annotation.Excel;
 import com.modern.common.core.domain.dto.BaseDto;
-import com.modern.enums.TpsVehicleDataKeyEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +29,7 @@ public class TspVehicleStdModelExListDTO extends BaseDto {
     @ApiModelProperty("能源类型")
     private String dataType;
 
-    private TpsVehicleDataKeyEnum dataKey;
+    private Integer dataKey;
 
     @Excel(name = "公告批次", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 4)
     @ApiModelProperty("公告批次")
@@ -46,4 +45,6 @@ public class TspVehicleStdModelExListDTO extends BaseDto {
     @Excel(name = "关联车辆数", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 6)
     @ApiModelProperty("关联车辆数")
     private String vehicleCount;
+
+
 }

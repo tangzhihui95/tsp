@@ -186,7 +186,7 @@ public class TspVehicleModelService extends TspBaseService {
             Integer stdModelCount = this.tspVehicleRepository.countByTspVehicleStdModelId(dto.getTspStdModelId());
             dto.setVehicleCount(stdModelCount.toString());
             if (dto.getDataKey() != null)
-                dto.setDataType(dto.getDataKey().getKey());
+                dto.setDataType(dto.getDataType());
         }
         return dtos;
     }
@@ -295,7 +295,9 @@ public class TspVehicleModelService extends TspBaseService {
         if (Objects.isNull(stdModel))
             ErrorEnum.TSP_VEHICLE_STD_MODEL_NULL_ERR.throwErr();
         TspVehicleStdModelInfoDTO dto = new TspVehicleStdModelInfoDTO();
+        TspVehicleModel tspVehicleModel = tspVehicleModelRepository.getById(stdModel.getTspVehicleModelId());
         BeanUtils.copyProperties(stdModel, dto);
+        dto.setVehicleModelName(tspVehicleModel.getVehicleModelName());
         TspVehicleStdModelExtra stdModelExtra = tspVehicleStdModelExtraService.getByTspStdModelId(tspVehicleStdModelId);
         if (Objects.isNull(stdModelExtra))
             stdModelExtra = new TspVehicleStdModelExtra();
@@ -346,15 +348,15 @@ public class TspVehicleModelService extends TspBaseService {
                             tspVehicleStdModel = new TspVehicleStdModel();
                             BeanUtils.copyProperties(dto, tspVehicleStdModel);
                             if ("纯电动".equals(dto.getDataType())) {
-                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.BE_VS);
+                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.BE_VS.getValue());
                             } else if ("混合动力".equals(dto.getDataType())) {
-                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.HYBRID);
+                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.HYBRID.getValue());
                             } else if ("燃料电池电动".equals(dto.getDataType())) {
-                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.FUEL_CELL_ELECTRIC);
+                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.FUEL_CELL_ELECTRIC.getValue());
                             } else if ("插电式混动".equals(dto.getDataType())) {
-                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.PLUG_IN_HYBRID);
+                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.PLUG_IN_HYBRID.getValue());
                             } else if ("增程式混动".equals(dto.getDataType())) {
-                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.INCREMENTAL_HYBRID);
+                                tspVehicleStdModel.setDataKey(TpsVehicleDataKeyEnum.INCREMENTAL_HYBRID.getValue());
                             }
                             if (dto.getDataType() != null && !"".equals(dto.getDataType()) && tspVehicleStdModel.getDataKey() == null) {
                                 failureNum++;

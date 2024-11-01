@@ -2,7 +2,6 @@ package com.modern.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modern.common.core.domain.vo.BaseVO;
-import com.modern.enums.TspVehicleStateEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,7 +38,7 @@ public class TspEquipmentPageListVO extends BaseVO {
 
     @ApiModelProperty("车辆状态")
     //@JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleStateEnum state;
+    private Integer state;
 
     @ApiModelProperty("设备IDs")
     private List<Long> tspEquipmentIds;

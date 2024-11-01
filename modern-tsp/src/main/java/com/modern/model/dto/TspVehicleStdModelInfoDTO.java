@@ -3,7 +3,6 @@ package com.modern.model.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modern.common.core.domain.dto.BaseDto;
 import com.modern.domain.TspVehicleStdModelExtra;
-import com.modern.enums.TpsVehicleDataKeyEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,11 +22,14 @@ public class TspVehicleStdModelInfoDTO extends BaseDto {
     @ApiModelProperty("车型ID")
     private Long tspVehicleModelId;
 
+    @ApiModelProperty("一级车型名称")
+    private String vehicleModelName;
+
     @ApiModelProperty("型号名称")
     private String stdModeName;
 
     @ApiModelProperty("能源类型")
-    private TpsVehicleDataKeyEnum dataKey;
+    private Integer dataKey;
 
     @ApiModelProperty("公告批次")
     private String noticeBatch;
