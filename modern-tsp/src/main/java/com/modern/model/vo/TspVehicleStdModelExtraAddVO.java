@@ -26,7 +26,7 @@ import java.util.List;
  */
 @ApiModel("车辆信息- 请求对象- 添加车型扩展信息")
 @Data
-public class TspVehicleStdModelExtraAddVO extends BaseVO {
+public class TspVehicleStdModelExtraAddVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty("车辆车型ID")
     private Long tspVehicleStdModelId;

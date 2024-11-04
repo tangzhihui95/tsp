@@ -4,7 +4,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modern.common.core.domain.dto.BaseDto;
-import com.modern.enums.TpsVehicleDataKeyEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,7 +31,7 @@ public class TspVehicleStdModePageListDTO extends BaseDto {
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @ApiModelProperty("能源类型")
-    private TpsVehicleDataKeyEnum dataKey;
+    private Integer dataKey;
 
     @ApiModelProperty("公告批次")
     private String noticeBatch;

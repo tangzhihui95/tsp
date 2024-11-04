@@ -8,7 +8,6 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import com.modern.common.core.domain.BaseModel;
-import com.modern.enums.TpsVehicleDataKeyEnum;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -38,7 +37,7 @@ public class TspVehicleStdModel extends BaseModel {
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @Column(comment = "能源类型", type = MySqlTypeConstant.TINYINT)
-    private TpsVehicleDataKeyEnum dataKey;
+    private Integer dataKey;
 
     @Column(comment = "公告批次", type = MySqlTypeConstant.VARCHAR)
     private String noticeBatch;

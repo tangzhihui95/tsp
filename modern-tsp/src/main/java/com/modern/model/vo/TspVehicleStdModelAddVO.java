@@ -1,8 +1,6 @@
 package com.modern.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.modern.common.core.domain.vo.BaseVO;
-import com.modern.enums.TpsVehicleDataKeyEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,7 +18,7 @@ import javax.validation.constraints.NotEmpty;
  */
 @ApiModel("车辆信息- 请求对象- 二级车型型号")
 @Data
-public class TspVehicleStdModelAddVO extends BaseVO {
+public class TspVehicleStdModelAddVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @ApiModelProperty("型号ID")
     private Long tspVehicleStdModelId;
@@ -34,7 +32,7 @@ public class TspVehicleStdModelAddVO extends BaseVO {
     private String stdModeName;
 
     @ApiModelProperty("能源类型")
-    private TpsVehicleDataKeyEnum dataKey;
+    private Integer dataKey;
 
     @NotEmpty(message = "公告批次不能为空")
     @ApiModelProperty("公告批次")

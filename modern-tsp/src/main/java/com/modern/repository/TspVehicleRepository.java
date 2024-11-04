@@ -8,9 +8,6 @@ import com.modern.common.core.ServicePlusImpl;
 import com.modern.common.exception.ServiceException;
 import com.modern.common.utils.StringUtils;
 import com.modern.domain.TspVehicle;
-import com.modern.enums.TspVehicleEnumCertificationState;
-import com.modern.enums.TspVehicleSendEnum;
-import com.modern.enums.TspVehicleStateEnum;
 import com.modern.mapper.TspVehicleMapper;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
@@ -55,9 +52,9 @@ public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspV
         ew.isNotNull((StringUtils.isNotNull(vo.getBindStatus()) && "1".equals(vo.getBindStatus())), "t.tsp_equipment_id");
         ew.isNull((StringUtils.isNotNull(vo.getBindStatus()) && "0".equals(vo.getBindStatus())), "t.tsp_equipment_id");
         ew.eq("t.is_delete", Integer.valueOf(0));
-        ew.eq((StringUtils.isNotNull(vo.getState()) && !vo.getState().equals(TspVehicleStateEnum.ALL)), "t.state", vo
+        ew.eq((StringUtils.isNotNull(vo.getState()) && !vo.getState().equals(0)), "t.state", vo
                 .getState());
-        ew.eq((StringUtils.isNotNull(vo.getCertificationState()) && !vo.getCertificationState().equals(TspVehicleEnumCertificationState.ALL)), "t.certification_state", vo
+        ew.eq((StringUtils.isNotNull(vo.getCertificationState()) && !vo.getCertificationState().equals(0)), "t.certification_state", vo
                 .getCertificationState());
         ew.and(StringUtils.isNotEmpty(vo.getSearch()), q1 -> ((QueryWrapper) ((QueryWrapper) ((QueryWrapper) ((QueryWrapper)
                 ((QueryWrapper) ((QueryWrapper) ((QueryWrapper) ((QueryWrapper) q1.like("a.std_mode_name", vo.getSearch()))
@@ -67,7 +64,7 @@ public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspV
                 .getTspVehicleStdModelId());
         ew.eq((!StringUtils.isEmpty(vo.getMobile()) && !"全部".equals(vo.getMobile())), "b.mobile", vo
                 .getMobile());
-        ew.eq((StringUtils.isNotNull(vo.getSendStatus()) && !vo.getSendStatus().equals(TspVehicleSendEnum.ALL)), "t.send_status", vo
+        ew.eq((StringUtils.isNotNull(vo.getSendStatus()) && !vo.getSendStatus().equals(0)), "t.send_status", vo
                 .getSendStatus());
         ew.orderByDesc("t.create_time", new String[0]);
         return ew;

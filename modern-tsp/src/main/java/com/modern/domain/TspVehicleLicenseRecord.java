@@ -29,8 +29,8 @@ import java.util.List;
  */
 
 @Alias("TspVehicleLicenseRecord")
-@Table(value = "Tsp_vehicle_license_record", comment = "摩登- TSP - 车辆操作记录")
-@TableName("Tsp_vehicle_license_record")
+@Table(value = "tsp_vehicle_license_record", comment = "摩登- TSP - 车辆操作记录")
+@TableName("tsp_vehicle_license_record")
 @Data
 public class TspVehicleLicenseRecord extends BaseModel {
     private static final long serialVersionUID = 1L;

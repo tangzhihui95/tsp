@@ -9,9 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.modern.common.annotation.Excel;
 import com.modern.common.core.domain.dto.BaseDto;
-import com.modern.enums.TspVehicleEnumCertificationState;
-import com.modern.enums.TspVehicleSendEnum;
-import com.modern.enums.TspVehicleStateEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -68,7 +65,7 @@ public class TspVehiclePageListDTO extends BaseDto {
     @Excel(name = "车辆状态", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     @ApiModelProperty("车辆状态")
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleStateEnum state;
+    private Integer state;
 
     @ApiModelProperty("绑定状态")
     private String bindStatus;
@@ -76,7 +73,7 @@ public class TspVehiclePageListDTO extends BaseDto {
     @Excel(name = "认证状态", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     @ApiModelProperty("认证状态")
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleEnumCertificationState certificationState;
+    private Integer certificationState;
 
     @ApiModelProperty("是否在线 1在线 0未在线")
     private Boolean isOnline;
@@ -84,7 +81,7 @@ public class TspVehiclePageListDTO extends BaseDto {
     @Excel(name = "推送状态", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     @ApiModelProperty("推送状态 1已推送 0未推送")
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleSendEnum sendStatus;
+    private Integer sendStatus;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

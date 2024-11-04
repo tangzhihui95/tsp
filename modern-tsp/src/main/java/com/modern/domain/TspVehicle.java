@@ -15,11 +15,10 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import com.modern.common.core.domain.BaseModel;
-import com.modern.enums.TspVehicleEnumCertificationState;
-import com.modern.enums.TspVehicleStateEnum;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -35,7 +34,7 @@ import java.time.LocalDateTime;
 @TableName(value = "tsp_vehicle", autoResultMap = true)
 @Alias("TspVehicle")
 @Data
-public class TspVehicle extends BaseModel {
+public class TspVehicle extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -117,11 +116,11 @@ public class TspVehicle extends BaseModel {
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @Column(comment = "认证状态 1-未认证 2-认证中 3-认证失败 4-已认证", type = MySqlTypeConstant.INT, isNull = false, defaultValue = "1")
-    private TspVehicleEnumCertificationState certificationState;
+    private Integer certificationState;
 
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
     @Column(comment = "状态 1-已创建 2-已销售 3-已绑定 4-已解绑 5-已报废 6-已注册", type = MySqlTypeConstant.INT, isNull = false, defaultValue = "1")
-    private TspVehicleStateEnum state;
+    private Integer state;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
