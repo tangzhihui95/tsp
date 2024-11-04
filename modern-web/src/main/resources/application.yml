@@ -8,6 +8,7 @@ project:
   copyrightYear: 2024
   # 文件路径 示例（ Windows配置D:/modern/profile，Linux配置 /home/mode/profile）
   profile: /home/mode/profile
+  #profile: D:/home/mode/profile
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证
@@ -32,6 +33,7 @@ server:
       min-spare: 100
       # 文件上传目录
       basedir: /home/data/apps/temp
+      #basedir: D:/data/apps/temp
 
 # 日志配置
 logging:
@@ -129,3 +131,8 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+ #配置 mybatis-plus 枚举
+mybatis-plus:
+   configLocation:
+     type-enums-package: com.modern.*.enums.*
