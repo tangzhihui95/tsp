@@ -176,5 +176,11 @@ public class TspVehicleModelController {
         return Result.ok(tspVehicleModelService.selectChildrenList(vo));
     }
 
+    @ApiOperation("二级车型-文件上传")
+    @PostMapping({"/upload/{type}"})
+    public Result<String> upload(@RequestParam("file") MultipartFile file, @PathVariable Integer type) {
+        return Result.ok(tspVehicleModelService.upload(file, type));
+    }
+
 
 }

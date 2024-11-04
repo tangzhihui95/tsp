@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.modern.common.annotation.Excel;
 import com.modern.common.core.domain.dto.BaseDto;
-import com.modern.enums.TspVehicleStateEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -44,7 +43,7 @@ public class TspEquipmentPageListDTO extends BaseDto {
     @Excel(name = "车辆状态", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     @ApiModelProperty("车辆状态")
     //@JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleStateEnum state;
+    private Integer state;
 
     @ApiModelProperty("设备型号")
     private String modelName;

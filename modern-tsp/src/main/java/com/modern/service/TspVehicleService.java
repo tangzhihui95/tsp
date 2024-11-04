@@ -26,6 +26,7 @@ import com.modern.mapper.TspVehicleStdModeMapper;
 import com.modern.model.dto.TspVehicleExFactoryTemplateDTO;
 import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
+import com.modern.model.dto.TspVehicleSaleTemplateDTO;
 import com.modern.model.vo.*;
 import com.modern.repository.*;
 import com.modern.system.service.ISysRoleService;
@@ -150,7 +151,7 @@ public class TspVehicleService extends TspBaseService {
         tspVehicle = new TspVehicle();
         tspVehicle.setUpdateBy(SecurityUtils.getUsername());
         tspVehicle.setCreateBy(SecurityUtils.getUsername());
-        tspVehicle.setState(TspVehicleStateEnum.CREATED);
+        tspVehicle.setState(TspVehicleStateEnum.CREATED.getValue());
         tspVehicle.setCreateTime(DateUtils.getCurrentTime());
         BeanUtils.copyProperties(vo, tspVehicle);
         if (null != vo.getLabel() && vo.getLabel().size() != 0) {
@@ -260,8 +261,8 @@ public class TspVehicleService extends TspBaseService {
                 market = tspVehicleMarketRepository.getByTspVehicleId(vo.getTspVehicleId());
                 other = tspVehicleOtherRepository.getByTspVehicleId(vo.getTspVehicleId());
                 if (Objects.nonNull(market)) {
-                    if (vehicle.getState().getValue().intValue() < TspVehicleStateEnum.SOLD.getValue().intValue())
-                        vehicle.setState(TspVehicleStateEnum.SOLD);
+                    if (vehicle.getState().intValue() < TspVehicleStateEnum.SOLD.getValue().intValue())
+                        vehicle.setState(TspVehicleStateEnum.SOLD.getValue());
                     BeanUtils.copyProperties(vo, market);
                     market.setUpdateBy(SecurityUtils.getUsername());
                     market.setUpdateTime(DateUtils.getCurrentTime());
@@ -350,8 +351,8 @@ public class TspVehicleService extends TspBaseService {
                 vehicleRecordAddVO.setTspUserId(byMobile.getId());
                 if (Objects.isNull(one) || !Objects.equals(one.getId(), byMobile.getId()))
                     tspUseVehicleRecordService.add(vehicleRecordAddVO);
-                if (vehicle.getState().getValue().intValue() < TspVehicleStateEnum.BOUND.getValue().intValue())
-                    vehicle.setState(TspVehicleStateEnum.BOUND);
+                if (vehicle.getState().intValue() < TspVehicleStateEnum.BOUND.getValue().intValue())
+                    vehicle.setState(TspVehicleStateEnum.BOUND.getValue());
                 vehicle.setTspUserId(byMobile.getId());
                 vehicle.setIsComplete(Boolean.valueOf(true));
                 vehicle.setUpdateBy(SecurityUtils.getUsername());
@@ -372,11 +373,11 @@ public class TspVehicleService extends TspBaseService {
         Long equipmentId = tspVehicleMapper.getByVehicleId(tspVehicleId);
         if (StringUtils.isNotNull(equipmentId))
             ErrorEnum.TSP_VEHICLE_EQUIPMENT_BIND_DELETE_ERR.throwErr();
-        if (!Objects.equals(TspVehicleStateEnum.ALL.getValue(), tspVehicle.getState().getValue()) && (
-                Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState().getValue()) ||
-                        Objects.equals(TspVehicleStateEnum.BOUND.getValue(), tspVehicle.getState().getValue()) ||
-                        Objects.equals(TspVehicleStateEnum.SCRAPPED.getValue(), tspVehicle.getState().getValue()) ||
-                        Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState().getValue())))
+        if (!Objects.equals(TspVehicleStateEnum.ALL.getValue(), tspVehicle.getState()) && (
+                Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState()) ||
+                        Objects.equals(TspVehicleStateEnum.BOUND.getValue(), tspVehicle.getState()) ||
+                        Objects.equals(TspVehicleStateEnum.SCRAPPED.getValue(), tspVehicle.getState()) ||
+                        Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState())))
             ErrorEnum.TSP_VEHICLE_DELETE_STATE_ERR.throwErr();
         TspVehicleAudit vehicleAudit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
         if (Objects.isNull(vehicleAudit))
@@ -416,12 +417,12 @@ public class TspVehicleService extends TspBaseService {
             Long equipmentId = tspVehicleMapper.getByVehicleId(tspVehicleId);
             if (StringUtils.isNotNull(equipmentId))
                 ErrorEnum.TSP_VEHICLE_EQUIPMENT_BIND_DELETES_ERR.throwErr();
-            if (!Objects.equals(TspVehicleStateEnum.ALL.getValue(), tspVehicle.getState().getValue()) && (
-                    Objects.equals(TspVehicleStateEnum.CREATED.getValue(), tspVehicle.getState().getValue()) ||
-                            Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState().getValue()) ||
-                            Objects.equals(TspVehicleStateEnum.BOUND.getValue(), tspVehicle.getState().getValue()) ||
-                            Objects.equals(TspVehicleStateEnum.SCRAPPED.getValue(), tspVehicle.getState().getValue()) ||
-                            Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState().getValue())))
+            if (!Objects.equals(TspVehicleStateEnum.ALL.getValue(), tspVehicle.getState()) && (
+                    Objects.equals(TspVehicleStateEnum.CREATED.getValue(), tspVehicle.getState()) ||
+                            Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState()) ||
+                            Objects.equals(TspVehicleStateEnum.BOUND.getValue(), tspVehicle.getState()) ||
+                            Objects.equals(TspVehicleStateEnum.SCRAPPED.getValue(), tspVehicle.getState()) ||
+                            Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState())))
                 ErrorEnum.TSP_VEHICLE_DELETES_STATE_ERR.throwErr();
             TspVehicleAudit vehicleAudit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
             if (Objects.nonNull(vehicleAudit))
@@ -471,10 +472,10 @@ public class TspVehicleService extends TspBaseService {
             ErrorEnum.TSP_USER_USER_NULL_ERR.throwErr();
         if (Objects.isNull(tspVehicle))
             ErrorEnum.TSP_VEHICLE_VEHICLE_NULL_ERR.throwErr();
-        if (!tspVehicle.getState().equals(TspVehicleStateEnum.SOLD))
+        if (!tspVehicle.getState().equals(TspVehicleStateEnum.SOLD.getValue()))
             ErrorEnum.TSP_VEHICLE_SOLD_NULL_ERR.throwErr();
         log.info("开始进行绑定中--------");
-        tspVehicle.setState(TspVehicleStateEnum.BOUND);
+        tspVehicle.setState(TspVehicleStateEnum.BOUND.getValue());
         tspVehicle.setTspUserId(tspUserId);
         tspVehicle.setCurrentBindTime(DateUtils.getCurrentTime());
         log.info("开始生成绑定记录中-----");
@@ -500,7 +501,7 @@ public class TspVehicleService extends TspBaseService {
             if (null != tspVehicle.getTspEquipmentId())
                 ErrorEnum.TSP_EQUIPMENT_SCRAP_ERR.throwErr();
             tspVehicle.setScrapTime(LocalDateTime.now());
-            tspVehicle.setState(TspVehicleStateEnum.SCRAPPED);
+            tspVehicle.setState(TspVehicleStateEnum.SCRAPPED.getValue());
             tspVehicle.setUpdateBy(SecurityUtils.getUsername());
             tspVehicle.setUpdateTime(DateUtils.getCurrentTime());
             tspVehicleRepository.updateById(tspVehicle);
@@ -792,14 +793,14 @@ public class TspVehicleService extends TspBaseService {
         return checkMap;
     }
 
-    /*@Transactional(rollbackFor = {Exception.class})
+    @Transactional(rollbackFor = {Exception.class})
     public String importSales(MultipartFile multipartFile, Boolean isUpdateSupport) {
         try {
-            log.info("导入车辆销售信息中----------------------MultipartFile={}",multipartFile);
+            log.info("导入车辆销售信息中----------------------MultipartFile={}", multipartFile);
             ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
             List<TspVehicleSaleTemplateDTO> dtos = util.importExcel(multipartFile.getInputStream());
             if (StringUtils.isNull(dtos) || dtos.size() == 0)
-                throw new ServiceException("");
+                throw new ServiceException("导入销售数据不能为空");
             int successNum = 0;
             int failureNum = 0;
             StringBuilder successMsg = new StringBuilder();
@@ -810,70 +811,190 @@ public class TspVehicleService extends TspBaseService {
                     failureNum = ((Integer) checkMap.get("failureNum")).intValue();
                     failureMsg = (StringBuilder) checkMap.get("failureMsg");
                     if (failureNum == 0) {
-                        if (dto.getPurchaser() == null || dto.getChannelType() == null) {
+                        if (null == dto.getPurchaser() || null == dto.getChannelType()) {
                             failureNum++;
-                            failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                            failureMsg.append("<br/>").append(failureNum).append("、必填字段数据缺失").append(dto.getVin()).append(" 导入失败");
                             return failureMsg.toString();
                         }
-                        TspVehicle tspVehicle = this.tspVehicleRepository.getByVin(dto.getVin());
-                        if (tspVehicle == null) {
+                        TspVehicle tspVehicle = tspVehicleRepository.getByVin(dto.getVin());
+                        if (Objects.isNull(tspVehicle)) {
                             failureNum++;
-                            failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                            failureMsg.append("<br/>").append(failureNum).append("、车辆").append(dto.getVin()).append(" 不存在");
                             continue;
                         }
                         if (tspVehicle.getProgress().intValue() == 1) {
                             tspVehicle.setUpdateBy(SecurityUtils.getUsername());
-                            tspVehicle.setState(TspVehicleStateEnum.SOLD);
+                            tspVehicle.setState(TspVehicleStateEnum.SOLD.getValue());
                             tspVehicle.setPurpose(dto.getPurpose());
                             tspVehicle.setProgress(Integer.valueOf(2));
-                            this.tspVehicleRepository.updateById(tspVehicle);
+                            tspVehicle.setUpdateTime(DateUtils.getCurrentTime());
+                            tspVehicleRepository.updateById(tspVehicle);
                             TspVehicleMarket tspVehicleMarket = new TspVehicleMarket();
                             TspVehicleOther tspVehicleOther = new TspVehicleOther();
                             BeanUtils.copyProperties(dto, tspVehicleMarket);
                             BeanUtils.copyProperties(dto, tspVehicleOther);
-                            if (dto.getPurchaserState().equals(""))
+                            if (dto.getPurchaserState().equals("单位用车"))
                                 tspVehicleMarket.setPurchaserState(Integer.valueOf(2));
-                            if (dto.getPurchaserState().equals(""))
+                            if (dto.getPurchaserState().equals("私人用车"))
                                 tspVehicleMarket.setPurchaserState(Integer.valueOf(1));
                             tspVehicleMarket.setTspVehicleId(tspVehicle.getId());
                             tspVehicleMarket.setCreateBy(SecurityUtils.getUsername());
                             tspVehicleMarket.setUpdateBy(SecurityUtils.getUsername());
+                            tspVehicleMarket.setCreateTime(DateUtils.getCurrentTime());
+                            tspVehicleMarket.setUpdateTime(DateUtils.getCurrentTime());
                             tspVehicleMarket.setInvoicingDate(LocalDate.parse(dto.getInvoicingDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                            TspVehicleMarket oneMarket = (TspVehicleMarket) ((LambdaQueryChainWrapper) this.tspVehicleMarketRepository.lambdaQuery().eq(TspVehicleMarket::getTspVehicleId, tspVehicle.getId())).one();
+                            TspVehicleMarket oneMarket = (TspVehicleMarket) ((LambdaQueryChainWrapper) tspVehicleMarketRepository.lambdaQuery().eq(TspVehicleMarket::getTspVehicleId, tspVehicle.getId())).one();
                             if (Objects.nonNull(oneMarket))
                                 tspVehicleMarket.setId(oneMarket.getId());
-                            this.tspVehicleMarketRepository.saveOrUpdate(tspVehicleMarket);
+                            tspVehicleMarketRepository.saveOrUpdate(tspVehicleMarket);
                             tspVehicleOther.setTspVehicleId(tspVehicle.getId());
                             tspVehicleOther.setCreateBy(SecurityUtils.getUsername());
                             tspVehicleOther.setUpdateBy(SecurityUtils.getUsername());
-                            TspVehicleOther otherOne = (TspVehicleOther) ((LambdaQueryChainWrapper) this.tspVehicleOtherRepository.lambdaQuery().eq(TspVehicleOther::getTspVehicleId, tspVehicle.getId())).one();
+                            tspVehicleOther.setCreateTime(DateUtils.getCurrentTime());
+                            tspVehicleOther.setUpdateTime(DateUtils.getCurrentTime());
+                            TspVehicleOther otherOne = (TspVehicleOther) ((LambdaQueryChainWrapper) tspVehicleOtherRepository.lambdaQuery().eq(TspVehicleOther::getTspVehicleId, tspVehicle.getId())).one();
                             if (Objects.nonNull(otherOne))
                                 tspVehicleOther.setId(otherOne.getId());
-                            this.tspVehicleOtherRepository.saveOrUpdate(tspVehicleOther);
+                            tspVehicleOtherRepository.saveOrUpdate(tspVehicleOther);
                             successNum++;
-                            successMsg.append("<br/>").append(successNum).append("").append(dto.getVin()).append(" ");
+                            successMsg.append("<br/>").append(successNum).append("、销售信息").append(dto.getVin()).append(" 新增成功");
                             continue;
                         }
                         failureNum++;
-                        failureMsg.append("<br/>").append(failureNum).append("").append(dto.getVin()).append(" ");
+                        failureMsg.append("<br/>").append(failureNum).append("、销售信息").append(dto.getVin()).append(" 已存在");
                     }
                 } catch (Exception e) {
                     failureNum++;
-                    String msg = "<br/>" + failureNum + "" + dto.getVin() + " ";
+                    String msg = "<br/>" + failureNum + "、销售信息" + dto.getVin() + " 导入失败";
                     failureMsg.append(msg).append(e.getMessage());
                     log.error(msg, e);
                 }
             }
             if (failureNum > 0) {
-                failureMsg.insert(0, "" + failureNum + " ");
+                failureMsg.insert(0, "很抱歉，导入失败！共" + failureNum + " 条数据格式不正确，错误如下：");
                 return failureMsg.toString();
             }
-            successMsg.insert(0, "" + successNum + " ");
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共" + successNum + " 条，数据如下：");
             return successMsg.toString();
         } catch (Throwable $ex) {
-            throw $ex;
+            try {
+                throw $ex;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-    }*/
+    }
+
+    private Map<String, Object> toCheckSales(TspVehicleSaleTemplateDTO dto, StringBuilder failureMsg, int failureNum) {
+        Map<String, Object> checkMap = new HashMap<>();
+        if (dto.getPurchaserState() != null && !"".equals(dto.getPurchaserState()) && !dto.getPurchaserState().equals("私人用车") && !dto.getPurchaserState().equals("单位用车")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、购买领域").append(dto.getPurchaserState()).append(" 值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getPurpose() || "".equals(dto.getPurpose()) || (!dto.getPurpose().equals("私人乘用车")
+                && !dto.getPurpose().equals("公务乘用车") && !dto.getPurpose().equals("私人运营车")
+                && !dto.getPurpose().equals("公务运营车"))) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆用途").append(dto.getPurpose()).append(" 值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String versionRegexp = "^([a-zA-Z0-9]){17}$";
+        if (null == dto.getVin() || !dto.getVin().matches(versionRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、出厂信息VIN").append(dto.getVin()).append(" 格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getEmployeeName() || dto.getEmployeeName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、办理员工名称").append(dto.getEmployeeName()).append(" 不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getPurchaser() || dto.getPurchaser().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、购买方").append(dto.getPurchaser()).append(" 不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String idRegexp = "^(\\d{17})(\\d|X|x)$";
+        if (null == dto.getVehicleIdCard() || !dto.getVehicleIdCard().matches(idRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、身份证号").append(dto.getVehicleIdCard()).append(" 格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String invoiceRegexp = "^\\d{8}$";
+        if (null == dto.getInvoiceNo() || !dto.getInvoiceNo().matches(invoiceRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、发票号码").append(dto.getInvoiceNo()).append(" 格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String dateRegexp = "^([0-9]{4})(-([0-1][0-9]))(-[0-3][0-9])$";
+        if (null == dto.getInvoicingDate() || !dto.getInvoicingDate().matches(dateRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、开票日期").append(dto.getInvoicingDate()).append(" 格式异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getSalesUnitName() || dto.getSalesUnitName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、销货单位名称").append(dto.getSalesUnitName()).append(" 不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getSalesUnitAddress() || dto.getSalesUnitAddress().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、销货单位地址").append(dto.getSalesUnitAddress()).append(" 不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getSalesChannel() || dto.getSalesChannel().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、售货渠道名称").append(dto.getSalesChannel()).append(" 不能为空");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getVehicleStatus() || dto.getVehicleStatus().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车辆状态").append(dto.getVehicleStatus()).append(" 值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getChannelType() || dto.getChannelType().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、销售渠道类型").append(dto.getChannelType()).append(" 值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (null == dto.getNewVehicleFlag() || dto.getNewVehicleFlag().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、是否是新车").append(dto.getNewVehicleFlag()).append(" 值异常");
+            checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        checkMap.put("failureNum", Integer.valueOf(failureNum));
+        checkMap.put("failureMsg", failureMsg);
+        return checkMap;
+    }
 
 
 }

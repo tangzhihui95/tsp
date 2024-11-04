@@ -3,8 +3,6 @@ package com.modern.model.vo;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.modern.common.core.domain.vo.BaseVO;
-import com.modern.enums.TspVehicleEnumCertificationState;
-import com.modern.enums.TspVehicleSendEnum;
 import com.modern.enums.TspVehicleStateEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -50,11 +48,11 @@ public class TspVehiclePageListVO extends BaseVO {
 
     @ApiModelProperty("推送状态")
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleSendEnum sendStatus;
+    private Integer sendStatus;
 
     @ApiModelProperty("认证状态")
     @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleEnumCertificationState certificationState;
+    private Integer certificationState;
 
     private List<Long> carIds;
 }

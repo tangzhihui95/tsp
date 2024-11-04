@@ -23,11 +23,11 @@ public class Application {
         SpringApplication.run(Application.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  Tsp-平台启动成功   ლ(´ڡ`ლ)ﾞ  \n");
     }
-
     @Bean
     MultipartConfigElement multipartConfigElement(){
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation("/home/data/apps/temp");
+        //factory.setLocation("D:/data/apps/temp");
         return factory.createMultipartConfig();
     }
 }

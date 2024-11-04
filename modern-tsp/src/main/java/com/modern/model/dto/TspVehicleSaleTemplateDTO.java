@@ -74,14 +74,14 @@ public class TspVehicleSaleTemplateDTO {
     @Excel(name = "销售渠道类型", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "1=")
     private Integer channelType;
 
-    @ApiModelProperty("")
-    @Excel(name = "", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
+    @ApiModelProperty("办理员工名称")
+    @Excel(name = "办理员工名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     private String employeeName;
 
-    @ApiModelProperty("")
-    @Excel(name = "", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
+    @ApiModelProperty("是否是新车")
+    @Excel(name = "是否是新车", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
     private String newVehicleFlagText;
 
-    @ApiModelProperty("")
+    @ApiModelProperty("是否是新车")
     private Integer newVehicleFlag;
 }
