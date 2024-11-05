@@ -643,7 +643,7 @@
 
   <script>
 import { regionData } from 'element-china-area-data';
-import { addVehicleMessage } from '../../../api/vehicle/vehicleMessage';
+import { addVehicleMessage,getVehicleMessage,updateVehicleMessage } from '../../../api/vehicle/vehicleMessage';
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 
@@ -840,15 +840,30 @@ export default {
     }
   },
 
-  //获取车型下拉框
+  //获取车型下拉框及编辑信息
   created() {
    
     this.getVehicleType();
+    const tspVehicleId = this.$route.params && this.$route.params.tspVehicleId;
+    if(tspVehicleId){
+      this.form1.tspVehicleId = tspVehicleId;
+      getVehicleMessage(this.form1.tspVehicleId).then(response => {
+          this.form1 = response.data;
+          this.form1.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId];
+          this.form2 = response.data;
+          this.form3 = response.data;
+          this.form4 = response.data;
+          this.form5 = response.data;
+      } 
+   )
+    }
+
   },
 
   methods: {
+
 //选择车牌号
-selectItem(item) {
+    selectItem(item) {
       this.form.plateCode = item;
       this.showList = false;
       this.$emit('selected', item);
@@ -887,10 +902,10 @@ selectItem(item) {
       //console.log(this.form.awardProvince)
       this.cities = [];
       this.area = [];
-      this.form.awardCity = "";
-      this.form.awardArea = "";
+      this.form2.awardCity = "";
+      this.form2.awardArea = "";
       let cityItem = this.provinces.filter(
-          (item) => item.value === this.form.awardProvince
+          (item) => item.value === this.form2.awardProvince
         );
         if (cityItem[0]) {
           this.cities = cityItem[0].children;
@@ -898,25 +913,25 @@ selectItem(item) {
       },
     changeCity() {
       console.log("城市选择")
-      console.log(this.form.awardCity)
+      console.log(this.form2.awardCity)
       this.area = [];
-      this.form.awardArea = "";
+      this.form2.awardArea = "";
       let areaItem = this.cities.filter(
-          (item) => item.value === this.form.awardCity
+          (item) => item.value === this.form2.awardCity
         );
         if (areaItem[0]) {
           this.area = areaItem[0].children;
         }
-        console.log(this.form.awardArea);
+        console.log(this.form2.awardArea);
 
        },
 // 上牌信息省市区
     handleChange1(value) {
 
 
-        this.form.awardProvince = value[0];
-        this.form.awardCity = value[1];
-        this.form.awardArea = value[2];
+        this.form3.awardProvince = value[0];
+        this.form3.awardCity = value[1];
+        this.form3.awardArea = value[2];
 			  console.log(this.selectedOptions)
         console.log(value)
 			
@@ -933,12 +948,10 @@ selectItem(item) {
             if (this.form1.tspVehicleId!= undefined) {
               updateVehicleMessage(this.form1).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             } else {
               addVehicleMessage(this.form1).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             }
           }
@@ -953,12 +966,10 @@ selectItem(item) {
             if (this.form1.tspVehicleId!= undefined) {
               updateVehicleMessage(this.form2).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             } else {
               addVehicleMessage(this.form2).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             }
           }
@@ -972,12 +983,10 @@ selectItem(item) {
             if (this.form1.tspVehicleId!= undefined) {
               updateVehicleMessage(this.form3).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             } else {
               addVehicleMessage(this.form3).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             }
           }
@@ -991,12 +1000,10 @@ selectItem(item) {
             if (this.form1.tspVehicleId!= undefined) {
               updateVehicleMessage(this.form4).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             } else {
               addVehicleMessage(this.form4).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.getList();
               });
             }
           }
@@ -1017,14 +1024,14 @@ selectItem(item) {
     cancel(){
             
               this.$store.dispatch("tagsView/delView", this.$route);
-              //this.$router.go(-1);
-              this.$router.push("/vehicle/vehicle-message/index/");
+              this.$router.go(-1);
+              //this.$router.push("/vehicle/vehicle-message/index/");
         },
 //完成按钮
     submit() {
               this.$store.dispatch("tagsView/delView", this.$route);
-              //this.$router.go(-1);
-              this.$router.push("/vehicle/vehicle-message/index/");
+              this.$router.go(-1);
+              //this.$router.push("/vehicle/vehicle-message/index/");
         },
 // 图片上传成功
     imgSuccess(res, file, fileList) {

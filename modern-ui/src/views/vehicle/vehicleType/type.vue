@@ -321,7 +321,7 @@
         </div>
         <el-form-item label="车型图片" prop="stdModelExtraAddVO.extraImages">
         <el-upload
-            :action="'/tsp/vehicle/model/upload/1'"
+            :action="'/tsp/vehicle/model/upload/'+'1'"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-success="imgSuccess"
