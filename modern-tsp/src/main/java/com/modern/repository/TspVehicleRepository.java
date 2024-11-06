@@ -7,14 +7,21 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.modern.common.core.ServicePlusImpl;
 import com.modern.common.exception.ServiceException;
 import com.modern.common.utils.StringUtils;
+import com.modern.common.utils.bean.BeanUtils;
+import com.modern.domain.TspUser;
 import com.modern.domain.TspVehicle;
+import com.modern.enums.TspVehicleStateEnum;
 import com.modern.mapper.TspVehicleMapper;
+import com.modern.model.dto.TspVehicleRelationMobileOptionDTO;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author：tzh
@@ -26,6 +33,8 @@ import java.util.List;
  */
 @Service
 public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspVehicle, TspVehicle> {
+    @Autowired
+    private TspUserRepository tspUserRepository;
 
 
     public List<TspVehicle> findByTspEquipmentId(Long tspEquipmentId) {
@@ -103,7 +112,27 @@ public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspV
     public List<TspVehicle> findByTspUserId(Long userId) {
         QueryWrapper<TspVehicle> ew = new QueryWrapper();
         ew.eq("tsp_user_id", userId);
-        return list((Wrapper)ew);
+        return list((Wrapper) ew);
+    }
+
+    public List<TspVehicleRelationMobileOptionDTO> relationMobileOption() {
+        List<TspVehicleRelationMobileOptionDTO> dtos = new ArrayList<>();
+        QueryWrapper<TspVehicle> ew = new QueryWrapper();
+        ew.eq("state", TspVehicleStateEnum.BOUND);
+        List<Long> longs = list(ew).stream().map(TspVehicle::getTspUserId).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(longs)) {
+            QueryWrapper<TspUser> userEw = new QueryWrapper();
+            userEw.in("id", longs);
+            TspVehicleRelationMobileOptionDTO allDto = new TspVehicleRelationMobileOptionDTO();
+            allDto.setMobile("全部");
+            dtos.add(allDto);
+            for (TspUser tspUser : tspUserRepository.list(userEw)) {
+                TspVehicleRelationMobileOptionDTO dto = new TspVehicleRelationMobileOptionDTO();
+                BeanUtils.copyProperties(tspUser, dto);
+                dtos.add(dto);
+            }
+        }
+        return dtos;
     }
 
 

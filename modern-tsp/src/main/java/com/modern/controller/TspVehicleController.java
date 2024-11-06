@@ -1,12 +1,13 @@
 package com.modern.controller;
 
 import com.modern.common.annotation.Log;
+import com.modern.common.core.domain.AjaxResult;
 import com.modern.common.core.domain.Result;
 import com.modern.common.core.page.PageInfo;
 import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
-import com.modern.model.dto.TspVehicleInfoDTO;
-import com.modern.model.dto.TspVehiclePageListDTO;
+import com.modern.common.utils.poi.ExcelUtil;
+import com.modern.model.dto.*;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
 import com.modern.model.vo.TspVehicleScrapVO;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -106,15 +108,15 @@ public class TspVehicleController {
         return Result.ok(tspVehicleService.dealEquipment(tspEquipmentId));
     }
 
-/*    @ApiOperation("车辆信息- 导出")
+    @ApiOperation("车辆信息- 导出")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:export')")
     @Log(title = "车辆信息- 导出", businessType = BusinessType.EXPORT)
     @PostMapping({"/export"})
     public AjaxResult export(@RequestBody @Valid TspVehiclePageListVO vo) {
-        List<TspVehicleExportListDTO> list = this.tspVehicleService.exportList(vo);
+        List<TspVehicleExportListDTO> list = tspVehicleService.exportList(vo);
         ExcelUtil<TspVehicleExportListDTO> util = new ExcelUtil(TspVehicleExportListDTO.class);
-        return util.exportExcel(list, "");
-    }*/
+        return util.exportExcel(list, "车辆信息");
+    }
 
     @ApiOperation("车辆管理-导入出厂信息")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:importVehicle')")
@@ -130,6 +132,53 @@ public class TspVehicleController {
     @PostMapping({"/importSales"})
     public JsonResult importSales(@RequestParam("file") MultipartFile multipartFile, Boolean isUpdateSupport) {
         return JsonResult.getResult(tspVehicleService.importSales(multipartFile, isUpdateSupport));
+    }
+
+    @ApiOperation("车辆管理-下载车辆出厂信息模版")
+    @PostMapping({"/importExFactoryTemplate"})
+    public AjaxResult importExFactoryTemplate() {
+        ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
+        return util.importTemplateExcel("出厂信息数据");
+    }
+
+    @ApiOperation("车辆管理-下载车辆销售信息模版")
+    @GetMapping({"/importSaleTemplate"})
+    public AjaxResult importSaleTemplate() {
+        ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
+        return util.importTemplateExcel("车辆销售信息数据");
+    }
+
+    @ApiOperation("车辆管理-根据车辆ID查认证信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:getAuditInfo')")
+    @GetMapping({"/getAuditInfo/{tspVehicleId}"})
+    public Result<TspVehicleAuditInfoDTO> getAuditInfo(@PathVariable Long tspVehicleId) {
+        return Result.ok(tspVehicleService.getAuditInfo(tspVehicleId));
+    }
+
+    @ApiOperation("车辆管理-关联账号")
+    @GetMapping({"/relationMobileOption"})
+    public Result<List<TspVehicleRelationMobileOptionDTO>> relationMobileOption() {
+        return Result.ok(tspVehicleService.relationMobileOption());
+    }
+
+    @ApiOperation("车辆管理-导出车辆出厂信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportExFactory')")
+    @Log(title = "- ", businessType = BusinessType.EXPORT)
+    @PostMapping({"/exportExFactory"})
+    public AjaxResult exportExFactory(@RequestBody @Valid TspVehiclePageListVO vo) {
+        List<TspVehicleExFactoryTemplateDTO> list = tspVehicleService.exportExFactory(vo);
+        ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
+        return util.exportExcel(list, "车辆出厂信息");
+    }
+
+    @ApiOperation("车辆管理-导出车辆销售信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportSales')")
+    @Log(title = "车辆管理- 导出车辆销售信息", businessType = BusinessType.EXPORT)
+    @PostMapping({"/exportSales"})
+    public AjaxResult exportSales(@RequestBody @Valid TspVehiclePageListVO vo) {
+        List<TspVehicleSaleTemplateDTO> list = tspVehicleService.exportSales(vo);
+        ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
+        return util.exportExcel(list, "车辆销售信息");
     }
 
 }
