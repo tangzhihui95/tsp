@@ -5,10 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.modern.common.core.BaseMapperPlus;
 import com.modern.domain.TspVehicle;
+import com.modern.model.dto.TspVehicleExFactoryTemplateDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
+import com.modern.model.dto.TspVehicleSaleTemplateDTO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -40,4 +44,9 @@ public interface TspVehicleMapper extends BaseMapperPlus<TspVehicle> {
     @Update({"update tsp_vehicle set tsp_equipment_id = null where id = #{tspVehicleId}"})
     int updateSetNull(Long paramLong);
 
+    @Select({"SELECT t.vin as 'vin',t.provider_name as 'providerName',t.configure_name as 'configureName',t.color as 'color',t.batch_no as 'batchNo',t.purpose as 'purpose',DATE_FORMAT( t.ex_factory_date, '%Y-%m-%d' ) AS 'exFactoryDate',DATE_FORMAT( t.operate_date, '%Y-%m-%d' ) AS 'operateDate',t.label as 'label',t.remark as 'remark',f.sn as 'sn',c.name as 'name',d.model_name as 'modelName',g.vehicle_model_name as 'vehicleModelName',a.std_mode_name as 'stdModelName',t.engine_num as 'engineNum',t.motor_num as 'motorNum',t.cdu_num as 'cduNum',t.motor_brand as 'motorBrand',t.ess_num as 'essNum',t.ess_model as 'essModel' FROM tsp_vehicle t LEFT JOIN tsp_vehicle_std_model a ON a.id = t.tsp_vehicle_std_model_id LEFT JOIN tsp_user b ON b.id = t.tsp_user_id LEFT JOIN tsp_vehicle_model g ON g.id = a.tsp_vehicle_model_id LEFT JOIN tsp_equipment f ON f.id = t.tsp_equipment_id LEFT JOIN tsp_equipment_model d ON d.id = f.tsp_equipment_model_id LEFT JOIN tsp_vehicle_license e ON e.tsp_vehicle_id = t.id LEFT JOIN tsp_equipment_type c ON c.id = d.tsp_equipment_type_id ${ew.customSqlSegment}"})
+    List<TspVehicleExFactoryTemplateDTO> getExFactoryList(Page<Object> paramPage, @Param("ew") QueryWrapper<TspVehicle> paramQueryWrapper);
+
+    @Select({"SELECT t.vin as 'vin',t.purpose as 'purpose',x.purchaser_state as 'purchaserState',x.purchaser as 'purchaser',x.vehicle_id_card as 'vehicleIdCard',x.price_tax as 'priceTax',x.invoice_no as 'invoiceNo',DATE_FORMAT( x.invoicing_date, '%Y-%m-%d' ) AS 'invoicingDate',x.is_san_bao as 'isSanBao',x.sales_unit_name as 'salesUnitName',x.sales_unit_address 'salesUnitAddress',y.vehicle_status as 'vehicleStatus',y.sales_channel as 'salesChannel',y.channel_type as 'channelType',y.employee_name as 'employeeName',y.new_vehicle_flag as 'newVehicleFlag' FROM tsp_vehicle t RIGHT JOIN tsp_vehicle_market x ON x.tsp_vehicle_id = t.id LEFT JOIN tsp_vehicle_std_model a ON a.id = t.tsp_vehicle_std_model_id LEFT JOIN tsp_user b ON b.id = t.tsp_user_id LEFT JOIN tsp_equipment f ON f.id = t.tsp_equipment_id LEFT JOIN tsp_equipment_model d ON d.id = f.tsp_equipment_model_id LEFT JOIN tsp_vehicle_license e ON e.tsp_vehicle_id = t.id LEFT JOIN tsp_vehicle_other y ON t.id = y.tsp_vehicle_id ${ew.customSqlSegment}"})
+    List<TspVehicleSaleTemplateDTO> getSalesList(Page<Object> paramPage, @Param("ew") QueryWrapper<TspVehicle> paramQueryWrapper);
 }
