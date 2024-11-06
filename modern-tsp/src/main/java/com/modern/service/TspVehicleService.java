@@ -1057,5 +1057,87 @@ public class TspVehicleService extends TspBaseService {
         return checkMap;
     }
 
+    public TspVehicleAuditInfoDTO getAuditInfo(Long tspVehicleId) {
+        log.info("根据车辆id获取认证信息--------------------tspVehicleId={}", tspVehicleId);
+        TspVehicleAudit audit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
+        if (Objects.isNull(audit))
+            ErrorEnum.TSP_VEHICLE_NULL_AUDIT.throwErr();
+        TspVehicle tspVehicle = tspVehicleRepository.getById(tspVehicleId);
+        TspUser tspUser = tspUserRepository.getById(tspVehicle.getTspUserId());
+        TspVehicleLicense license = tspVehicleLicenseRepository.getByTspVehicleId(tspVehicleId);
+        TspVehicleAuditInfoDTO dto = new TspVehicleAuditInfoDTO();
+        BeanUtils.copyProperties(audit, dto);
+        if (Objects.nonNull(license))
+            dto.setPlateCode(license.getPlateCode());
+        dto.setTspUser(tspUser);
+        dto.setTspVehicle(tspVehicle);
+        return dto;
+    }
+
+    public List<TspVehicleRelationMobileOptionDTO> relationMobileOption() {
+        return tspVehicleRepository.relationMobileOption();
+    }
+
+    public List<TspVehicleExFactoryTemplateDTO> exportExFactory(TspVehiclePageListVO vo) {
+        List<TspVehicleExFactoryTemplateDTO> list = null;
+        try {
+            vo.setPageNum(Integer.valueOf(1));
+            vo.setPageSize(Integer.valueOf(2147483647));
+            QueryWrapper<TspVehicle> ew = tspVehicleRepository.getPageListEw(vo);
+            list = tspVehicleMapper.getExFactoryList(Page.of(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
+            for (TspVehicleExFactoryTemplateDTO dto : list) {
+                String label = dto.getLabel();
+                List<String> labelList = new ArrayList<>();
+                if (null != label && !"".equals(label) && !"[]".equals(label)) {
+                    List<String> strings = Arrays.asList(label.split(","));
+                    for (String string : strings) {
+                        if (string.contains("["))
+                            string = string.replace("[", "");
+                        if (string.contains("]"))
+                            string = string.replace("]", "");
+                        if (string.contains(" "))
+                            string = string.replace(" ", "");
+                        TspTag tag = tspTagRepository.getById(Long.valueOf(string));
+                        labelList.add(tag.getTagName());
+                    }
+                }
+                if (labelList.size() > 0)
+                    dto.setLabel(String.valueOf(labelList));
+                if ("[]".equals(dto.getLabel()))
+                    dto.setLabel("");
+            }
+        } catch (Exception e) {
+            String msg = "导出车辆出厂信息失败";
+            log.error(msg, e);
+        }
+        return list;
+    }
+
+    public List<TspVehicleSaleTemplateDTO> exportSales(TspVehiclePageListVO vo) {
+        log.info("导出车辆销售信息---------------TspVehiclePageListVO={}", vo);
+        List<TspVehicleSaleTemplateDTO> list = null;
+        try {
+            vo.setPageNum(Integer.valueOf(1));
+            vo.setPageSize(Integer.valueOf(2147483647));
+            QueryWrapper<TspVehicle> ew = tspVehicleRepository.getPageListEw(vo);
+            list = tspVehicleMapper.getSalesList(Page.of(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
+            for (TspVehicleSaleTemplateDTO dto : list) {
+                if ("1".equals(dto.getPurchaserState())) {
+                    dto.setPurchaserState("私人用车");
+                    continue;
+                }
+                if ("2".equals(dto.getPurchaserState())) {
+                    dto.setPurchaserState("单位用车");
+                    continue;
+                }
+                if ("0".equals(dto.getPurchaserState()))
+                    dto.setPurchaserState("");
+            }
+        } catch (Exception e) {
+            String msg = "导出车辆销售失败";
+            log.error(msg, e);
+        }
+        return list;
+    }
 
 }

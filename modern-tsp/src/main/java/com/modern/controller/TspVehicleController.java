@@ -7,9 +7,7 @@ import com.modern.common.core.page.PageInfo;
 import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.poi.ExcelUtil;
-import com.modern.model.dto.TspVehicleExportListDTO;
-import com.modern.model.dto.TspVehicleInfoDTO;
-import com.modern.model.dto.TspVehiclePageListDTO;
+import com.modern.model.dto.*;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
 import com.modern.model.vo.TspVehicleScrapVO;
@@ -134,6 +132,53 @@ public class TspVehicleController {
     @PostMapping({"/importSales"})
     public JsonResult importSales(@RequestParam("file") MultipartFile multipartFile, Boolean isUpdateSupport) {
         return JsonResult.getResult(tspVehicleService.importSales(multipartFile, isUpdateSupport));
+    }
+
+    @ApiOperation("车辆管理-下载车辆出厂信息模版")
+    @PostMapping({"/importExFactoryTemplate"})
+    public AjaxResult importExFactoryTemplate() {
+        ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
+        return util.importTemplateExcel("出厂信息数据");
+    }
+
+    @ApiOperation("车辆管理-下载车辆销售信息模版")
+    @GetMapping({"/importSaleTemplate"})
+    public AjaxResult importSaleTemplate() {
+        ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
+        return util.importTemplateExcel("车辆销售信息数据");
+    }
+
+    @ApiOperation("车辆管理-根据车辆ID查认证信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:getAuditInfo')")
+    @GetMapping({"/getAuditInfo/{tspVehicleId}"})
+    public Result<TspVehicleAuditInfoDTO> getAuditInfo(@PathVariable Long tspVehicleId) {
+        return Result.ok(tspVehicleService.getAuditInfo(tspVehicleId));
+    }
+
+    @ApiOperation("车辆管理-关联账号")
+    @GetMapping({"/relationMobileOption"})
+    public Result<List<TspVehicleRelationMobileOptionDTO>> relationMobileOption() {
+        return Result.ok(tspVehicleService.relationMobileOption());
+    }
+
+    @ApiOperation("车辆管理-导出车辆出厂信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportExFactory')")
+    @Log(title = "- ", businessType = BusinessType.EXPORT)
+    @PostMapping({"/exportExFactory"})
+    public AjaxResult exportExFactory(@RequestBody @Valid TspVehiclePageListVO vo) {
+        List<TspVehicleExFactoryTemplateDTO> list = tspVehicleService.exportExFactory(vo);
+        ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
+        return util.exportExcel(list, "车辆出厂信息");
+    }
+
+    @ApiOperation("车辆管理-导出车辆销售信息")
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportSales')")
+    @Log(title = "车辆管理- 导出车辆销售信息", businessType = BusinessType.EXPORT)
+    @PostMapping({"/exportSales"})
+    public AjaxResult exportSales(@RequestBody @Valid TspVehiclePageListVO vo) {
+        List<TspVehicleSaleTemplateDTO> list = tspVehicleService.exportSales(vo);
+        ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
+        return util.exportExcel(list, "车辆销售信息");
     }
 
 }
