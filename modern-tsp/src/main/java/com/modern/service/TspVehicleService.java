@@ -23,10 +23,7 @@ import com.modern.enums.TspVehicleStateEnum;
 import com.modern.mapper.TspEquipmentMapper;
 import com.modern.mapper.TspVehicleMapper;
 import com.modern.mapper.TspVehicleStdModeMapper;
-import com.modern.model.dto.TspVehicleExFactoryTemplateDTO;
-import com.modern.model.dto.TspVehicleInfoDTO;
-import com.modern.model.dto.TspVehiclePageListDTO;
-import com.modern.model.dto.TspVehicleSaleTemplateDTO;
+import com.modern.model.dto.*;
 import com.modern.model.vo.*;
 import com.modern.repository.*;
 import com.modern.system.service.ISysRoleService;
@@ -380,11 +377,11 @@ public class TspVehicleService extends TspBaseService {
                         Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState())))
             ErrorEnum.TSP_VEHICLE_DELETE_STATE_ERR.throwErr();
         TspVehicleAudit vehicleAudit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
-        if (Objects.isNull(vehicleAudit))
+        if (Objects.nonNull(vehicleAudit))
             tspVehicleAuditRepository.removeById((Serializable) vehicleAudit);
         tspVehicleRepository.removeById(tspVehicleId);
         TspVehicleLicense license = tspVehicleLicenseRepository.getByTspVehicleId(tspVehicle.getId());
-        if (Objects.isNull(license))
+        if (Objects.nonNull(license))
             tspVehicleLicenseRepository.removeById(license.getId());
         String labelStr = tspVehicle.getLabel();
         if (StringUtils.isNotNull(labelStr) && !"".equals(labelStr) && !"[]".equals(labelStr)) {
@@ -418,12 +415,11 @@ public class TspVehicleService extends TspBaseService {
             if (StringUtils.isNotNull(equipmentId))
                 ErrorEnum.TSP_VEHICLE_EQUIPMENT_BIND_DELETES_ERR.throwErr();
             if (!Objects.equals(TspVehicleStateEnum.ALL.getValue(), tspVehicle.getState()) && (
-                    Objects.equals(TspVehicleStateEnum.CREATED.getValue(), tspVehicle.getState()) ||
-                            Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState()) ||
+                    Objects.equals(TspVehicleStateEnum.SOLD.getValue(), tspVehicle.getState()) ||
                             Objects.equals(TspVehicleStateEnum.BOUND.getValue(), tspVehicle.getState()) ||
                             Objects.equals(TspVehicleStateEnum.SCRAPPED.getValue(), tspVehicle.getState()) ||
                             Objects.equals(TspVehicleStateEnum.ALREADY.getValue(), tspVehicle.getState())))
-                ErrorEnum.TSP_VEHICLE_DELETES_STATE_ERR.throwErr();
+                ErrorEnum.TSP_VEHICLE_DELETE_STATE_ERR.throwErr();
             TspVehicleAudit vehicleAudit = tspVehicleAuditService.getByTspVehicleId(tspVehicleId);
             if (Objects.nonNull(vehicleAudit))
                 tspVehicleAuditRepository.removeById((Serializable) vehicleAudit);
@@ -580,6 +576,71 @@ public class TspVehicleService extends TspBaseService {
         Integer state = TspVehicleStateEnum.UNBOUND.getValue();
         tspVehicleMapper.updateSetState(state, tspVehicleId);
         return tspVehicleMapper.updateSetNull(tspVehicleId);
+    }
+
+    public List<TspVehicleExportListDTO> exportList(TspVehiclePageListVO vo) {
+        log.info("导入车辆信息开始----------------TspVehiclePageListVO={}", vo);
+        vo.setPageNum(Integer.valueOf(1));
+        vo.setPageSize(Integer.valueOf(2147483647));
+        List<TspVehicleExportListDTO> dtos = new ArrayList<>();
+        getPageList(vo).getList().forEach(pageListDTO -> {
+            TspVehicleExportListDTO dto = new TspVehicleExportListDTO();
+            BeanUtils.copyProperties(pageListDTO, dto);
+            switch (pageListDTO.getCertificationState().intValue()) {
+                case 1:
+                    dto.setCertificationState("未认证");
+                    break;
+                case 2:
+                    dto.setCertificationState("认证中");
+                    break;
+                case 3:
+                    dto.setCertificationState("认证失败");
+                    break;
+                case 4:
+                    dto.setCertificationState("已认证");
+                    break;
+                default:
+                    dto.setCertificationState("全部");
+                    break;
+            }
+            dto.setCertificationState(String.valueOf(pageListDTO.getCertificationState()));
+            switch (pageListDTO.getState().intValue()) {
+                case 1:
+                    dto.setCertificationState("已创建");
+                    break;
+                case 2:
+                    dto.setCertificationState("已销售");
+                    break;
+                case 3:
+                    dto.setCertificationState("已绑定");
+                    break;
+                case 4:
+                    dto.setCertificationState("已解绑");
+                    break;
+                case 5:
+                    dto.setCertificationState("已报废");
+                    break;
+                case 6:
+                    dto.setCertificationState("已注册");
+                    break;
+                default:
+                    dto.setCertificationState("全部");
+                    break;
+            }
+            dto.setState(String.valueOf(pageListDTO.getState()));
+            switch (pageListDTO.getState().intValue()) {
+                case 1:
+                    dto.setCertificationState("已推送");
+                    break;
+                default:
+                    dto.setCertificationState("未推送");
+                    break;
+            }
+            dto.setSendStatus(String.valueOf(pageListDTO.getSendStatus()));
+            dto.setCreateTime(pageListDTO.getCreateTime());
+            dtos.add(dto);
+        });
+        return dtos;
     }
 
     @Transactional(rollbackFor = {Exception.class})

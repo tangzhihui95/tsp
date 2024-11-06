@@ -1,10 +1,13 @@
 package com.modern.controller;
 
 import com.modern.common.annotation.Log;
+import com.modern.common.core.domain.AjaxResult;
 import com.modern.common.core.domain.Result;
 import com.modern.common.core.page.PageInfo;
 import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
+import com.modern.common.utils.poi.ExcelUtil;
+import com.modern.model.dto.TspVehicleExportListDTO;
 import com.modern.model.dto.TspVehicleInfoDTO;
 import com.modern.model.dto.TspVehiclePageListDTO;
 import com.modern.model.vo.TspVehicleAddVO;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -106,15 +110,15 @@ public class TspVehicleController {
         return Result.ok(tspVehicleService.dealEquipment(tspEquipmentId));
     }
 
-/*    @ApiOperation("车辆信息- 导出")
+    @ApiOperation("车辆信息- 导出")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:export')")
     @Log(title = "车辆信息- 导出", businessType = BusinessType.EXPORT)
     @PostMapping({"/export"})
     public AjaxResult export(@RequestBody @Valid TspVehiclePageListVO vo) {
-        List<TspVehicleExportListDTO> list = this.tspVehicleService.exportList(vo);
+        List<TspVehicleExportListDTO> list = tspVehicleService.exportList(vo);
         ExcelUtil<TspVehicleExportListDTO> util = new ExcelUtil(TspVehicleExportListDTO.class);
-        return util.exportExcel(list, "");
-    }*/
+        return util.exportExcel(list, "车辆信息");
+    }
 
     @ApiOperation("车辆管理-导入出厂信息")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:importVehicle')")
