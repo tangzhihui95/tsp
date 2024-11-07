@@ -7,6 +7,7 @@ import com.modern.common.core.page.PageInfo;
 import com.modern.common.enums.BusinessType;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.poi.ExcelUtil;
+import com.modern.domain.TspDealer;
 import com.modern.model.dto.*;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author：tzh
@@ -116,7 +118,7 @@ public class TspVehicleController {
     public void export(HttpServletResponse response, TspVehiclePageListVO vo) {
         List<TspVehicleExportListDTO> list = tspVehicleService.exportList(vo);
         ExcelUtil<TspVehicleExportListDTO> util = new ExcelUtil(TspVehicleExportListDTO.class);
-        util.exportExcel(response,list, "车辆信息");
+        util.exportExcel(response, list, "车辆信息");
     }
 
     @ApiOperation("车辆管理-导入出厂信息")
@@ -166,20 +168,44 @@ public class TspVehicleController {
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportExFactory')")
     @Log(title = "- ", businessType = BusinessType.EXPORT)
     @PostMapping({"/exportExFactory"})
-    public void exportExFactory(HttpServletResponse response,TspVehiclePageListVO vo) {
+    public void exportExFactory(HttpServletResponse response, TspVehiclePageListVO vo) {
         List<TspVehicleExFactoryTemplateDTO> list = tspVehicleService.exportExFactory(vo);
         ExcelUtil<TspVehicleExFactoryTemplateDTO> util = new ExcelUtil(TspVehicleExFactoryTemplateDTO.class);
-        util.exportExcel(response,list, "车辆出厂信息");
+        util.exportExcel(response, list, "车辆出厂信息");
     }
 
     @ApiOperation("车辆管理-导出车辆销售信息")
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:exportSales')")
     @Log(title = "车辆管理- 导出车辆销售信息", businessType = BusinessType.EXPORT)
     @PostMapping({"/exportSales"})
-    public void exportSales(HttpServletResponse response,TspVehiclePageListVO vo) {
+    public void exportSales(HttpServletResponse response, TspVehiclePageListVO vo) {
         List<TspVehicleSaleTemplateDTO> list = tspVehicleService.exportSales(vo);
         ExcelUtil<TspVehicleSaleTemplateDTO> util = new ExcelUtil(TspVehicleSaleTemplateDTO.class);
-        util.exportExcel(response,list, "车辆销售信息");
+        util.exportExcel(response, list, "车辆销售信息");
+    }
+
+    @ApiOperation("车辆管理-根据车辆id查询绑定详情")
+    @GetMapping({"/getBind/{tspVehicleId}"})
+    public Result<List<Map<String, Object>>> getBind(@PathVariable Long tspVehicleId) {
+        return Result.ok(tspVehicleService.getBind(tspVehicleId));
+    }
+
+    @ApiOperation("车辆管理-经销商名称下拉")
+    @GetMapping({"/saleNameList"})
+    public Result<List<Map<String, String>>> saleNameList() {
+        return Result.ok(tspVehicleService.saleNameList());
+    }
+
+    @ApiOperation("车辆管理-通过经销商地址模糊查询经销商列表")
+    @GetMapping({"/saleNameListByLikeAddress"})
+    public Result<List<TspDealer>> saleNameListByLikeAddress(@RequestParam("address") String address) {
+        return Result.ok(tspVehicleService.saleNameListByLikeAddress(address));
+    }
+
+    @ApiOperation("车辆管理-根据经销商名称查询经销商地址")
+    @GetMapping({"/saleNameGetAddress/{dealerName}"})
+    public Result<Map<String, String>> saleNameGetAddress(@PathVariable("dealerName") String dealerName) {
+        return Result.ok(tspVehicleService.saleNameGetAddress(dealerName));
     }
 
 }

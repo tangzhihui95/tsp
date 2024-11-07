@@ -20,6 +20,7 @@ import com.modern.common.utils.bean.BeanUtils;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.*;
 import com.modern.enums.TspVehicleStateEnum;
+import com.modern.mapper.TspDealerMapper;
 import com.modern.mapper.TspEquipmentMapper;
 import com.modern.mapper.TspVehicleMapper;
 import com.modern.mapper.TspVehicleStdModeMapper;
@@ -94,6 +95,8 @@ public class TspVehicleService extends TspBaseService {
     private TspEquipmentRepository tspEquipmentRepository;
     @Resource
     private TspVehicleStdModeMapper tspVehicleStdModeMapper;
+    @Resource
+    private TspDealerMapper tspDealerMapper;
 
     public PageInfo<TspVehiclePageListDTO> getPageList(TspVehiclePageListVO vo) {
         log.info("车辆信息列表查询入参--------{}", vo);
@@ -1138,6 +1141,21 @@ public class TspVehicleService extends TspBaseService {
             log.error(msg, e);
         }
         return list;
+    }
+    public List<Map<String, Object>> getBind(Long tspVehicleId) {
+        return tspVehicleMapper.getBind(tspVehicleId);
+    }
+
+    public List<Map<String, String>> saleNameList() {
+        return tspDealerMapper.saleNameList();
+    }
+
+    public List<TspDealer> saleNameListByLikeAddress(String address) {
+        return tspDealerMapper.saleNameListByLikeAddress(address);
+    }
+
+    public Map<String, String> saleNameGetAddress(String dealerName) {
+        return tspDealerMapper.saleNameGetAddress(dealerName);
     }
 
 }
