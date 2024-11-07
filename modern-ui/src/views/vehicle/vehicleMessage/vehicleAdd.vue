@@ -8,16 +8,18 @@
         <el-step title="绑定信息" />
         <el-step title="出入库记录" />
     </el-steps>
-        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+
         <div v-show="active == 1">
+          <el-form ref="form1" :model="form1" :rules="rules" label-width="180px">
+          <el-table-column label="信息进度" v-if="false" prop="progress"/>
         <h4 class="form-header h4" content-position="left">基本信息</h4>
-        <el-form-item label="信息进度" prop="progress" v-if="false" :disabled="true"/>
+        <el-table-column label="车辆ID" v-if="false" prop="tspvehicleId"/>
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
         <el-form-item label="车辆厂商" prop="providerName":required="true" >
           <el-input
-            v-model="form.providerName"
+            v-model="form1.providerName"
             style="width: 100%"
             :disabled="true"
             clearable
@@ -25,7 +27,7 @@
         </el-form-item>
         <el-form-item label="车辆型号" prop="vehicleTypeModel" label-width="120px">
       <el-cascader
-        v-model="form.vehicleTypeModel"
+        v-model="form1.vehicleTypeModel"
         style="width:100%"
         :options="option"
         @change="handleChange"
@@ -34,7 +36,7 @@
        </el-form-item>
         <el-form-item label="CDU序列号" prop="cduNum" >
           <el-input
-            v-model="form.cduNum"
+            v-model="form1.cduNum"
             placeholder="请输入CDU序列号"
             style="width: 100%"
             clearable
@@ -44,14 +46,14 @@
         <div class="itemInline">
         <el-form-item label="车辆配置名称" prop="configureName" :required="true">
           <el-input
-            v-model="form.configureName"
+            v-model="form1.configureName"
             placeholder="请输入车辆配置名称"
             style="width:100%"
             clearable
           />
         </el-form-item>
         <el-form-item label="外观颜色" prop="color" :required="true">          
-            <el-select v-model="form.color" placeholder="请选择外观颜色"clearable>
+            <el-select v-model="form1.color" placeholder="请选择外观颜色"clearable>
             <el-option
               v-for="dict1 in dict.type.vehicle_color"
               :key="dict1.value"
@@ -62,7 +64,7 @@
           </el-form-item> 
           <el-form-item label="VIN" prop="vin" :required="true">
           <el-input
-            v-model="form.vin"
+            v-model="form1.vin"
             placeholder="请输入VIN"
             style="width:100%"
             clearable
@@ -72,24 +74,24 @@
         <div class="itemInline">
           <el-form-item label="批次号" prop="batchNo" :required="true">
           <el-input
-            v-model="form.batchNo"
+            v-model="form1.batchNo"
             placeholder="请输入批次号"
             style="width: 100%"
             clearable
           />
         </el-form-item>
         <el-form-item label="出厂日期" prop="exFactoryDate">
-        <el-date-picker v-model="form.exFactoryDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-date-picker v-model="form1.exFactoryDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
       <el-form-item label="下线日期" prop="operateDate">
-        <el-date-picker v-model="form.operateDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-date-picker v-model="form1.operateDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
     </div>
     <div class="itemInline">
         <el-form-item label="电池包规格" prop="essModel" :required="true">          
-            <el-select v-model="form.essModel" placeholder="请选择电池包规格" clearable>
+            <el-select v-model="form1.essModel" placeholder="请选择电池包规格" clearable>
             <el-option
               v-for="dict2 in dict.type.ess_model"
               :key="dict2.value"
@@ -100,7 +102,7 @@
           </el-form-item>
         <el-form-item label="电池包编号" prop="essNum" :required="true">
           <el-input
-            v-model="form.essNum"
+            v-model="form1.essNum"
             placeholder="请输入电池包序列号"
             style="width: 100%"
             clearable
@@ -108,7 +110,7 @@
         </el-form-item>
         <el-form-item label="发动机序列号" prop="engineNum">
           <el-input
-            v-model="form.engineNum"
+            v-model="form1.engineNum"
             placeholder="请输入发动机序列号"
             style="width: 100%"
             clearable
@@ -117,7 +119,7 @@
     </div>
     <div class="itemInline">
         <el-form-item label="电动机品牌" prop="motorBrand" :required="true">          
-            <el-select v-model="form.motorBrand" placeholder="请选择电动机品牌" clearable>
+            <el-select v-model="form1.motorBrand" placeholder="请选择电动机品牌" clearable>
             <el-option
               v-for="dict3 in dict.type.motor_brand"
               :key="dict3.value"
@@ -128,7 +130,7 @@
           </el-form-item>
         <el-form-item label="电动机序列号" prop="motorNum" :required="true">
           <el-input
-            v-model="form.motorNum"
+            v-model="form1.motorNum"
             placeholder="请输入电动机序列号"
             style="width: 100%"
             clearable
@@ -204,7 +206,7 @@
       </el-table>
         <h4 class="form-header h4" content-position="left">其他信息</h4>
         <el-form-item label="标签" prop="label">          
-            <el-select v-model="form.label" placeholder="请选择" clearable>
+            <el-select v-model="form1.label" placeholder="请选择" clearable>
             <el-option
               v-for="dict4 in dict.type.label_type"
               :key="dict4.value"
@@ -214,21 +216,24 @@
           </el-select>
           </el-form-item>    
         <el-form-item label="备注" prop="remark">
-        <el-input v-model="form.remark" type="textarea" placeholder="请输入备注"
+        <el-input v-model="form1.remark" type="textarea" placeholder="请输入备注"
           :autosize="{minRows: 4, maxRows: 4}" :style="{width: '70%'}"></el-input>
       </el-form-item> 
+        </el-form>
       </div>            
         <div v-show="active == 2">
+          <el-form ref="form2" :model="form2" :rules="rules" label-width="180px"> 
+            <el-table-column label="信息进度" v-if="false" prop="progress"/>
           <h4 class="form-header h4" content-position="left">销售信息</h4>
         <div class="itemInline">  
         <el-form-item label="购买领域" prop="purchaserState" label-width="120px" >
-            <el-radio-group v-model="form.purchaserState" ref="radioGroup">
+            <el-radio-group v-model="form2.purchaserState" ref="radioGroup">
               <el-radio :label="1">私人用车</el-radio>
               <el-radio :label="0">单位用车</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="车辆用途" prop="purpose" :required="true">          
-            <el-select v-model="form.purpose" placeholder="请选择车辆用途" clearable>
+            <el-select v-model="form2.purpose" placeholder="请选择车辆用途" clearable>
             <el-option
               v-for="dict5 in dict.type.purpose"
               :key="dict5.value"
@@ -238,7 +243,7 @@
           </el-select>
           </el-form-item>
           <el-form-item label="是否是新车" prop="newVehicleFlag" :required="true">          
-            <el-select v-model="form.newVehicleFlag" placeholder="是否是新车" clearable>
+            <el-select v-model="form2.newVehicleFlag" placeholder="是否是新车" clearable>
             <el-option
               v-for="dict6 in dict.type.is_new_vehicle"
               :key="dict6.value"
@@ -251,7 +256,7 @@
         <div class="itemInline">  
           <el-form-item label="购买方名称" prop="purchaser" :required="true">
           <el-input
-            v-model="form.purchaser"
+            v-model="form2.purchaser"
             placeholder="请输入购买方名称"
             style="width: 100%"
             clearable
@@ -259,31 +264,31 @@
         </el-form-item>
         <el-form-item label="身份证号" prop="vehicleIdCard" :required="true">
           <el-input
-            v-model="form.vehicleIdCard"
+            v-model="form2.vehicleIdCard"
             placeholder="请输入身份证号"
             style="width: 100%"
             clearable
           />
         </el-form-item>   
         <el-form-item label="价税合计(小写)" prop="priceTax">
-        <el-input-number v-model="form.priceTax"></el-input-number>
+        <el-input-number v-model="form2.priceTax"></el-input-number>
         </el-form-item>
         </div>
         <div class="itemInline">  
           <el-form-item label="发票号码" prop="invoiceNo" :required="true">
           <el-input
-            v-model="form.invoiceNo"
+            v-model="form2.invoiceNo"
             placeholder="请输入发票号码"
             style="width: 100%"
             clearable
           />
         </el-form-item> 
         <el-form-item label="开票日期" prop="invoicingDate">
-        <el-date-picker v-model="form.invoicingDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-date-picker v-model="form2.invoicingDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '100%'}" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>
       <el-form-item label="是否三包" prop="isSanBao" label-width="120px" >
-            <el-radio-group v-model="form.isSanBao" ref="radioGroup">
+            <el-radio-group v-model="form2.isSanBao" ref="radioGroup">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
@@ -291,7 +296,7 @@
         </div>
         <div class="itemInline">  
           <el-form-item label="销货单位名称" prop="salesUnitName">          
-            <el-select v-model="form.salesUnitName" placeholder="请选择销货单位名称" clearable>
+            <el-select v-model="form2.salesUnitName" placeholder="请选择销货单位名称" clearable>
             <el-option
               v-for="dict7 in dict.type.sale_name"
               :key="dict7.value"
@@ -302,14 +307,14 @@
           </el-form-item>
           <el-form-item label="销货单位地址" prop="salesUnitAddress" >
           <el-input
-            v-model="form.salesUnitAddress"
+            v-model="form2.salesUnitAddress"
             style="width: 100%"
             :disabled="true"
             clearable
           />
         </el-form-item>
         <el-form-item label="车辆状态" prop="vehicleStatus">          
-            <el-select v-model="form.vehicleStatus" placeholder="请选择车辆状态" clearable>
+            <el-select v-model="form2.vehicleStatus" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict8 in dict.type.state"
               :key="dict8.value"
@@ -322,7 +327,7 @@
         <div class="itemInline"> 
           <el-form-item label="销售渠道名称" prop="salesChannel" :required="true">
           <el-input
-            v-model="form.salesChannel"
+            v-model="form2.salesChannel"
             placeholder="请输入销售渠道名称"
             style="width: 100%"
             clearable
@@ -330,14 +335,14 @@
         </el-form-item> 
         <el-form-item label="办理员工姓名" prop="employeeName" :required="true">
           <el-input
-            v-model="form.employeeName"
+            v-model="form2.employeeName"
             placeholder="请输入办理员工姓名"
             style="width: 100%"
             clearable
           />
         </el-form-item> 
         <el-form-item label="销售渠道类型" prop="channelType" :required="true">          
-            <el-select v-model="form.channelType" placeholder="请选择销售渠道类型" clearable>
+            <el-select v-model="form2.channelType" placeholder="请选择销售渠道类型" clearable>
             <el-option
               v-for="dict9 in dict.type.channel_type"
               :key="dict9.value"
@@ -349,7 +354,7 @@
         </div>
         <div class="itemInline">  
           <el-form-item label="经销商省份" prop="awardProvince">          
-            <el-select v-model="form.awardProvince" placeholder="请选择省" clearable>
+            <el-select v-model="form2.awardProvince" placeholder="请选择省" clearable>
             <el-option
               v-for="item in provinces"
               :key="item.value"
@@ -360,7 +365,7 @@
           </el-select>
           </el-form-item>
           <el-form-item label="经销商城市" prop="awardCity">          
-            <el-select v-model="form.awardCity" placeholder="请选择市" clearable>
+            <el-select v-model="form2.awardCity" placeholder="请选择市" clearable>
             <el-option
               v-for="item in cities"
               :key="item.value"
@@ -371,7 +376,7 @@
           </el-select>
           </el-form-item>
           <el-form-item label="经销商区县" prop="awardArea">          
-            <el-select v-model="form.awardArea" placeholder="请选择区" clearable>
+            <el-select v-model="form2.awardArea" placeholder="请选择区" clearable>
             <el-option
               v-for="item in area"
               :key="item.value"
@@ -381,7 +386,7 @@
           </el-select>
           </el-form-item>
           <el-form-item label="经销商" prop="dealerId" :required="true">          
-            <el-select v-model="form.dealerId" placeholder="请选择经销商" clearable>
+            <el-select v-model="form2.dealerId" placeholder="请选择经销商" clearable>
             <el-option
               v-for="dict7 in dict.type.sale_name"
               :key="dict7.value"
@@ -403,13 +408,16 @@
           <i class="el-icon-plus"></i>
         </el-upload>
         </el-form-item>
+      </el-form>
         </div>
       <div v-show="active == 3">
+        <el-form ref="form3" :model="form3" :rules="rules" label-width="180px">
+          <el-table-column label="信息进度" v-if="false" prop="progress"/>
         <h4 class="form-header h4" content-position="left">上牌信息</h4>
         <div class="itemInline">  
           <el-form-item label="车管所名称" prop="awardPlaceName" :required="true">
           <el-input
-            v-model="form.awardPlaceName"
+            v-model="form3.awardPlaceName"
             placeholder="请输入车管所名称"
             style="width: 100%"
             clearable
@@ -422,23 +430,23 @@
 		   placeholder="请选择"
 		   expand-trigger="hover"
 		   ref="cascaderAddr"
-		   v-model="form.selectedOptions"
+		   v-model="form3.selectedOptions"
        clerable
 		   @change="handleChange1">
 	     </el-cascader>
      </el-form-item>
      <el-form-item label="注册详细地址" prop="awardPlaceAddress">
-        <el-input v-model="form.awardPlaceAddress" type="textarea" placeholder="请输入注册详细地址"
+        <el-input v-model="form3.awardPlaceAddress" type="textarea" placeholder="请输入注册详细地址"
           :autosize="{minRows: 2, maxRows: 2}" :style="{width: '100%'}"></el-input>
       </el-form-item>      
         </div>
         <div class="itemInline">
           <el-form-item label="上牌日期" prop="currentUpPlaceDate">
-        <el-date-picker v-model="form.currentUpPlaceDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+        <el-date-picker v-model="form3.currentUpPlaceDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
           :style="{width: '95%'}" placeholder="选择日期时间" clearable></el-date-picker>
       </el-form-item>  
       <el-form-item label="车牌颜色" prop="plateColour" :required="true">          
-            <el-select v-model="form.plateColour" placeholder="请选择车牌颜色" clearable>
+            <el-select v-model="form3.plateColour" placeholder="请选择车牌颜色" clearable>
             <el-option
               v-for="dict8 in dict.type.plate_colour"
               :key="dict8.value"
@@ -450,7 +458,7 @@
       
       <div class="join1" style="margin-right: 0px;">
       <el-form-item label="车牌号" prop="plateCodeName">
-            <el-select v-model="form.plateCodeName" placeholder="地区" style="width: 35%" clearable>
+            <el-select v-model="form3.plateCodeName" placeholder="地区" style="width: 35%" clearable>
             <el-option
               v-for="item in plateCodeItems"
               :key="item.value"
@@ -463,7 +471,7 @@
       <div class="join2" style="margin-left: 0px;">
       <el-form-item  prop="plateCode">
         <el-input
-            v-model="form.plateCode"
+            v-model="form3.plateCode"
             placeholder="请输入车牌号"
             style="width: 80%"
             clearable
@@ -483,13 +491,16 @@
           <i class="el-icon-plus"></i>
         </el-upload>
         </el-form-item>
+        </el-form>
       </div>
       <div v-show="active == 4">
+        <el-form ref="form4" :model="form4" :rules="rules" label-width="180px">
+          <el-table-column label="信息进度" v-if="false" prop="progress"/>
         <h4 class="form-header h4" content-position="left">车主绑定信息</h4>
       <div class="itemInline"> 
         <el-form-item label="车主手机号" prop="mobile" :required="true">
           <el-input
-            v-model="form.mobile"
+            v-model="form4.mobile"
             placeholder="请输入车主手机号"
             style="width: 100%"
             clearable
@@ -497,7 +508,7 @@
         </el-form-item> 
         <el-form-item label="车主姓名" prop="realName" :required="true">
           <el-input
-            v-model="form.realName"
+            v-model="form4.realName"
             placeholder="请输入车主姓名"
             style="width: 100%"
             clearable
@@ -505,7 +516,7 @@
         </el-form-item>
         <el-form-item label="车主身份证号" prop="idCard" :required="true">
           <el-input
-            v-model="form.idCard"
+            v-model="form4.idCard"
             placeholder="请输入车主身份证号"
             style="width: 100%"
             clearable
@@ -589,9 +600,12 @@
       :limit.sync="form.pageSize"
       @pagination="listdeviceType"
     /> -->
+    </el-form>
     </div>
 
       <div v-show="active == 5">
+    <el-form ref="form5" :model="form5" :rules="rules" label-width="180px">
+      <el-table-column label="信息进度" v-if="false" prop="progress"/>
       <h4 class="form-header h4" content-position="left">出入库记录</h4>
        <el-table ref="refTable4" v-loading="loading" :data="listBoxRecord">
         <el-table-column label="序号" type="index" align="center">
@@ -614,13 +628,13 @@
           </template> 
         </el-table-column>
       </el-table>
+    </el-form>
       </div>
-     </el-form>
     <!-- 设置页面按钮 -->
      <div  class="button-footer">
-    <el-button v-if="active < 5" type="primary" :disabled="isEdit" style="margin-top: 12px" @click="next">保存</el-button> 
+    <el-button v-if="active < 5" type="primary"  style="margin-top: 12px" @click="next">保存</el-button> 
     <el-button v-if="active > 1" type="primary"  style="margin-top: 12px" @click="pre">上一步</el-button>
-    <el-button v-if="active < 5" type="warning" :disabled="isEdit" style="margin-top: 12px" @click="next">下一步</el-button>
+    <el-button v-if="active < 5" type="warning"  style="margin-top: 12px" @click="next">下一步</el-button>
     <el-button v-if="active < 5" style="margin-top: 12px" @click="cancel">取消</el-button>
     <el-button v-if="active > 4" style="margin-top: 12px" @click="submit">完成</el-button>
      </div>
@@ -629,9 +643,9 @@
 
   <script>
 import { regionData } from 'element-china-area-data';
-import { addVehicleMessage } from '../../../api/vehicle/vehicleMessage';
+import { addVehicleMessage,getVehicleMessage,updateVehicleMessage } from '../../../api/vehicle/vehicleMessage';
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
-import { Progress } from 'element-ui';
+
 
 export default {
   name: "vehicleAdd",
@@ -640,14 +654,33 @@ export default {
   data() {
     return {
       //车辆信息表单
-      form: {
+      form1: {
+      
         pageNum: 1,
         pageSize:10,
         providerName: '摩登汽车有限公司',
       },
+      form2:{
+        
+        pageNum: 1,
+        pageSize:10,
+      },
+      form3:{
+      
+        pageNum: 1,
+        pageSize:10,
+      },
+      form4:{
+        
+        pageNum: 1,
+        pageSize:10,
+      },
+      form5:{
+       
+        pageNum: 1,
+        pageSize:10,
+      },
       active: 1,
-      //是否编辑
-      isEdit: true,
       //历史绑定设备
       listHistoryEquipment: [],
       //当前绑定设备
@@ -807,15 +840,30 @@ export default {
     }
   },
 
-  //获取车型下拉框
+  //获取车型下拉框及编辑信息
   created() {
    
     this.getVehicleType();
+    const tspVehicleId = this.$route.params && this.$route.params.tspVehicleId;
+    if(tspVehicleId){
+      this.form1.tspVehicleId = tspVehicleId;
+      getVehicleMessage(this.form1.tspVehicleId).then(response => {
+          this.form1 = response.data;
+          this.form1.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId];
+          this.form2 = response.data;
+          this.form3 = response.data;
+          this.form4 = response.data;
+          this.form5 = response.data;
+      } 
+   )
+    }
+
   },
 
   methods: {
+
 //选择车牌号
-selectItem(item) {
+    selectItem(item) {
       this.form.plateCode = item;
       this.showList = false;
       this.$emit('selected', item);
@@ -824,7 +872,7 @@ selectItem(item) {
     getVehicleType() {
 
       this.vehicleTypeModel = []
-      vehicleTypeModel(this.form).then(response => {
+      vehicleTypeModel(this.form1).then(response => {
         this.option = response.data;
       });
     },
@@ -834,17 +882,17 @@ selectItem(item) {
       console.log(value)
       if(value.length>1)
     {
-    this.form.tspVehicleModelId=value[0]
-    this.form.tspVehicleStdModelId=value[1]
-    console.log(this.form.tspVehicleModelId)
-    console.log(this.form.tspVehicleStdModelId)
+    this.form1.tspVehicleModelId=value[0]
+    this.form1.tspVehicleStdModelId=value[1]
+    console.log(this.form1.tspVehicleModelId)
+    console.log(this.form1.tspVehicleStdModelId)
     }
     else
     {  
-    this.form.tspVehicleModelId=value[0]
-    this.form.tspVehicleStdModelId=undefined
-    console.log(this.form.tspVehicleModelId)
-    console.log(this.form.tspVehicleStdModelId)
+    this.form1.tspVehicleModelId=value[0]
+    this.form1.tspVehicleStdModelId=undefined
+    console.log(this.form1.tspVehicleModelId)
+    console.log(this.form1.tspVehicleStdModelId)
     }
 
     },
@@ -854,10 +902,10 @@ selectItem(item) {
       //console.log(this.form.awardProvince)
       this.cities = [];
       this.area = [];
-      this.form.awardCity = "";
-      this.form.awardArea = "";
+      this.form2.awardCity = "";
+      this.form2.awardArea = "";
       let cityItem = this.provinces.filter(
-          (item) => item.value === this.form.awardProvince
+          (item) => item.value === this.form2.awardProvince
         );
         if (cityItem[0]) {
           this.cities = cityItem[0].children;
@@ -865,71 +913,109 @@ selectItem(item) {
       },
     changeCity() {
       console.log("城市选择")
-      console.log(this.form.awardCity)
+      console.log(this.form2.awardCity)
       this.area = [];
-      this.form.awardArea = "";
+      this.form2.awardArea = "";
       let areaItem = this.cities.filter(
-          (item) => item.value === this.form.awardCity
+          (item) => item.value === this.form2.awardCity
         );
         if (areaItem[0]) {
           this.area = areaItem[0].children;
         }
-        console.log(this.form.awardArea);
+        console.log(this.form2.awardArea);
 
        },
 // 上牌信息省市区
     handleChange1(value) {
 
 
-        this.form.awardProvince = value[0];
-        this.form.awardCity = value[1];
-        this.form.awardArea = value[2];
+        this.form3.awardProvince = value[0];
+        this.form3.awardCity = value[1];
+        this.form3.awardArea = value[2];
 			  console.log(this.selectedOptions)
         console.log(value)
 			
       },
-//判断信息完成进度
-    checkProgress() {
-      // if(this.form.tspVehicleModelId!=undefined && this.form.tspVehicleStdModelId!=undefined && this.form.vin!=undefined
-      //  && this.form.configureName!=undefined && this.form.color!=undefined && this.form.operateDate!=undefined 
-      //  && this.form.batchNo!=undefined && this.form.exFactoryDate!=undefined && this.form.essModel!=undefined
-      // && this.form.essNum!=undefined && this.form.motorBrand!=undefined && this.form.motorNum!=undefined ){
-        
-      //   this.form.progress = 0;
-      //   this.form.isEdit = false;
-      //  }
-      // else if(this.form.purpose!=undefined && this.form.newVehicleFlag!=undefined && this.form.purchaser!=undefined 
-      //        && this.form.invoiceNo!=undefined ){
 
-      // }
-      // else if(){
-
-      // }
-
-    },
 //下一步/保存按钮
     next() {
-              if (this.active++ > 5) this.active = 1
-
-        this.$refs["form"].validate(valid => {
+      
+      if (this.active == 1) {
+        
+        this.$refs["form1"].validate(valid => {
           if (valid) {
-            if (this.form.tspVehicleStdModelId != undefined) {
-              addVehicleMessage(this.form).then(response => {
+            this.form1.progress = 1;
+            if (this.form1.tspVehicleId!= undefined) {
+              updateVehicleMessage(this.form1).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.open = false;
-                this.getList();
               });
             } else {
-              addVehicleMessage(this.form).then(response => {
+              addVehicleMessage(this.form1).then(response => {
                 this.$modal.msgSuccess("保存成功");
-                this.open = false;
-                this.getList();
               });
             }
           }
         });
               
-          },
+      }
+      else if (this.active == 2) {
+
+        this.$refs["form2"].validate(valid => {
+          if (valid) {
+            this.form2.progress = 2;
+            if (this.form1.tspVehicleId!= undefined) {
+              updateVehicleMessage(this.form2).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            } else {
+              addVehicleMessage(this.form2).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            }
+          }
+        });
+      }
+      else if (this.active == 3) {
+
+        this.$refs["form3"].validate(valid => { 
+          if (valid) {
+            this.form3.progress = 3;
+            if (this.form1.tspVehicleId!= undefined) {
+              updateVehicleMessage(this.form3).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            } else {
+              addVehicleMessage(this.form3).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            }
+          }
+        });
+      }
+      else if (this.active == 4) {
+
+        this.$refs["form4"].validate(valid => {
+          if (valid) {
+            this.form4.progress = 4;
+            if (this.form1.tspVehicleId!= undefined) {
+              updateVehicleMessage(this.form4).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            } else {
+              addVehicleMessage(this.form4).then(response => {
+                this.$modal.msgSuccess("保存成功");
+              });
+            }
+          }
+        });
+      }
+      else
+      {
+        this.form5.progress = 5;
+      }
+  if (this.active++ > 5) this.active = 1
+   },
+
 // 上一步按钮
     pre() {
               if (this.active-- < 2) this.active = 1
@@ -938,14 +1024,14 @@ selectItem(item) {
     cancel(){
             
               this.$store.dispatch("tagsView/delView", this.$route);
-              //this.$router.go(-1);
-              this.$router.push("/vehicle/vehicle-message/index/");
+              this.$router.go(-1);
+              //this.$router.push("/vehicle/vehicle-message/index/");
         },
 //完成按钮
     submit() {
               this.$store.dispatch("tagsView/delView", this.$route);
-              //this.$router.go(-1);
-              this.$router.push("/vehicle/vehicle-message/index/");
+              this.$router.go(-1);
+              //this.$router.push("/vehicle/vehicle-message/index/");
         },
 // 图片上传成功
     imgSuccess(res, file, fileList) {

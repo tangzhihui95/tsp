@@ -45,6 +45,14 @@ export function updateVehicleModel(data) {
   })
 }
 
+// 二级型号详情
+export function vehicleModelDetail(tspVehicleStdModelId) {
+  return request({
+    url: '/tsp/vehicle/model/getByTspStdModelId/' + tspVehicleStdModelId,
+    method: 'get'
+  })  
+}
+
 // 删除单条车辆类型
 export function delVehicleType(tspVehicleModelId) {
   return request({
