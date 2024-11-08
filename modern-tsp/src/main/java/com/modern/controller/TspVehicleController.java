@@ -208,4 +208,10 @@ public class TspVehicleController {
         return Result.ok(tspVehicleService.saleNameGetAddress(dealerName));
     }
 
+    @ApiOperation("车辆管理-单车监控列表")
+    @PostMapping({"/listVehicle"})
+    public Result<PageInfo<TspVehiclePageListDTO>> listVehicle(@RequestBody @Valid TspVehiclePageListVO vo) {
+        return Result.ok(tspVehicleService.listVehicle(vo));
+    }
+
 }

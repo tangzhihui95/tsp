@@ -54,4 +54,7 @@ public interface TspVehicleMapper extends BaseMapperPlus<TspVehicle> {
     @Select({"SELECT mobile as 'mobile',real_name as 'realName',id_card as 'idCard' FROM tsp_use_vehicle_record WHERE tsp_vehicle_id = #{tspVehicleId}"})
     List<Map<String, Object>> getBind(Long paramLong);
 
+    @Select({"SELECT COUNT(t.id) FROM tsp_vehicle t LEFT JOIN tsp_vehicle_std_model a ON t.tsp_vehicle_std_model_id = a.id LEFT JOIN tsp_vehicle_model g ON g.id = a.tsp_vehicle_model_id LEFT JOIN tsp_user b on t.tsp_user_id = b.id LEFT JOIN tsp_equipment c on t.tsp_equipment_id = c.id LEFT JOIN tsp_vehicle_license e on e.tsp_vehicle_id = t.id LEFT JOIN tsp_equipment f on f.id = t.tsp_equipment_id LEFT JOIN tsp_vehicle_audit d on t.id = d.tsp_vehicle_id ${ew.customSqlSegment}"})
+    Integer getCount(@Param("ew") QueryWrapper<TspVehicle> paramQueryWrapper);
+
 }
