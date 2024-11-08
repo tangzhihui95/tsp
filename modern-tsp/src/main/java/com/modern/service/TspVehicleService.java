@@ -1,6 +1,7 @@
 package com.modern.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson2.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -19,7 +20,10 @@ import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.bean.BeanUtils;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.*;
+import com.modern.entity.VehicleIntegrate;
 import com.modern.enums.TspVehicleStateEnum;
+import com.modern.framework.config.RedisConfig;
+import com.modern.mapper.TspDealerMapper;
 import com.modern.mapper.TspEquipmentMapper;
 import com.modern.mapper.TspVehicleMapper;
 import com.modern.mapper.TspVehicleStdModeMapper;
@@ -30,6 +34,9 @@ import com.modern.system.service.ISysRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,8 +44,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -94,6 +103,12 @@ public class TspVehicleService extends TspBaseService {
     private TspEquipmentRepository tspEquipmentRepository;
     @Resource
     private TspVehicleStdModeMapper tspVehicleStdModeMapper;
+    @Resource
+    private TspDealerMapper tspDealerMapper;
+    @Autowired
+    private RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    RedisConfig redisConfig;
 
     public PageInfo<TspVehiclePageListDTO> getPageList(TspVehiclePageListVO vo) {
         log.info("车辆信息列表查询入参--------{}", vo);
@@ -1138,6 +1153,90 @@ public class TspVehicleService extends TspBaseService {
             log.error(msg, e);
         }
         return list;
+    }
+
+    public List<Map<String, Object>> getBind(Long tspVehicleId) {
+        return tspVehicleMapper.getBind(tspVehicleId);
+    }
+
+    public List<Map<String, String>> saleNameList() {
+        return tspDealerMapper.saleNameList();
+    }
+
+    public List<TspDealer> saleNameListByLikeAddress(String address) {
+        return tspDealerMapper.saleNameListByLikeAddress(address);
+    }
+
+    public Map<String, String> saleNameGetAddress(String dealerName) {
+        return tspDealerMapper.saleNameGetAddress(dealerName);
+    }
+
+    public PageInfo<TspVehiclePageListDTO> listVehicle(TspVehiclePageListVO vo) {
+        log.info("获取车辆列表-----------------TspVehiclePageListVO={}", vo);
+        QueryWrapper<TspVehicle> ew = tspVehicleRepository.getPageListEw(vo);
+        Integer count = tspVehicleMapper.getCount(ew);
+        if (count.intValue() <= 10)
+            vo.setPageNum(Integer.valueOf(1));
+        IPage<TspVehiclePageListDTO> page = tspVehicleMapper.getPageList(Page.of(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
+        for (TspVehiclePageListDTO record : page.getRecords()) {
+            RedisConfig redisConfig = new RedisConfig();
+            RedisTemplate<Object, Object> redisTemplate = redisConfig.redisTemplate(redisConnectionFactory);
+            HashOperations<Object, Object, Object> hashOps = redisTemplate.opsForHash();
+            List<Object> values = hashOps.values("VehicleRealtimeData:" + record.getVin());
+            if (CollectionUtil.isNotEmpty(values) && values.size() != 0) {
+                LocalDateTime collectTime = null;
+                log.info("获取整车数据中---------------page={}", page);
+                Map<String, Object> integrateJson = (Map<String, Object>) readListFromCache("VehicleRealtimeData:" + record.getVin(), "VehicleIntegrate");
+                if (CollectionUtil.isNotEmpty(integrateJson)) {
+                    collectTime = convertToLocalDateTime((JSONArray) integrateJson.get("collectTime"));
+                    integrateJson.remove("collectTime");
+                    List<VehicleIntegrate> vehicleIntegrates = JSONArray.parseArray("[" + integrateJson + "]", VehicleIntegrate.class);
+                    if (vehicleIntegrates != null && vehicleIntegrates.size() != 0) {
+                        record.setIsOnline(calcVehicleStateExt(vehicleIntegrates.get(0), collectTime, LocalDateTime.now()));
+                        continue;
+                    }
+                    record.setIsOnline(Boolean.valueOf(false));
+                }
+                continue;
+            }
+            record.setIsOnline(Boolean.valueOf(false));
+        }
+        return PageInfo.of(page, page.getTotal());
+    }
+
+    private <T> Object readListFromCache(String key, String hashKey) {
+        try {
+            Object o = redisConfig.redisTemplate(redisConnectionFactory).opsForHash().get(key, hashKey);
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static LocalDateTime convertToLocalDateTime(JSONArray collectTimeJSONArray) {
+        try {
+            int h = (collectTimeJSONArray.size() > 3) ? ((Integer) collectTimeJSONArray.get(3)).intValue() : 0;
+            int m = (collectTimeJSONArray.size() > 4) ? ((Integer) collectTimeJSONArray.get(4)).intValue() : 0;
+            int s = (collectTimeJSONArray.size() > 5) ? ((Integer) collectTimeJSONArray.get(5)).intValue() : 0;
+            LocalDateTime collectTime = LocalDateTime.of(((Integer) collectTimeJSONArray.get(0)).intValue(), Month.of(((Integer) collectTimeJSONArray.get(1)).intValue()), ((Integer) collectTimeJSONArray.get(2)).intValue(), h, m, s, 0);
+            return collectTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalDateTime.MIN;
+        }
+    }
+
+    private Boolean calcVehicleStateExt(VehicleIntegrate dto, LocalDateTime collectTime, LocalDateTime now) {
+        log.info("车辆状态,当前时间------------{}---------------{}", new Object[]{dto, collectTime, now});
+        if (Objects.nonNull(dto) && Objects.nonNull(collectTime)) {
+            Duration duration = Duration.between(collectTime, now);
+            if (duration.toMillis() > 60000L)
+                return Boolean.valueOf(false);
+            return Boolean.valueOf(true);
+        }
+        return Boolean.valueOf(false);
     }
 
 }
