@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author：tzh
@@ -49,4 +50,11 @@ public interface TspVehicleMapper extends BaseMapperPlus<TspVehicle> {
 
     @Select({"SELECT t.vin as 'vin',t.purpose as 'purpose',x.purchaser_state as 'purchaserState',x.purchaser as 'purchaser',x.vehicle_id_card as 'vehicleIdCard',x.price_tax as 'priceTax',x.invoice_no as 'invoiceNo',DATE_FORMAT( x.invoicing_date, '%Y-%m-%d' ) AS 'invoicingDate',x.is_san_bao as 'isSanBao',x.sales_unit_name as 'salesUnitName',x.sales_unit_address 'salesUnitAddress',y.vehicle_status as 'vehicleStatus',y.sales_channel as 'salesChannel',y.channel_type as 'channelType',y.employee_name as 'employeeName',y.new_vehicle_flag as 'newVehicleFlag' FROM tsp_vehicle t RIGHT JOIN tsp_vehicle_market x ON x.tsp_vehicle_id = t.id LEFT JOIN tsp_vehicle_std_model a ON a.id = t.tsp_vehicle_std_model_id LEFT JOIN tsp_user b ON b.id = t.tsp_user_id LEFT JOIN tsp_equipment f ON f.id = t.tsp_equipment_id LEFT JOIN tsp_equipment_model d ON d.id = f.tsp_equipment_model_id LEFT JOIN tsp_vehicle_license e ON e.tsp_vehicle_id = t.id LEFT JOIN tsp_vehicle_other y ON t.id = y.tsp_vehicle_id ${ew.customSqlSegment}"})
     List<TspVehicleSaleTemplateDTO> getSalesList(Page<Object> paramPage, @Param("ew") QueryWrapper<TspVehicle> paramQueryWrapper);
+
+    @Select({"SELECT mobile as 'mobile',real_name as 'realName',id_card as 'idCard' FROM tsp_use_vehicle_record WHERE tsp_vehicle_id = #{tspVehicleId}"})
+    List<Map<String, Object>> getBind(Long paramLong);
+
+    @Select({"SELECT COUNT(t.id) FROM tsp_vehicle t LEFT JOIN tsp_vehicle_std_model a ON t.tsp_vehicle_std_model_id = a.id LEFT JOIN tsp_vehicle_model g ON g.id = a.tsp_vehicle_model_id LEFT JOIN tsp_user b on t.tsp_user_id = b.id LEFT JOIN tsp_equipment c on t.tsp_equipment_id = c.id LEFT JOIN tsp_vehicle_license e on e.tsp_vehicle_id = t.id LEFT JOIN tsp_equipment f on f.id = t.tsp_equipment_id LEFT JOIN tsp_vehicle_audit d on t.id = d.tsp_vehicle_id ${ew.customSqlSegment}"})
+    Integer getCount(@Param("ew") QueryWrapper<TspVehicle> paramQueryWrapper);
+
 }

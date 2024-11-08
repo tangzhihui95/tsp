@@ -293,6 +293,7 @@
          <el-tab-pane label="基本信息" name="first">
           <h4 class="form-header h4" content-position="left">基本信息</h4>
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
+        <el-table-column label="车辆ID" v-if="false" prop="tspvehicleId"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
         <el-form-item label="车辆厂商" prop="providerName":required="true" >
@@ -961,7 +962,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
-import { listVehicleMessage } from "../../../api/vehicle/vehicleMessage";
+import { listVehicleMessage,getVehicleMessage,deleteVehicleMessage,batchDeleteVehicleMessage,scrapVehicleMessage } from "../../../api/vehicle/vehicleMessage";
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 
@@ -1140,8 +1141,10 @@ export default {
       if(row.id!= undefined) {
         
         this.title = "编辑车辆";
-        this.$router.push("/vehicle/vehicle-add/index/"+this.title);
-        this.form = row;
+        const tspVehicleId=row.id;
+
+        this.$router.push("/vehicle/vehicle-edit/index/"+tspVehicleId);
+        
       }
     },
     /** 详情按钮操作 */
@@ -1149,8 +1152,15 @@ export default {
     handleDetail(row) {
 
       this.title = "查看详情";
+      
       this.open = true;
+      getVehicleMessage(row.id).then(response => {
+      
+        this.form = response.data;
 
+        this.form.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId]
+      
+      });
     },
     //重置详情表单
     reset() {
@@ -1193,13 +1203,13 @@ export default {
     /** 导入出厂信息按钮操作 */
     handleImport() {  
         this.upload.title = "导入出厂信息";
-        this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentModel";
+        this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/vehicle/importVehicle";
         this.upload.open = true;
       },
     /** 导入销售信息按钮操作 */
     handleImport2() {  
         this.upload.title = "导入销售信息";
-        this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/equipmentType/importEquipmentModel";
+        this.upload.url =process.env.VUE_APP_BASE_API+ "/tsp/vehicle/importSales";
         this.upload.open = true;
       },
     /** 下载模板操作 */
@@ -1241,7 +1251,7 @@ export default {
       if(vehicleId!= undefined) {
 
         this.$modal.confirm('是否确认删除VIN为"' + row.vin + '"的数据项？').then(() => {
-          return deldeviceType(vehicleId);
+          return deleteVehicleMessage(vehicleId);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
@@ -1258,7 +1268,7 @@ export default {
       } 
       else{
         this.$modal.confirm('是否确认删除选中的'+ids.length+'条数据项？').then(() => {
-          return deldeviceType(ids);
+          return batchDeleteVehicleMessage(ids);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");

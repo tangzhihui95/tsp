@@ -241,9 +241,9 @@
             <el-select v-model="form2.dataKey" placeholder="请选择能源类型" :disabled="!this.isEditMode" clearable>
             <el-option
               v-for="dict1 in dict.type.data_type"
-              :key="dict1.value"
+              :key="Number(dict1.value)"
               :label="dict1.label"
-              :value="dict1.label"
+              :value="Number(dict1.value)"
             />
           </el-select>
           </el-form-item>
@@ -270,17 +270,17 @@
         </div>
         <h4 class="form-header h4" content-position="left">整车参数</h4>
         <div class="itemInline">    
-          <el-form-item label="气缸数(个)" prop="cylinderNumber">
+          <el-form-item label="气缸数(个)" prop="stdModelExtraAddVO.cylinderNumber">
             <el-input
-            v-model="form2.cylinderNumber"
+            v-model="form2.stdModelExtraAddVO.cylinderNumber"
             placeholder="请输入气缸数"
             style="width: 100%"
             :disabled="!this.isEditMode"
             clearable
             />
            </el-form-item>
-           <el-form-item label="环保标准" prop="environmentalProtection" :required="true">          
-            <el-select v-model="form2.environmentalProtection" placeholder="请选择环保标准" :disabled="!this.isEditMode" clearable>
+           <el-form-item label="环保标准" prop="stdModelExtraAddVO.environmentalProtection" :required="true">          
+            <el-select v-model="form2.stdModelExtraAddVO.environmentalProtection" placeholder="请选择环保标准" :disabled="!this.isEditMode" clearable>
             <el-option
               v-for="dict2 in dict.type.environmental_protection"
               :key="dict2.value"
@@ -289,9 +289,9 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="整车质保" prop="vehicleWarranty">
+          <el-form-item label="整车质保" prop="stdModelExtraAddVO.vehicleWarranty">
             <el-input
-            v-model="form2.vehicleWarranty"
+            v-model="form2.stdModelExtraAddVO.vehicleWarranty"
             placeholder="请输入整车质保"
             style="width: 100%"
             :disabled="!this.isEditMode"
@@ -300,18 +300,18 @@
            </el-form-item>   
         </div>
         <div class="itemInline">
-           <el-form-item label="发动机型号" prop="engineType">
+           <el-form-item label="发动机型号" prop="stdModelExtraAddVO.engineType">
             <el-input
-            v-model="form2.engineType"
+            v-model="form2.stdModelExtraAddVO.engineType"
             placeholder="请输入发动机型号"
             style="width: 80%"
             :disabled="!this.isEditMode"
             clearable
             />
            </el-form-item> 
-           <el-form-item label="车身尺寸(长*宽*高)M" prop="dimensions" :required="true">          
+           <el-form-item label="车身尺寸(长*宽*高)M" prop="stdModelExtraAddVO.dimensions" :required="true">          
             <el-input
-            v-model="form2.dimensions"
+            v-model="form2.stdModelExtraAddVO.dimensions"
             placeholder="请输入车身尺寸"
             style="width: 100%"
             :disabled="!this.isEditMode"
@@ -319,9 +319,9 @@
             />
            </el-form-item>           
         </div>
-        <el-form-item label="车型图片" prop="extraImages">
+        <el-form-item label="车型图片" prop="stdModelExtraAddVO.extraImages">
         <el-upload
-            :action="'/tsp/equipmentType/export'"
+            :action="'/tsp/vehicle/model/upload/'+'1'"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-success="imgSuccess"
@@ -334,18 +334,18 @@
         </el-form-item>
         <h4 class="form-header h4" content-position="left">性能参数</h4>
         <div class="itemInline">    
-          <el-form-item label="发动机排量(mL)" prop="displacement">
+          <el-form-item label="发动机排量(mL)" prop="stdModelExtraAddVO.displacement">
             <el-input
-            v-model="form2.displacement"
+            v-model="form2.stdModelExtraAddVO.displacement"
             placeholder="请输入发动机排量"
             style="width: 100%"
             :disabled="!this.isEditMode"
             clearable
             />
           </el-form-item>
-          <el-form-item label="综合油耗(L/100km)" prop="oilWear">
+          <el-form-item label="综合油耗(L/100km)" prop="stdModelExtraAddVO.oilWear">
             <el-input
-            v-model="form2.oilWear"
+            v-model="form2.stdModelExtraAddVO.oilWear"
             placeholder="请输入综合油耗"
             style="width: 100%"
             :disabled="!this.isEditMode"
@@ -354,18 +354,18 @@
           </el-form-item>  
         </div>
         <div class="itemInline">    
-          <el-form-item label="最大功率kw" prop="maximumPower">
+          <el-form-item label="最大功率kw" prop="stdModelExtraAddVO.maximumPower">
             <el-input
-            v-model="form2.maximumPower"
+            v-model="form2.stdModelExtraAddVO.maximumPower"
             placeholder="请输入最大功率"
             style="width: 100%"
             :disabled="!this.isEditMode"
             clearable
             />
           </el-form-item>
-          <el-form-item label="最大扭矩(N*m)" prop="maximumTorque">
+          <el-form-item label="最大扭矩(N*m)" prop="stdModelExtraAddVO.maximumTorque">
             <el-input
-            v-model="form2.maximumTorque"
+            v-model="form2.stdModelExtraAddVO.maximumTorque"
             placeholder="请输入最大扭矩"
             style="width: 100%"
             :disabled="!this.isEditMode"
@@ -374,8 +374,8 @@
           </el-form-item>
         </div>
         <div class="itemInline">  
-            <el-form-item label="变速箱" prop="transmissionCase" :required="true">          
-            <el-select v-model="form2.transmissionCase" placeholder="请选择变速箱" :disabled="!this.isEditMode" clearable>
+            <el-form-item label="变速箱" prop="stdModelExtraAddVO.transmissionCase" :required="true">          
+            <el-select v-model="form2.stdModelExtraAddVO.transmissionCase" placeholder="请选择变速箱" :disabled="!this.isEditMode" clearable>
             <el-option
               v-for="dict3 in dict.type.transmission_case"
               :key="dict3.value"
@@ -384,9 +384,9 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="驱动方式" prop="drivingMode">
+          <el-form-item label="驱动方式" prop="stdModelExtraAddVO.drivingMode">
             <el-input
-            v-model="form2.drivingMode"
+            v-model="form2.stdModelExtraAddVO.drivingMode"
             placeholder="请输入驱动方式"
             style="width: 100%"
             :disabled="!this.isEditMode"
@@ -435,7 +435,7 @@
   <script>
 import { getToken } from "@/utils/auth";
 import { listVehicleType, addVehicleType,updateVehicleType,delVehicleType,batchDelVehicleType,
-  vehicleTypeModel,addVehicleModel,updateVehicleModel,delVehicleModel} from "../../../api/vehicle/vehicleType";
+  vehicleTypeModel,addVehicleModel,updateVehicleModel,delVehicleModel,vehicleModelDetail} from "../../../api/vehicle/vehicleType";
 
 export default {
   name: "listVehicleType",
@@ -483,14 +483,33 @@ export default {
         },
     // 表单参数
     form: {},
-    form2: {},
+    form2: {
+      stdModelExtraAddVO: {},
+      pageNum: 1,
+      pageSize: 10,
+    },
     //表单校验
     rules:
     {
-      vehicleModelName: [
-          { required: true, message: "请输入车型名称", trigger: "blur" },
+      stdModeName: [
+          { required: true, message: "型号名称不能为空", trigger: "blur" },
           { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" },
         ],
+      dataKey: [
+          { required: true, message: "请选择能源类型", trigger: "blur" },
+        ],
+      noticeModel: [
+          { required: true, message: "请输入公告型号", trigger: "blur" },
+          { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" },
+        ], 
+      noticeBatch: [
+          { required: true, message: "请输入公告批次", trigger: "blur" },
+          { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" },
+        ],
+      'stdModelExtraAddVO.dimensions':[
+          { required: true, message: "请输入车身尺寸", trigger: "blur" }
+      ],
+        
     }, 
     //查询下拉框
     vehicleTypeModel: [],
@@ -510,9 +529,9 @@ export default {
         listVehicleType(this.queryParams).then(response => {
         this.listVehicleType = response.data.list;
         this.total = response.data.total;
-        this.loading = false;
+        
       });
-      
+      this.loading = false;
       
     },
     // 获取查询下拉框数据
@@ -601,15 +620,9 @@ export default {
           dataKey: "",
           noticeModel: "",
           noticeBatch: "",
-          dimensions: "",
-          engineType: "",
-          displacement: "",
-          oilWear: "",
-          maximumPower: "",
-          maximumTorque: "",
-          transmissionCase: "",
-          drivingMode: "",
-          extraImages: "",
+          tspVehicleModelId: "",
+          tspVehicleStdModelId:"",
+          stdModelExtraAddVO:{}
         };        
         this.resetForm("form2");
       },
@@ -617,7 +630,7 @@ export default {
     submitForm: function() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.tspVehicleModelId != undefined) {
+            if (this.form.tspVehicleModelId != '') {
               updateVehicleType(this.form).then(response => {
                 this.$modal.msgSuccess("修改车型成功");
                 this.open = false;
@@ -638,7 +651,7 @@ export default {
     submitForm2: function() {
         this.$refs["form2"].validate(valid => {
           if (valid) {
-            if (this.form2.tspVehicleStdModelId != undefined) {  
+            if (this.form2.tspVehicleStdModelId != '') {  
               updateVehicleModel(this.form2).then(response => {          
                 this.$modal.msgSuccess("修改型号成功");
                 this.open2 = false;
@@ -679,8 +692,14 @@ export default {
       },
    /** 修改车辆型号按钮操作 */ 
       handleUpdateModel(row) {
-        this.form2 = row;
-        this.form2.tspVehicleStdModelId = row.id;
+          vehicleModelDetail(row.id).then(response => {
+          this.form2.tspVehicleModelId=row.tspVehicleModelId;
+          //console.log(this.form2.tspVehicleModelId) 
+          this.form2=response.data;
+          this.form2.stdModelExtraAddVO=response.data.stdModelExtra
+          this.form2.tspVehicleStdModelId =row.id;
+          //console.log(this.form2.tspVehicleStdModelId) 
+        });
         this.open2 = true;
         this.isEditMode = true;
         this.title = "编辑型号";
@@ -688,9 +707,11 @@ export default {
     //二级型号详情按钮操作
       handleDetail(row) {
         this.isEditMode = false;
-        this.form2 = row;
-        this.form2.tspVehicleStdModelId = row.id;
-        //this.form2.vehicleModelName = this.vehicleModelName;
+        vehicleModelDetail(row.id).then(response => {
+          this.form2.tspVehicleStdModelId = row.id;
+          this.form2=response.data;
+          this.form2.stdModelExtraAddVO=response.data.stdModelExtra
+        });
         this.open2 = true;
         this.title = "二级型号详情";
 
