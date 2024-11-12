@@ -346,7 +346,7 @@ public class TspVehicleModelService extends TspBaseService {
                             failureMsg.append("<br/>").append(successNum).append("、车辆一级车型").append(dto.getVehicleModelName()).append("不存在");
                             continue;
                         }
-                        if (Objects.isNull(tspVehicleModel)) {
+                        if (Objects.isNull(tspVehicleStdModel)) {
                             tspVehicleStdModel = new TspVehicleStdModel();
                             BeanUtils.copyProperties(dto, tspVehicleStdModel);
                             if ("纯电动".equals(dto.getDataType())) {

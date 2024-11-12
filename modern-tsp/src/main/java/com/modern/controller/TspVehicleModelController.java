@@ -83,12 +83,13 @@ public class TspVehicleModelController {
     }
 
     @PreAuthorize("@ss.hasPermi('tsp:vehicleModel:export')")
+    @ApiOperation("车辆车型-导出")
     @Log(title = "车辆车型-导出", businessType = BusinessType.EXPORT)
     @PostMapping({"/export"})
-    public AjaxResult export(TspVehicleModelPageListVO vo) {
+    public void export(HttpServletResponse response,TspVehicleModelPageListVO vo) {
         List<TspVehicleStdModelExListDTO> list = this.tspVehicleModelService.exportList(vo);
         ExcelUtil<TspVehicleStdModelExListDTO> util = new ExcelUtil(TspVehicleStdModelExListDTO.class);
-        return util.exportExcel(list, "车辆车型信息");
+        util.exportExcel(response,list, "车辆车型信息");
     }
 
     @ApiOperation("车辆车型一级车型-下载模版")
