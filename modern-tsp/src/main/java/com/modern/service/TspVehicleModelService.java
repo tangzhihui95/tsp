@@ -185,10 +185,29 @@ public class TspVehicleModelService extends TspBaseService {
         IPage<TspVehicleStdModelExListDTO> page = tspVehicleModelMapper.getPageList(Page.of(vo.getPageNum().intValue(), vo.getPageSize().intValue()), ew);
         List<TspVehicleStdModelExListDTO> dtos = page.getRecords();
         for (TspVehicleStdModelExListDTO dto : dtos) {
-            Integer stdModelCount = this.tspVehicleRepository.countByTspVehicleStdModelId(dto.getTspStdModelId());
+            Integer stdModelCount = tspVehicleRepository.countByTspVehicleStdModelId(dto.getTspStdModelId());
             dto.setVehicleCount(stdModelCount.toString());
             if (dto.getDataKey() != null)
-                dto.setDataType(dto.getDataType());
+                switch (dto.getDataKey().intValue()) {
+                    case 1:
+                        dto.setDataType("混合动力");
+                        break;
+                    case 2:
+                        dto.setDataType("纯电动");
+                        break;
+                    case 3:
+                        dto.setDataType("燃料电池电动");
+                        break;
+                    case 4:
+                        dto.setDataType("插电式混动");
+                        break;
+                    case 5:
+                        dto.setDataType("增程式混动");
+                    default:
+                        dto.setDataType("未定义");
+                        break;
+                }
+            dto.setDataType(dto.getDataType());
         }
         return dtos;
     }
