@@ -203,6 +203,7 @@ public class TspVehicleModelService extends TspBaseService {
                         break;
                     case 5:
                         dto.setDataType("增程式混动");
+                        break;
                     default:
                         dto.setDataType("未定义");
                         break;
