@@ -3,6 +3,7 @@ package com.modern.domain;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,6 +17,8 @@ import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -137,4 +140,8 @@ public class TspVehicleStdModelExtra extends BaseModel {
 
     @Column(comment = "数据来源", type = MySqlTypeConstant.BIGINT)
     private Integer dataSource;
+
+    @TableField(value = "extra_images", typeHandler = FastjsonTypeHandler.class)
+    @Column(comment = "车身图片", type = MySqlTypeConstant.TEXT)
+    private List<String> extraImages = new ArrayList<>();
 }
