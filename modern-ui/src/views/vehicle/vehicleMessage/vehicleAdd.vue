@@ -643,7 +643,7 @@
 
   <script>
 import { regionData } from 'element-china-area-data';
-import { addVehicleMessage,getVehicleMessage,updateVehicleMessage } from '../../../api/vehicle/vehicleMessage';
+import { addVehicleMessage,getVehicleMessage,updateVehicleMessage,queryVehicleAuth } from '../../../api/vehicle/vehicleMessage';
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 
@@ -849,14 +849,17 @@ export default {
       this.form1.tspVehicleId = tspVehicleId;
       getVehicleMessage(this.form1.tspVehicleId).then(response => {
           this.form1 = response.data;
-          this.form1.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId];
           this.form2 = response.data;
           this.form3 = response.data;
           this.form4 = response.data;
           this.form5 = response.data;
+          this.form1.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId];
       } 
    )
-    }
+  //  queryVehicleAuth(this.form1.tspVehicleId).then(response => {
+  //        this.listBindingRecord = response.data.tspUser;
+  //  })
+  }
 
   },
 
