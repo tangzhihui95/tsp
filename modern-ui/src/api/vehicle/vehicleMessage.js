@@ -55,8 +55,48 @@ export function batchDeleteVehicleMessage(tspVehicleIds) {
 //车辆信息报废
 export function scrapVehicleMessage(data) {
   return request({
-    url: '/tsp/vehicle/scrap/',
+    url: '/tsp/vehicle/scrap',
     method: 'put',
     data: data
   })
 }
+
+//车辆与用户绑定
+export function bindVehicleMessage(tspVehicleId,tspUserId) {
+  return request({
+    url: '/tsp/vehicle/bind/' + tspVehicleId + '/' + tspUserId,
+    method: 'patch',
+  })
+}
+
+//车辆解绑
+export function unbindVehicleMessage(tspEquipmentId) {
+  return request({
+    url: '/tsp/vehicle/dealEquipment/' + tspEquipmentId,
+    method: 'get',    
+  })
+}
+
+//车辆认证查询
+export function queryVehicleAuth(tspVehicleId) {
+  return request({
+    url: '/tsp/vehicle/getAuditInfo/' + tspVehicleId,
+    method: 'get',
+  })
+}
+
+//车辆绑定记录
+export function listVehicleBindRecord(tspVehicleId) {
+  return request({
+    url: '/tsp/vehicle/getBind/' + tspVehicleId,
+    method: 'get',
+  })
+}
+
+//车辆关联账号列表
+export function listVehicleMobile() {
+  return request({
+    url: '/tsp/vehicle/relationMobileOption',
+    method: 'get',
+  })    
+} 

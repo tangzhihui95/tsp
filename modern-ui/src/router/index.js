@@ -177,6 +177,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/vehicle/vehicle-edit',
+    component: Layout,
+    hidden: true,
+    permissions: ['vehicle:vehicle:edit'],
+    children: [
+      {
+        path: 'index/:tspVehicleId(\\d+)',    
+        component: () => import('@/views/vehicle/vehicleMessage/vehicleAdd'),
+        name: 'vehicleAdd',
+        meta: { title: '编辑信息', activeMenu: '/vehicle/vehicleMessage'}
+      }
+    ]
+  },
+  {
     path: '/vehicle/vehicle-message',
     component: Layout,
     hidden: true,
@@ -187,6 +201,20 @@ export const dynamicRoutes = [
         component: () => import('@/views/vehicle/vehicleMessage/index'),
         name: 'vehicleMessage',
         meta: { title: '车辆信息管理', activeMenu: '/vehicle/vehicleMessage'}
+      }
+    ]
+  },
+  {
+    path: '/vehicleUser/user',
+    component: Layout,
+    hidden: true,
+    permissions: ['vehicleUser:user:detail'],
+    children: [
+      {
+        path: 'detail/:userId(\\d+)',
+        component: () => import('@/views/vehicleUser/user/userDetail'),
+        name: 'vehicleMessage',
+        meta: { title: '账户详情', activeMenu: '/vehicleUser/user'}
       }
     ]
   },

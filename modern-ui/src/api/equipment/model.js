@@ -35,7 +35,7 @@ export function deldeviceModel(tspEquipmentIds) {
   //报废设备
   export function scrapdeviceModel(data) {
     return request({
-      url: '/tsp/equipment/scrap/',
+      url: '/tsp/equipment/scrap',
       method: 'put',
       data: data
     })
