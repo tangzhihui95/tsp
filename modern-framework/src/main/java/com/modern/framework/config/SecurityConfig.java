@@ -108,12 +108,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 过滤请求
                 .authorizeRequests()
                 // 对于登录login 注册register 验证码captchaImage 允许匿名访问
-                .antMatchers("/login", "/register", "/captchaImage").permitAll()
+                .antMatchers("/login", "/register", "/captchaImage", "/synchronize/**", "/image/**").permitAll()
                 // 静态资源，可匿名访问
                 .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/swagger-ui.html", "/doc.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
                 .antMatchers("/druid/**").permitAll()
-                .antMatchers("/home/modern/tsp/admin/upload/**").permitAll()
+                .antMatchers("/home/mode/profile/upload/**").permitAll()
                 .antMatchers("/getInfo").permitAll()
                 .antMatchers("/getPublicKey").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
