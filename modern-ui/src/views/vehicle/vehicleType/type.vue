@@ -467,6 +467,7 @@ import { getToken } from "@/utils/auth";
 import { listVehicleType, addVehicleType,updateVehicleType,delVehicleType,batchDelVehicleType,
   vehicleTypeModel,addVehicleModel,updateVehicleModel,delVehicleModel,vehicleModelDetail} from "../../../api/vehicle/vehicleType";
 
+
 export default {
   name: "listVehicleType",
   dicts:['transmission_case','environmental_protection','data_type'],
@@ -521,7 +522,9 @@ export default {
 	  dialogVisible: false,
 	  hideUpload: false,
 	  baseUrl: 'http://10.110.1.241:8088',
+    //baseUrl: 'http://10.100.18.60:8088',
 	  uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+    //uploadImgUrl: process.env.VUE_APP_BASE_API + "/tsp/vehicle/model/upload/1",
 	    headers: {
 	          Authorization: "Bearer " + getToken(),
 	        },
@@ -913,7 +916,8 @@ export default {
       // 图片上传成功回调
       handleUploadSuccess(res) {
         this.fileList.push({url:res.url});
-
+        //this.fileList.push({url:res.data})
+          console.log(this.fileList);
         //console.log(this.form2.stdModelExtraAddVO.extraImages);
         this.$emit("input", this.listToString(this.fileList));
         this.loading.close();
@@ -988,21 +992,14 @@ export default {
           for (i = 0; i < list.length; i++) {
            strs  = "";
            strs += list[i].url.substring(24);
+           //strs += list[i].url;
            this.form2.stdModelExtraAddVO.extraImages[i] = strs;
          }
         }
 
-         //console.log(this.form2.stdModelExtraAddVO.extraImages);
-         return strs != '' ? strs.substring(0, strs.length - 1) : '';
+         console.log(this.form2.stdModelExtraAddVO.extraImages);
+         //return strs != '' ? strs.substring(0, strs.length - 1) : '';
       },
-      // listToString(list, separator) {
-      //   let strs = "";
-      //   separator = separator || ",";
-      //   for (let i in list) {
-      //     strs += list[i].url.replace(this.baseUrl, "") + separator;
-      //   }
-      //   return strs != '' ? strs.substring(0, strs.length - 1) : '';
-      // }
 
 
   },
