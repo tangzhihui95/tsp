@@ -7,12 +7,14 @@ project:
   # 版权年份
   copyrightYear: 2024
   # 文件路径 示例（ Windows配置D:/modern/profile，Linux配置 /home/mode/profile）
-  profile: /home/mode/profile
-  #profile: D:/home/mode/profile
+  profile: /home/mode/profile/upload
+  #profile: D:/home/mode/profile/upload
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
+  # imgs:
+  salePath: ${project.profile}/sale/imgs
 
 # 开发环境配置
 server:
@@ -32,8 +34,8 @@ server:
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
       # 文件上传目录
-      basedir: /home/data/apps/temp
-      #basedir: D:/data/apps/temp
+      basedir: /home/mode/profile/upload
+      #basedir: D:/home/mode/profile/upload
 
 # 日志配置
 logging:
