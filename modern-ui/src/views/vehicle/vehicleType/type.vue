@@ -991,9 +991,16 @@ export default {
          else{
           for (i = 0; i < list.length; i++) {
            strs  = "";
-           strs += list[i].url.substring(24);
+           if (list[i].url.includes("50881")){
+            strs += list[i].url.substring(25);
            //strs += list[i].url;
            this.form2.stdModelExtraAddVO.extraImages[i] = strs;
+           }
+           else{
+            strs += list[i].url.substring(24);
+           //strs += list[i].url;
+           this.form2.stdModelExtraAddVO.extraImages[i] = strs;
+           }   
          }
         }
 
