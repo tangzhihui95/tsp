@@ -23,10 +23,7 @@ import com.modern.domain.*;
 import com.modern.entity.VehicleIntegrate;
 import com.modern.enums.TspVehicleStateEnum;
 import com.modern.framework.config.RedisConfig;
-import com.modern.mapper.TspDealerMapper;
-import com.modern.mapper.TspEquipmentMapper;
-import com.modern.mapper.TspVehicleMapper;
-import com.modern.mapper.TspVehicleStdModeMapper;
+import com.modern.mapper.*;
 import com.modern.model.dto.*;
 import com.modern.model.vo.*;
 import com.modern.repository.*;
@@ -109,6 +106,9 @@ public class TspVehicleService extends TspBaseService {
     private RedisConnectionFactory redisConnectionFactory;
     @Autowired
     RedisConfig redisConfig;
+    @Resource
+    private TspVehicleEquipmentMapper tspVehicleEquipmentMapper;
+
 
     public PageInfo<TspVehiclePageListDTO> getPageList(TspVehiclePageListVO vo) {
         log.info("车辆信息列表查询入参--------{}", vo);
@@ -1202,6 +1202,20 @@ public class TspVehicleService extends TspBaseService {
             record.setIsOnline(Boolean.valueOf(false));
         }
         return PageInfo.of(page, page.getTotal());
+    }
+
+    public PageInfo<TspEquipmentPageListDTO> equipmentHistory(Long tspVehicleId) {
+        log.info("根据当前车辆ID查询历史记录----------------tspVehicleId={}", tspVehicleId);
+        QueryWrapper<TspVehicleEquipment> listEw = tspVehicleEquipmentRepository.getPageListEw(tspVehicleId);
+        IPage<TspEquipmentPageListDTO> pageList = tspVehicleEquipmentMapper.getPageList(Page.of(1L, 10L), listEw);
+        return PageInfo.of(pageList,pageList.getTotal());
+    }
+
+    public PageInfo<TspEquipmentPageListDTO> equipmentNow(Long tspEquipmentId) {
+        log.info("根据设备ID查询设备绑定记录--------------tspEquipmentId={}", tspEquipmentId);
+        QueryWrapper<TspEquipment> listEw = tspEquipmentRepository.getNowEquipment(tspEquipmentId);
+        IPage<TspEquipmentPageListDTO> pageList = tspEquipmentMapper.getNowPageList(Page.of(1L, 10L), listEw);
+        return PageInfo.of(pageList,pageList.getTotal());
     }
 
     private <T> Object readListFromCache(String key, String hashKey) {

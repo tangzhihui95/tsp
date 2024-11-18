@@ -34,4 +34,11 @@ public class TspVehicleEquipmentRepository extends ServicePlusImpl<TspVehicleEqu
         ew.orderByDesc("create_time", new String[0]);
         return list(ew);
     }
+
+    public QueryWrapper<TspVehicleEquipment> getPageListEw(Long tspVehicleId) {
+        QueryWrapper<TspVehicleEquipment> ew = new QueryWrapper();
+        ew.eq("a.tsp_vehicle_id", tspVehicleId);
+        ew.orderByDesc("create_time", new String[0]);
+        return ew;
+    }
 }
