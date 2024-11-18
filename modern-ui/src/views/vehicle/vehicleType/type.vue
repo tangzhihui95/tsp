@@ -472,7 +472,7 @@ export default {
   name: "listVehicleType",
   dicts:['transmission_case','environmental_protection','data_type'],
   props: {
-	      value: [String, Object, Array],
+	      type: [String, Object, Array],
 	      // 图片数量限制
 	      limit: {
 	        type: Number,

@@ -68,8 +68,14 @@ export function bindVehicleMessage(tspVehicleId,tspUserId) {
     method: 'patch',
   })
 }
-
-//车辆解绑
+//车辆与设备绑定（目前没有）
+export function bindVehicleEquipment(tspVehicleId,tspEquipmentId) {
+  return request({
+    url: '/tsp/vehicle/bindEquipment/' + tspVehicleId + '/' + tspEquipmentId,
+    method: 'patch',
+  })
+}
+//车辆设备解绑
 export function unbindVehicleMessage(tspEquipmentId) {
   return request({
     url: '/tsp/vehicle/dealEquipment/' + tspEquipmentId,
@@ -77,7 +83,21 @@ export function unbindVehicleMessage(tspEquipmentId) {
   })
 }
 
-//车辆认证查询
+//当前设备绑定记录
+export function equipmentNow(tspEquipmentId) {
+  return request({
+    url: '/tsp/vehicle/equipmentNow/' + tspEquipmentId,
+    method: 'get',
+  })
+}
+//历史绑定设备记录
+export function equipmentHistory(tspEquipmentId) {
+  return request({
+    url: '/tsp/vehicle/equipmentHistory/' + tspEquipmentId,
+    method: 'get',
+  })
+}
+//车辆操作栏实名查询
 export function queryVehicleAuth(tspVehicleId) {
   return request({
     url: '/tsp/vehicle/getAuditInfo/' + tspVehicleId,
@@ -85,7 +105,7 @@ export function queryVehicleAuth(tspVehicleId) {
   })
 }
 
-//车辆绑定记录
+//车辆列表操作栏绑定记录
 export function listVehicleBindRecord(tspVehicleId) {
   return request({
     url: '/tsp/vehicle/getBind/' + tspVehicleId,

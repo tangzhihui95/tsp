@@ -244,15 +244,15 @@
           </el-select>
           </el-form-item>
           <el-form-item label="是否为终端" prop="isTerminal" label-width="120px" >
-            <el-radio-group v-model="form.isTerminal" ref="radioGroup" :disabled="!this.isEditMode">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
+            <el-radio-group v-model="form.isTerminal" aria-hidden="true" ref="radioGroup" :disabled="!this.isEditMode">
+              <el-radio :label= "1" >是</el-radio>
+              <el-radio :label= "0" >否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="注册状态" prop="isRegister" label-width="120px" >
-            <el-radio-group v-model="form.isRegister" ref="radioGroup" :disabled="!this.isEditMode">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
+            <el-radio-group v-model="form.isRegister" aria-hidden="true" ref="radioGroup" :disabled="!this.isEditMode">
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
