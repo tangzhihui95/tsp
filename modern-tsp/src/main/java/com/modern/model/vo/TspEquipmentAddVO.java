@@ -65,8 +65,8 @@ public class TspEquipmentAddVO {
     @ApiModelProperty("设备SN")
     private String sn;
 
-    @ApiModelProperty("是否为终端")
-    private Boolean isTerminal;
+    @ApiModelProperty("是否为终端 是否为终端1-是 0-否")
+    private Integer isTerminal;
 
     @ApiModelProperty("供应商代码")
     private String supplierCode;
