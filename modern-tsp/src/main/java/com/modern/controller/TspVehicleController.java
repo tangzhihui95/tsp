@@ -233,9 +233,9 @@ public class TspVehicleController {
 
     @PreAuthorize("@ss.hasPermi('tsp:useVehicleRecord:list')")
     @ApiOperation("车辆管理-用户绑定历史记录")
-    @PostMapping({"/list"})
-    public Result<PageInfo<TspUseVehicleRecordPageListDTO>> list(@RequestBody @Valid TspUseVehicleRecordPageListVO frontQuery) {
-        return Result.ok(tspUseVehicleRecordService.getPageList(frontQuery));
+    @PostMapping({"/useVehicleRecordList"})
+    public Result<PageInfo<TspUseVehicleRecordPageListDTO>> useVehicleRecordList(@RequestBody @Valid TspUseVehicleRecordPageListVO frontQuery) {
+        return Result.ok(tspUseVehicleRecordService.useVehicleRecordList(frontQuery));
     }
 
 }
