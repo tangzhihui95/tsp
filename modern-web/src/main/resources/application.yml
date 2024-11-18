@@ -14,7 +14,7 @@ project:
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
   # imgs:
-  salePath: ${project.profile}/sale/imgs
+  #salePath: ${project.profile}/sale/imgs
 
 # 开发环境配置
 server:
