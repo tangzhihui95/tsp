@@ -17,6 +17,7 @@ import com.modern.repository.TspUseVehicleRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class TspUseVehicleRecordService extends TspVehicleService {
 
     @Autowired
     private TspUseVehicleRecordRepository tspUseVehicleRecordRepository;
-    @Autowired
+    @Resource
     private TspUseVehicleRecordMapper tspUseVehicleRecordMapper;
 
     public void add(TspUseVehicleRecordAddVO recordAddVO) {
@@ -50,7 +51,7 @@ public class TspUseVehicleRecordService extends TspVehicleService {
         tspUseVehicleRecordRepository.save(vehicleRecord);
     }
 
-    public PageInfo<TspUseVehicleRecordPageListDTO> getPageList(TspUseVehicleRecordPageListVO frontQuery) {
+    public PageInfo<TspUseVehicleRecordPageListDTO> useVehicleRecordList(TspUseVehicleRecordPageListVO frontQuery) {
         QueryWrapper<TspUseVehicleRecord> ew = new QueryWrapper();
         ew.eq(StringUtils.isNotNull(frontQuery.getTspVehicleId()), "tsp_vehicle_id", frontQuery.getTspVehicleId());
         ew.eq("is_delete", Integer.valueOf(0));
