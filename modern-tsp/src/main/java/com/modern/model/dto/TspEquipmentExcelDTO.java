@@ -73,7 +73,7 @@ public class TspEquipmentExcelDTO {
 
     @Excel(name = "是否为终端", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "true=是,false=否", sort = 9)
     @ApiModelProperty("是否为终端1-是 0-否")
-    private Boolean isTerminal;
+    private Integer isTerminal;
 
     @Excel(name = "供应商代码", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 10)
     @ApiModelProperty("供应商代码")
