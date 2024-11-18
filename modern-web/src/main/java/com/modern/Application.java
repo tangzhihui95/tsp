@@ -26,8 +26,8 @@ public class Application {
     @Bean
     MultipartConfigElement multipartConfigElement(){
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setLocation("/home/data/apps/temp");
-        //factory.setLocation("D:/data/apps/temp");
+        factory.setLocation("/home/mode/profile");
+        //factory.setLocation("D:/home/mode/profile");
         return factory.createMultipartConfig();
     }
 }

@@ -13,7 +13,7 @@
         <el-form-item label="关联账号" prop="mobile" label-width="120px">
           <el-select v-model="queryParams.mobile" placeholder="请选择关联账号" clearable>
             <el-option
-              v-for="dict in dict.type.vehicle_relation_no"
+              v-for="dict in mobileOption"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -198,7 +198,7 @@
       </el-table-column>
       <el-table-column label="关联账号" align="center" prop="mobile">
        <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicle_relation_no" :value="scope.row.mobile"/>
+          <dict-tag :options="mobileOption" :value="scope.row.mobile"/>
         </template>
       </el-table-column>
       <el-table-column label="认证状态" align="center" prop="certificationState">
@@ -909,7 +909,7 @@
 
     </el-dialog>
       
-      <!-- 设备报废弹窗 -->
+      <!-- 车辆报废弹窗 -->
       <el-dialog :title="title" :visible.sync="scrapOpen" width="300px" append-to-body>        
       <el-form ref="scrapForm" :model="scrapForm" :rules="rules" label-width="80px">
         <el-form-item label="登录密码" prop="password" :required="true">
@@ -920,7 +920,7 @@
           placeholder="请输入登录密码"
          />
         </el-form-item>
-        <el-form-item label="车辆IDs" prop="vehicleIds" v-if="false" :disabled="true" ></el-form-item>
+        <el-form-item label="车辆IDs" prop="tspVehicleIds" v-if="false" :disabled="true" ></el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitForm2">确 定</el-button>
@@ -957,12 +957,28 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+
+      <!-- 绑定记录弹窗 -->
+    <el-dialog :title="title" :visible.sync="bindRecordOpen" width="800px" append-to-body>        
+      <el-table ref="refTable5" v-loading="loading" :data="listUserRecord">
+        <el-table-column label="车辆ID" align="center" v-if="false" prop="id"/>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="电话号码" align="center" prop="mobile"></el-table-column>
+        <el-table-column label="真实姓名" align="center" prop="realName"></el-table-column>
+        <el-table-column label="证件编码" align="center" prop="idCard"></el-table-column>
+      </el-table>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="cancel3">关 闭</el-button>
+        </div>
+    </el-dialog>
     </div>
   </template>
 
 <script>
 import { getToken } from "@/utils/auth";
-import { listVehicleMessage,getVehicleMessage,deleteVehicleMessage,batchDeleteVehicleMessage,scrapVehicleMessage } from "../../../api/vehicle/vehicleMessage";
+import { listVehicleMessage,getVehicleMessage,deleteVehicleMessage,
+  batchDeleteVehicleMessage,scrapVehicleMessage,listVehicleMobile,
+  listVehicleBindRecord,queryVehicleAuth} from "../../../api/vehicle/vehicleMessage";
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 
@@ -975,7 +991,7 @@ export default {
       // 遮罩层
       loading: true,
      // 选中数组
-     vehicleIds: [],
+     tspVehicleIds: [],
      // 非单个禁用
      single: true,
      // 非多个禁用
@@ -993,12 +1009,16 @@ export default {
       listHistoryEquipment: [],
     //当前绑定设备
       listEquipment: [],
-    //绑定记录
+    //用户绑定记录
       listBindingRecord: [],
+    //绑定记录弹窗 
+      listUserRecord: [],
     //出入库记录
       listBoxRecord: [],
     //详情框弹窗
       activeName: "first",
+    //关联账号
+      mobileOption: [],
     //查询参数
       queryParams: {
         pageNum: 1,
@@ -1021,10 +1041,15 @@ export default {
       isEditMode: true,
       //弹窗标题
       title: "",
+      //绑定记录弹窗
+      bindRecordOpen: false,
       //弹窗表单
       form: {},
       //报废表单
-      scrapForm: {},
+      scrapForm: {
+        pageNum: 1,
+        pageSize: 10,
+      },
       //导入弹窗参数
       upload: {
         title: "",
@@ -1074,6 +1099,7 @@ export default {
   created() {
     this.setTreeData();
     this.getList();
+    this.getMobileOption();
   },
   methods: {
     //初始化列表数据
@@ -1085,7 +1111,7 @@ export default {
       });
       this.loading = false;
     },
-    //设置树数据
+    //设置车型树数据
     setTreeData() {
       
       this.vehicleTypeModel = []
@@ -1112,6 +1138,26 @@ export default {
       console.log(this.queryParams.tspVehicleModelId)
       console.log(this.form.tspVehicleModelId)
      }
+    },
+    //获取手机号下拉框
+    getMobileOption() {
+
+      listVehicleMobile().then(response => {
+        this.mobileOption = response.data;    
+        console.log(this.mobileOption)
+      });
+    },
+    //绑定记录按钮操作
+    handleRecord(row) {
+          this.bindRecordOpen = true;
+          this.title = "历史绑定记录";
+          listVehicleBindRecord(row.id).then(response => {
+            this.listUserRecord = response.data;
+          });
+    },
+    //关闭绑定记录弹窗
+    cancel3() {
+      this.bindRecordOpen = false;
     },
     /** 搜索按钮操作 */
      handleQuery() {
@@ -1161,6 +1207,9 @@ export default {
         this.form.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId]
       
       });
+  //     queryVehicleAuth(row.id).then(response => {
+  //        this.listBindingRecord = response.data.tspUser;
+  //  })
     },
     //重置详情表单
     reset() {
@@ -1189,10 +1238,10 @@ export default {
     submitForm2: function() {
         this.$refs["scrapForm"].validate(valid => {        
           if (valid) {          
-            this.scrapForm.vehicleIds = this.vehicleIds;     
+            this.scrapForm.tspVehicleIds = this.tspVehicleIds;     
       }
             this.$modal.confirm("是否确认报废选中车辆？") .then(() => {            
-              return  scrapdeviceModel(this.scrapForm);
+              return  scrapVehicleMessage(this.scrapForm);
             }).then(response => {            
               this.$modal.msgSuccess("车辆报废成功");            
               this.scrapOpen = false;
@@ -1216,12 +1265,12 @@ export default {
     importTemplate() {
         if(this.upload.title=="导入出厂信息")
         {
-          this.download('/tsp/equipmentType/importTypeTemplate', {
+          this.download('/tsp/vehicle/importExFactoryTemplate', {
           }, `出厂信息导入模板${new Date().getTime()}.xlsx`)
         }
         else if(this.upload.title=="导入销售信息")
         {
-          this.download('/tsp/equipmentType/importModelTemplate', {
+          this.download('/tsp/vehicle/importSaleTemplate', {
           }, `销售信息导入模板${new Date().getTime()}.xlsx`)
         }
         
@@ -1261,7 +1310,7 @@ export default {
     /** 批量删除车辆信息按钮操作 */
      batchDelete() {
        
-      const ids=this.vehicleIds;
+      const ids=this.tspVehicleIds;
       if(ids.length == 0) {
         this.$message.warning("请选择需要删除的车辆信息");
         return;
@@ -1277,28 +1326,28 @@ export default {
     },
     /** 导出车辆信息按钮操作 */
      handleExport() {
-      this.download('/tsp/equipment/export', {
+      this.download('/tsp/vehicle/export', {
           ...this.queryParams
         }, `车辆信息_${new Date().getTime()}.xlsx`)
 
       },
     /** 导出出厂信息按钮操作 */
      handleExport2() {
-        this.download('/tsp/equipment/export', {
+        this.download('/tsp/vehicle/exportExFactory', {
           ...this.queryParams
         }, `出厂信息_${new Date().getTime()}.xlsx`)
 
       },
     /** 导出销售信息按钮操作 */
     handleExport3() {
-      this.download('/tsp/equipment/export', {
+      this.download('/tsp/vehicle/exportSales', {
           ...this.queryParams
         }, `销售信息_${new Date().getTime()}.xlsx`)
 
       },
     //车辆报废按钮操作
       handleScrap() {
-        if (this.vehicleIds.length == 0) {
+        if (this.tspVehicleIds.length == 0) {
           this.$message.warning("请选择需要报废的车辆信息");
           return;
         } 
@@ -1310,10 +1359,10 @@ export default {
       },
     // 多选框选中数据
       handleSelectionChange(selection) {
-        this.vehicleIds = selection.map(item => item.id)
+        this.tspVehicleIds = selection.map(item => item.id)
         this.single = selection.length!=1
         this.multiple = !selection.length
-        console.log(this.vehicleIds)
+        console.log(this.tspVehicleIds)
       },
    // 附件上传图片预览事件，这个就是将路径直接放进一个弹窗显示出来就可以了
       handlePictureCardPreview(file) {

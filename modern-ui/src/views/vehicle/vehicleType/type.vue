@@ -320,18 +320,48 @@
            </el-form-item>           
         </div>
         <el-form-item label="车型图片" prop="stdModelExtraAddVO.extraImages">
-        <el-upload
-            :action="'/tsp/vehicle/model/upload/'+'1'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            :on-success="handleUploadSuccess"
+            :before-upload="handleBeforeUpload"
+            :limit="limit"
+            :on-error="handleUploadError"
+            :on-exceed="handleExceed"
+            name="file"
+            :on-remove="handleRemove"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList"
             :on-preview="handlePictureCardPreview"
-            :on-success="imgSuccess"
-            :on-error="imgError"
-            :on-remove="imgRemove"
+            :class="{hide: this.fileList.length >= this.limit}"
             :disabled="!this.isEditMode"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
-        </el-form-item>
+
+        <!-- 上传提示 -->
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+        请上传
+        <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
+        <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
+        的文件
+      </div>
+
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
+  </el-form-item>
         <h4 class="form-header h4" content-position="left">性能参数</h4>
         <div class="itemInline">    
           <el-form-item label="发动机排量(mL)" prop="stdModelExtraAddVO.displacement">
@@ -437,9 +467,33 @@ import { getToken } from "@/utils/auth";
 import { listVehicleType, addVehicleType,updateVehicleType,delVehicleType,batchDelVehicleType,
   vehicleTypeModel,addVehicleModel,updateVehicleModel,delVehicleModel,vehicleModelDetail} from "../../../api/vehicle/vehicleType";
 
+
 export default {
   name: "listVehicleType",
   dicts:['transmission_case','environmental_protection','data_type'],
+  props: {
+	      value: [String, Object, Array],
+	      // 图片数量限制
+	      limit: {
+	        type: Number,
+	        default: 5,
+	      },
+	      // 大小限制(MB)
+	      fileSize: {
+	        type: Number,
+	        default: 5,
+	      },
+	      // 文件类型, 例如['png', 'jpg', 'jpeg']
+	      fileType: {
+	        type: Array,
+	        default: () => ["png", "jpg", "jpeg"],
+	      },
+	      // 是否显示提示
+	      isShowTip: {
+	        type: Boolean,
+	        default: true
+	      }
+	  },
   data() {
     return {
     //遮罩层
@@ -462,7 +516,19 @@ export default {
     isEditMode: true,
     // 是否显示弹出层
     open: false,
-    open2: false,    
+    open2: false, 
+    //下载图片路径
+    dialogImageUrl: "",
+	  dialogVisible: false,
+	  hideUpload: false,
+	  baseUrl: 'http://10.110.1.241:8088',
+    //baseUrl: 'http://10.100.18.60:8088',
+	  uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+    //uploadImgUrl: process.env.VUE_APP_BASE_API + "/tsp/vehicle/model/upload/1",
+	    headers: {
+	          Authorization: "Bearer " + getToken(),
+	        },
+	  fileList: [],
     //查询参数
     queryParams: {
         vehicleModelName: "",
@@ -484,7 +550,9 @@ export default {
     // 表单参数
     form: {},
     form2: {
-      stdModelExtraAddVO: {},
+      stdModelExtraAddVO: {
+        extraImages: [],
+      },
       pageNum: 1,
       pageSize: 10,
     },
@@ -614,6 +682,8 @@ export default {
       },
   //车辆二级型号表单重置
     reset2() {
+
+        this.fileList = [];
         this.form2 = {
           vehicleModelName: "",          
           stdModeName: "",
@@ -622,7 +692,21 @@ export default {
           noticeBatch: "",
           tspVehicleModelId: "",
           tspVehicleStdModelId:"",
-          stdModelExtraAddVO:{}
+          stdModelExtraAddVO:{
+            cylinderNumber: "",
+            environmentalProtection: "",
+            vehicleWarranty: "",
+            engineType: "",
+            dimensions: "",
+            displacement: "",
+            extraImages: [],
+            oilWear: "",
+            maximumPower: "",
+            maximumTorque: "",
+            transmissionCase: "",
+            drivingMode: "",
+  
+          }
         };        
         this.resetForm("form2");
       },
@@ -692,12 +776,19 @@ export default {
       },
    /** 修改车辆型号按钮操作 */ 
       handleUpdateModel(row) {
+          this.fileList = [];
           vehicleModelDetail(row.id).then(response => {
           this.form2.tspVehicleModelId=row.tspVehicleModelId;
           //console.log(this.form2.tspVehicleModelId) 
           this.form2=response.data;
           this.form2.stdModelExtraAddVO=response.data.stdModelExtra
           this.form2.tspVehicleStdModelId =row.id;
+
+          //console.log(this.form2.stdModelExtraAddVO.extraImages);
+          for(let i in response.data.stdModelExtraAddVO.extraImages){
+
+           this.fileList.push({url:this.baseUrl + response.data.stdModelExtraAddVO.extraImages[i]});
+        }
           //console.log(this.form2.tspVehicleStdModelId) 
         });
         this.open2 = true;
@@ -707,11 +798,20 @@ export default {
     //二级型号详情按钮操作
       handleDetail(row) {
         this.isEditMode = false;
+        this.fileList = [];
         vehicleModelDetail(row.id).then(response => {
           this.form2.tspVehicleStdModelId = row.id;
           this.form2=response.data;
-          this.form2.stdModelExtraAddVO=response.data.stdModelExtra
-        });
+          this.form2.stdModelExtraAddVO=response.data.stdModelExtra;
+          //console.log(this.form2.stdModelExtraAddVO.extraImages);
+
+          for(let i in response.data.stdModelExtraAddVO.extraImages){
+
+          this.fileList.push({url:this.baseUrl + response.data.stdModelExtraAddVO.extraImages[i]});
+        }
+      });
+ 
+        //console.log(this.fileList);
         this.open2 = true;
         this.title = "二级型号详情";
 
@@ -752,9 +852,9 @@ export default {
       },
    /** 导出按钮操作 */
     handleExport() {
-        this.download('/tsp/equipmentType/export', {
+        this.download('/tsp/vehicle/model/export', {
           ...this.queryParams
-        }, `deviceType_${new Date().getTime()}.xlsx`)
+        }, `vehicleType_${new Date().getTime()}.xlsx`)
       },
    /** 导入车辆分类按钮操作 */
     handleImportType() {
@@ -798,41 +898,116 @@ export default {
     submitFileForm() {
         this.$refs.upload.submit();
       }, 
-   // 图片上传成功
-    imgSuccess(res, file, fileList) {
-      this.fileList = fileList;
-      //这里我是用一个fileList数组存取，当保存的时候进行图片路径处理
-    },
-   // 图片上传失败
-    imgError(res) {
-      this.$message({
-        type: "error",
-        message: "附件上传失败",
-      });
-    },
-  // 删除图片
-    imgRemove(file, fileList) {
-      this.fileList = fileList;
-    },
-  // 附件上传图片预览事件，这个就是将路径直接放进一个弹窗显示出来就可以了
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-  // 处理图片路径
-    setImgUrl(imgArr) {
-      let arr = [];
-      if (imgArr.length>0) {
-        for (let i = 0; i < imgArr.length; i++) {
-        const element = imgArr[i];
-        arr.push(element.response.data.url);
-  //这个地方根据后台返回的数据进行取值，可以先打印一下
-      }
-      return arr.join();
-      } else {
-        return ''
-      } 
-    },
+	  // 删除图片
+    handleRemove(file, fileList) {
+
+        const findex = this.fileList.map(f => f.url).indexOf(file.url);
+        if (findex > -1) {
+          this.fileList.splice(findex, 1);
+          //console.log(this.fileList);
+          //this.form2.stdModelExtraAddVO.extraImages.splice(findex, 1);
+          this.$emit("input", this.listToString(this.fileList));
+
+          //console.log(this.form2.stdModelExtraAddVO.extraImages);
+        
+        }
+
+      },
+      // 图片上传成功回调
+      handleUploadSuccess(res) {
+        this.fileList.push({url:res.url});
+        //this.fileList.push({url:res.data})
+          console.log(this.fileList);
+        //console.log(this.form2.stdModelExtraAddVO.extraImages);
+        this.$emit("input", this.listToString(this.fileList));
+        this.loading.close();
+        this.getList();
+      },
+      // 图片上传前loading加载
+      handleBeforeUpload(file) {
+        let isImg = false;
+        if (this.fileType.length) {
+          let fileExtension = "";
+          if (file.name.lastIndexOf(".") > -1) {
+            fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
+          }
+          isImg = this.fileType.some(type => {
+            if (file.type.indexOf(type) > -1) return true;
+            if (fileExtension && fileExtension.indexOf(type) > -1) return true;
+            return false;
+          });
+        } else {
+          isImg = file.type.indexOf("image") > -1;
+        }
+
+        if (!isImg) {
+          this.$message.error(
+            `文件格式不正确, 请上传${this.fileType.join("/")}图片格式文件!`
+          );
+          return false;
+        }
+        if (this.fileSize) {
+          const isLt = file.size / 1024 / 1024 < this.fileSize;
+          if (!isLt) {
+            this.$message.error(`上传图片大小不能超过 ${this.fileSize} MB!`);
+            return false;
+          }
+        }
+        this.loading = this.$loading({
+          lock: true,
+          text: "上传中",
+          background: "rgba(0, 0, 0, 0.7)",
+        });
+        this.loading.close();
+      },
+      // 图片文件个数超出
+      handleExceed() {
+        this.$message.error(`上传图片数量不能超过 ${this.limit} 个!`);
+      },
+      // 图片上传失败
+      handleUploadError() {
+        this.$message({
+          type: "error",
+          message: "上传失败",
+        });
+        this.loading.close();
+        this.getList();
+      },
+      // 图片预览
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      // 图片对象转成指定字符串分隔
+      listToString(list){
+         let strs = "";
+         let i = 0;
+         this.form2.stdModelExtraAddVO.extraImages = [];
+         if (list.length == 0) {
+
+           this.form2.stdModelExtraAddVO.extraImages = [];
+           return '';
+         }
+         else{
+          for (i = 0; i < list.length; i++) {
+           strs  = "";
+           if (list[i].url.includes("50881")){
+            strs += list[i].url.substring(25);
+           //strs += list[i].url;
+           this.form2.stdModelExtraAddVO.extraImages[i] = strs;
+           }
+           else{
+            strs += list[i].url.substring(24);
+           //strs += list[i].url;
+           this.form2.stdModelExtraAddVO.extraImages[i] = strs;
+           }   
+         }
+        }
+
+         console.log(this.form2.stdModelExtraAddVO.extraImages);
+         //return strs != '' ? strs.substring(0, strs.length - 1) : '';
+      },
+
 
   },
    filters: {

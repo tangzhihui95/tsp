@@ -13,6 +13,8 @@ project:
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
+  # imgs:
+  salePath: ${project.profile}/sale/imgs
 
 # 开发环境配置
 server:
@@ -32,8 +34,8 @@ server:
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
       # 文件上传目录
-      basedir: /home/data/apps/temp
-      #basedir: D:/data/apps/temp
+      basedir: /home/mode/profile
+      #basedir: D:/home/mode/profile
 
 # 日志配置
 logging:
