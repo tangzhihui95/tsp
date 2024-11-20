@@ -31,5 +31,8 @@ public interface TspEquipmentMapper extends BaseMapperPlus<TspEquipment> {
     @Select({"SELECT t.id,tv.state,t.tsp_equipment_model_id,t.version,t.sn,t.icc_id,t.sim,t.imsi,t.imei,t.is_terminal,t.supplier_code,t.scrap_time,b.extra_type,t.serial_number,t.operator,t.is_online,t.is_register,t.is_scrap,t.create_time,a.model_name,a.suppliers,a.id as tsp_equipment_type_id ,CONCAT(b.name,' / ',a.model_name) as 'typeModel' FROM tsp_equipment t LEFT JOIN tsp_vehicle tv ON  t.id = tv.tsp_equipment_id and tv.is_delete = 0 LEFT JOIN tsp_equipment_model a ON t.tsp_equipment_model_id = a.id LEFT JOIN tsp_equipment_type b ON a.tsp_equipment_type_id = b.id ${ew.customSqlSegment}"})
     IPage<TspEquipmentPageListDTO> getPageList(Page<TspEquipmentPageListDTO> paramPage, @Param("ew") Wrapper<TspEquipment> paramWrapper);
 
+    @Select({"SELECT b.id,b.sn,b.sim,b.icc_id,b.imei,CONCAT(d.name,' / ',c.model_name) AS 'typeModel' FROM tsp_equipment b LEFT JOIN tsp_equipment_model c ON b.tsp_equipment_model_id = c.id LEFT JOIN tsp_equipment_type d ON c.tsp_equipment_type_id = d.id ${ew.customSqlSegment}"})
+    IPage<TspEquipmentPageListDTO> getNowPageList(Page<TspEquipmentPageListDTO> paramPage, @Param("ew") QueryWrapper<TspEquipment> paramQueryWrapper);
+
 
 }

@@ -73,7 +73,7 @@ public class TspEquipmentPageListDTO extends BaseDto {
     private String imei;
 
     @ApiModelProperty("是否为终端 1：是 0：否")
-    private Boolean isTerminal;
+    private Integer isTerminal;
 
     @ApiModelProperty("供应商代码")
     private String supplierCode;

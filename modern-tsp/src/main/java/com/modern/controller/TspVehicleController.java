@@ -9,9 +9,11 @@ import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.TspDealer;
 import com.modern.model.dto.*;
+import com.modern.model.vo.TspUseVehicleRecordPageListVO;
 import com.modern.model.vo.TspVehicleAddVO;
 import com.modern.model.vo.TspVehiclePageListVO;
 import com.modern.model.vo.TspVehicleScrapVO;
+import com.modern.service.TspUseVehicleRecordService;
 import com.modern.service.TspVehicleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +42,9 @@ public class TspVehicleController {
 
     @Autowired
     private TspVehicleService tspVehicleService;
+
+    @Autowired
+    private TspUseVehicleRecordService tspUseVehicleRecordService;
 
 
     @PreAuthorize("@ss.hasPermi('tsp:vehicle:list')")
@@ -212,6 +217,25 @@ public class TspVehicleController {
     @PostMapping({"/listVehicle"})
     public Result<PageInfo<TspVehiclePageListDTO>> listVehicle(@RequestBody @Valid TspVehiclePageListVO vo) {
         return Result.ok(tspVehicleService.listVehicle(vo));
+    }
+
+    @ApiOperation("车辆管理-根据车辆ID查询历史绑定设备记录列表")
+    @GetMapping({"/equipmentHistory/{tspVehicleId}"})
+    public Result<PageInfo<TspEquipmentPageListDTO>> equipmentHistory(@PathVariable Long tspVehicleId) {
+        return Result.ok(tspVehicleService.equipmentHistory(tspVehicleId));
+    }
+
+    @ApiOperation("车辆管理-根据设备ID查询当前设备绑定记录")
+    @GetMapping({"/equipmentNow/{tspEquipmentId}"})
+    public Result<PageInfo<TspEquipmentPageListDTO>> equipmentNow(@PathVariable Long tspEquipmentId) {
+        return Result.ok(tspVehicleService.equipmentNow(tspEquipmentId));
+    }
+
+    @PreAuthorize("@ss.hasPermi('tsp:useVehicleRecord:list')")
+    @ApiOperation("车辆管理-用户绑定历史记录")
+    @PostMapping({"/useVehicleRecordList"})
+    public Result<PageInfo<TspUseVehicleRecordPageListDTO>> useVehicleRecordList(@RequestBody @Valid TspUseVehicleRecordPageListVO frontQuery) {
+        return Result.ok(tspUseVehicleRecordService.useVehicleRecordList(frontQuery));
     }
 
 }

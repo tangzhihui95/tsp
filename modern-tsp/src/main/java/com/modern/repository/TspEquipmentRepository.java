@@ -80,4 +80,10 @@ public class TspEquipmentRepository extends ServicePlusImpl<TspEquipmentMapper, 
         return getOne(ew);
     }
 
+    public QueryWrapper<TspEquipment> getNowEquipment(Long tspEquipmentId) {
+        QueryWrapper<TspEquipment> ew = new QueryWrapper();
+        ew.eq("b.id", tspEquipmentId);
+        return ew;
+    }
+
 }
