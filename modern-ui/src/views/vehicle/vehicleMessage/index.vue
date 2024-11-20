@@ -871,8 +871,8 @@
         <pagination
           v-show="total>0"
           :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
+          :page.sync="form.pageNum"
+          :limit.sync="form.pageSize"
           @pagination="listBindingRecord"
         />
         </el-tab-pane>
@@ -1044,7 +1044,11 @@ export default {
       //绑定记录弹窗
       bindRecordOpen: false,
       //弹窗表单
-      form: {},
+      form: {
+        pageNum: 1,
+        pageSize: 10,
+
+      },
       //报废表单
       scrapForm: {
         pageNum: 1,

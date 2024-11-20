@@ -160,14 +160,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleSelect(scope.row)"
-            v-hasPermi="['system:deviceModel:add']"
+            v-hasPermi="['vehicle:device:add']"
           >选择设备</el-button>
           <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              v-hasPermi="['system:deviceType:remove']"
+              @click="handleUnbind(scope.row)"
+              v-hasPermi="['vehicle:device:remove']"
             >解绑设备</el-button>
           </template>
         </el-table-column>
@@ -226,7 +226,7 @@
             <el-table-column label="信息进度" v-if="false" prop="progress"/>
           <h4 class="form-header h4" content-position="left">销售信息</h4>
         <div class="itemInline">  
-        <el-form-item label="购买领域" prop="purchaserState" label-width="120px" >
+        <el-form-item label="购买领域" prop="purchaserState" label-width="120px">
             <el-radio-group v-model="form2.purchaserState" ref="radioGroup">
               <el-radio :label="1">私人用车</el-radio>
               <el-radio :label="0">单位用车</el-radio>
@@ -296,12 +296,13 @@
         </div>
         <div class="itemInline">  
           <el-form-item label="销货单位名称" prop="salesUnitName">          
-            <el-select v-model="form2.salesUnitName" placeholder="请选择销货单位名称" clearable>
+            <el-select v-model="form2.salesUnitName" placeholder="请选择销货单位名称" 
+            @click.native="selectTrigger(form2.salesUnitName)" clearable>
             <el-option
-              v-for="dict7 in dict.type.sale_name"
-              :key="dict7.value"
-              :label="dict7.label"
-              :value="dict7.label"
+              v-for="dict7 in sale_name"
+              :key="dict7.id"
+              :label="dict7.dealerName"
+              :value="dict7.dealerName"
             />
           </el-select>
           </el-form-item>
@@ -388,10 +389,10 @@
           <el-form-item label="经销商" prop="dealerId" :required="true">          
             <el-select v-model="form2.dealerId" placeholder="请选择经销商" clearable>
             <el-option
-              v-for="dict7 in dict.type.sale_name"
-              :key="dict7.value"
-              :label="dict7.label"
-              :value="dict7.label"
+              v-for="dict7 in sale_name"
+              :key="dict7.id"
+              :label="dict7.dearlerName"
+              :value="dict7.id"
             />
           </el-select>
           </el-form-item>
@@ -510,7 +511,7 @@
     </div>
   </div> 
       <el-form-item label="上传车辆照片" prop="plateImgUrls">
-        <!-- <div class="component-upload-image">
+        <div class="component-upload-image">
           <el-upload
             :action="uploadImgUrl"
             list-type="picture-card"
@@ -528,10 +529,10 @@
             :class="{hide: this.fileList2.length >= this.limit}"
         >
             <i class="el-icon-plus"></i>
-        </el-upload> -->
+        </el-upload>
 
         <!-- 上传提示 -->
-      <!-- <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
         <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
         <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
@@ -549,7 +550,7 @@
         style="display: block; max-width: 100%; margin: 0 auto"
       />
     </el-dialog>
-  </div> -->
+  </div>
       </el-form-item>
     </el-form>
       </div>
@@ -585,7 +586,7 @@
       </div>
       <div class="itemInline">
       <el-form-item label="请上传手持身份证正面照片"  prop="cardFrontImg">
-        <!-- <div class="component-upload-image">
+        <div class="component-upload-image">
           <el-upload
             :action="uploadImgUrl"
             list-type="picture-card"
@@ -603,10 +604,10 @@
             :class="{hide: this.fileList3.length >= this.limit}"
         >
             <i class="el-icon-plus"></i>
-        </el-upload> -->
+        </el-upload>
 
         <!-- 上传提示 -->
-      <!-- <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
         <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
         <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
@@ -624,10 +625,10 @@
         style="display: block; max-width: 100%; margin: 0 auto"
       />
     </el-dialog>
-  </div> -->
+  </div>
       </el-form-item>
         <el-form-item label="请上传手持身份证反面照片" prop="cardBackImg">
-          <!-- <div class="component-upload-image">
+          <div class="component-upload-image">
           <el-upload
             :action="uploadImgUrl"
             list-type="picture-card"
@@ -645,10 +646,10 @@
             :class="{hide: this.fileList4.length >= this.limit}"
         >
             <i class="el-icon-plus"></i>
-        </el-upload> -->
+        </el-upload>
 
         <!-- 上传提示 -->
-      <!-- <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
         <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
         <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
@@ -666,12 +667,12 @@
         style="display: block; max-width: 100%; margin: 0 auto"
       />
     </el-dialog>
-  </div> -->
+  </div>
     </el-form-item>
       </div>
       <div class="itemInline">
-        <!-- <el-form-item  prop="cardFrontImg"> -->
-          <!-- <div class="component-upload-image">
+        <el-form-item  prop="cardFrontImg">
+          <div class="component-upload-image">
           <el-upload
             :action="uploadImgUrl"
             list-type="picture-card"
@@ -689,10 +690,10 @@
             :class="{hide: this.fileList3.length >= this.limit}"
         >
             <i class="el-icon-plus"></i>
-        </el-upload> -->
+        </el-upload>
 
         <!-- 上传提示 -->
-      <!-- <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
         <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
         <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
@@ -710,10 +711,10 @@
         style="display: block; max-width: 100%; margin: 0 auto"
       />
     </el-dialog>
-  </div> -->
-      <!-- </el-form-item> -->
-      <!-- <el-form-item  prop="cardBackImg"> -->
-        <!-- <div class="component-upload-image">
+  </div> 
+      </el-form-item>
+       <el-form-item  prop="cardBackImg">
+        <div class="component-upload-image">
           <el-upload
             :action="uploadImgUrl"
             list-type="picture-card"
@@ -731,10 +732,10 @@
             :class="{hide: this.fileList4.length >= this.limit}"
         >
             <i class="el-icon-plus"></i>
-        </el-upload> -->
+        </el-upload> 
 
         <!-- 上传提示 -->
-      <!-- <div class="el-upload__tip" slot="tip" v-if="isShowTip">
+      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
         <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
         <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
@@ -752,8 +753,8 @@
         style="display: block; max-width: 100%; margin: 0 auto"
       />
     </el-dialog>
-  </div> -->
-      <!-- </el-form-item>  -->
+  </div> 
+      </el-form-item> 
       </div>
       <h4 class="form-header h4" content-position="left">绑定记录</h4>
       <el-table ref="refTable3" v-loading="loading" :data="listBindingRecord">
@@ -942,7 +943,7 @@
 import { getToken } from "@/utils/auth";
 import { regionData } from 'element-china-area-data';
 import { addVehicleMessage,getVehicleMessage,updateVehicleMessage,
-  queryVehicleAuth, bindVehicleEquipment} from '../../../api/vehicle/vehicleMessage';
+  queryVehicleAuth, bindVehicleEquipment,listDealerName,dealerAddress} from '../../../api/vehicle/vehicleMessage';
 import {listdeviceModel} from "@/api/equipment/model";
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
@@ -1077,16 +1078,8 @@ export default {
            {value: '云', label: '云'},{value: '台', label: '台'},
 
       ],
-      //购买领域
-      purchaserState: [
-      { value: 1, label: "私人用车" },
-      { value: 0, label: "单位用车" },
-      ],
-      //是否三包
-      isSanBao: [
-      { value: 1, label: "是" },      
-      { value: 0, label: "否" },
-      ],
+      //销货单位名称
+      sale_name:[],
       //省市区
       provinces: regionData,
       cities: [],
@@ -1204,7 +1197,10 @@ export default {
 
   //获取车型下拉框及编辑信息
   created() {
-   
+    
+    this.loading = true;
+    listDealerName().then(response => {
+      this.sale_name=response.data});
     this.getVehicleType();
     const tspVehicleId = this.$route.params && this.$route.params.tspVehicleId;
     if(tspVehicleId){
@@ -1223,6 +1219,8 @@ export default {
   //  })
   }
 
+  this.loading = false;
+
   },
 
   methods: {
@@ -1235,8 +1233,19 @@ export default {
           this.loading = false;
         });
       },
+//选中销货单位名称获取地址
+    selectTrigger(value){
+      console.log(value)
+      const dealerName = value;
+      console.log(dealerName)
+        dealerAddress(dealerName).then(response => {
+
+          this.form2.salesUnitAddress = response.data;
+        
+        })
+    },      
 //选择车牌号
-selectItem(item) {
+    selectItem(item) {
       this.form.plateCode = item;
       this.showList = false;
       this.$emit('selected', item);
@@ -1425,7 +1434,30 @@ selectItem(item) {
         },
 // 选择设备按钮
     handleSelect(row){
-     
+     //this.currentRow = row;
+     this.open = true;
+     this.getList();
+    },
+// 解绑设备按钮
+    handleUnbind(row){
+      this.$confirm("确定解绑该设备吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        unbindVehicleEquipment(this.form1.tspVehicleId, row.tspEquipmentId).then(response => {
+          this.$message({
+            type: "success",
+            message: "解绑成功!"
+          });
+          this.getList();
+        });
+      }).catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消解绑"
+        }); 
+      });
     },
 // 查询按钮
     handleQuery() {
@@ -1740,6 +1772,14 @@ selectItem(item) {
    font-size: 0;
    border-collapse: collapse;
  }
+
+ input[aria-hidden="true"] {
+    display: none !important;
+}
+
+.el-radio:focus:not(.is-focus):not(:active):not(.is-disabled) .el-radio__inner {
+    box-shadow: none;
+}
 
 </style>
   

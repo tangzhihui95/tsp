@@ -91,12 +91,20 @@ export function equipmentNow(tspEquipmentId) {
   })
 }
 //历史绑定设备记录
-export function equipmentHistory(tspEquipmentId) {
+export function equipmentHistory(tspVehicleId) {
   return request({
-    url: '/tsp/vehicle/equipmentHistory/' + tspEquipmentId,
+    url: '/tsp/vehicle/equipmentHistory/' + tspVehicleId,
     method: 'get',
   })
 }
+//绑定信息页面车主绑定记录
+export function listVehicleOwner( ) {
+  return request({
+    url: '/tsp/vehicle/useVehicleRecordList',
+    method: 'post',
+  })
+}
+
 //车辆操作栏实名查询
 export function queryVehicleAuth(tspVehicleId) {
   return request({
@@ -120,3 +128,20 @@ export function listVehicleMobile() {
     method: 'get',
   })    
 } 
+
+//经销商名称下拉框
+export function listDealerName() {
+  return request({
+    url: '/tsp/vehicle/saleNameList',
+    method: 'get',
+  })
+} 
+
+//根据经销商名称获取经销商地址
+export function dealerAddress(dealerName) {
+  return request({
+    url: '/tsp/vehicle/saleNameGetAddress/' + dealerName,
+    method: 'get',
+  })
+} 
+
