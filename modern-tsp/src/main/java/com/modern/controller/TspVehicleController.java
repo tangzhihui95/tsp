@@ -219,13 +219,13 @@ public class TspVehicleController {
         return Result.ok(tspVehicleService.listVehicle(vo));
     }
 
-    @ApiOperation("车辆管理-根据车辆ID查询当前设备列表")
+    @ApiOperation("车辆管理-根据车辆ID查询历史绑定设备记录列表")
     @GetMapping({"/equipmentHistory/{tspVehicleId}"})
     public Result<PageInfo<TspEquipmentPageListDTO>> equipmentHistory(@PathVariable Long tspVehicleId) {
         return Result.ok(tspVehicleService.equipmentHistory(tspVehicleId));
     }
 
-    @ApiOperation("车辆管理-根据设备ID查询设备绑定记录")
+    @ApiOperation("车辆管理-根据设备ID查询当前设备绑定记录")
     @GetMapping({"/equipmentNow/{tspEquipmentId}"})
     public Result<PageInfo<TspEquipmentPageListDTO>> equipmentNow(@PathVariable Long tspEquipmentId) {
         return Result.ok(tspVehicleService.equipmentNow(tspEquipmentId));
