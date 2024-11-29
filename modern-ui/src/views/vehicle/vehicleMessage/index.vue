@@ -530,9 +530,9 @@
             <el-select v-model="form.newVehicleFlag" :disabled="true" placeholder="是否是新车" clearable>
             <el-option
               v-for="dict6 in dict.type.is_new_vehicle"
-              :key="dict6.value"
+              :key="Number(dict6.value)"
               :label="dict6.label"
-              :value="dict6.label"
+              :value="Number(dict6.value)"
             />
           </el-select>
           </el-form-item>
@@ -576,8 +576,8 @@
       </el-form-item>
       <el-form-item label="是否三包" prop="isSanBao" label-width="120px" >
             <el-radio-group v-model="form.isSanBao" :disabled="true" ref="radioGroup">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </div>
@@ -585,7 +585,7 @@
           <el-form-item label="销货单位名称" prop="salesUnitName">          
             <el-select v-model="form.salesUnitName" :disabled="true" placeholder="请选择销货单位名称" clearable>
             <el-option
-              v-for="dict7 in dict.type.sale_name"
+              v-for="dict7 in sale_name"
               :key="dict7.value"
               :label="dict7.label"
               :value="dict7.label"
@@ -604,9 +604,9 @@
             <el-select v-model="form.vehicleStatus" :disabled="true" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict8 in dict.type.state"
-              :key="dict8.value"
+              :key="Number(dict8.value)"
               :label="dict8.label"
-              :value="dict8.label"
+              :value="Number(dict8.value)"
             />
           </el-select>
           </el-form-item>
@@ -634,9 +634,9 @@
             <el-select v-model="form.channelType" :disabled="true" placeholder="请选择销售渠道类型" clearable>
             <el-option
               v-for="dict9 in dict.type.channel_type"
-              :key="dict9.value"
+              :key="Number(dict9.value)"
               :label="dict9.label"
-              :value="dict9.label"
+              :value="Number(dict9.value)"
             />
           </el-select>
           </el-form-item>
@@ -677,23 +677,40 @@
           <el-form-item label="经销商" prop="dealerId" :required="true">          
             <el-select v-model="form.dealerId" :disabled="true" placeholder="请选择经销商" clearable>
             <el-option
-              v-for="dict7 in dict.type.sale_name"
-              :key="dict7.value"
-              :label="dict7.label"
-              :value="dict7.label"
+              v-for="dict7 in sale_name"
+              :key="String(dict7.id)"
+              :label="dict7.dealerName"
+              :value="String(dict7.id)"
             />
           </el-select>
           </el-form-item>
         </div>
         <el-form-item label="发票" prop="invoiceImgUrls">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList1"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item>
         </el-tab-pane>
          <el-tab-pane label="上牌信息" name="third">
@@ -743,7 +760,7 @@
         </el-form-item>
         <div class="join1" style="margin-right: 0px;">
       <el-form-item label="车牌号" prop="plateCodeName">
-            <el-select v-model="form.plateCodeName" placeholder="地区" style="width: 35%" clearable>
+            <el-select v-model="form.plateCodeName" placeholder="地区" :disabled="true" style="width: 35%" clearable>
             <el-option
               v-for="item in plateCodeItems"
               :key="item.value"
@@ -759,24 +776,44 @@
             v-model="form.plateCode"
             placeholder="请输入车牌号"
             style="width: 80%"
+            :disabled="true"
             clearable
           />
       </el-form-item>
     </div>
         </div>
         <el-form-item label="上传车辆照片" prop="plateImgUrls">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList2"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item>
         </el-tab-pane>
          <el-tab-pane label="绑定信息" name="fourth">
           <h4 class="form-header h4" content-position="left">车主绑定信息</h4>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="车辆ID" align="center" v-if="false" prop="tspVehicleId"/>
       <div class="itemInline"> 
         <el-form-item label="车主手机号" prop="mobile" :required="true">
           <el-input
@@ -808,46 +845,114 @@
       </div>
       <div class="itemInline">
       <el-form-item label="请上传手持身份证正面照片"  prop="cardFrontImg">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+        <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList3"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item>
         <el-form-item label="请上传手持身份证反面照片" prop="cardBackImg">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList4"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item>
       </div>
       <div class="itemInline">
         <el-form-item  prop="cardFrontImg">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList3"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item>
         <el-form-item  prop="cardBackImg">
-        <el-upload
-            :action="'/tsp/equipmentType/export'"
+          <div class="component-upload-image">
+          <el-upload
+            :action="uploadImgUrl"
             list-type="picture-card"
+            name="file"
+            :show-file-list="true"
+            :headers="headers"
+            :file-list="fileList4"
             :on-preview="handlePictureCardPreview"
             :disabled="true"
-          >
-          <i class="el-icon-plus"></i>
+        >
+            <i class="el-icon-plus"></i>
         </el-upload>
+      <el-dialog
+        :visible.sync="dialogVisible"
+        title="预览"
+        width="800px"
+        append-to-body
+      >
+      <img
+        :src="dialogImageUrl"
+        style="display: block; max-width: 100%; margin: 0 auto"
+      />
+    </el-dialog>
+  </div>
         </el-form-item> 
       </div>
       <h4 class="form-header h4" content-position="left">绑定记录</h4>
@@ -857,12 +962,12 @@
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="id"/>
         <el-table-column label="手机号" align="center" prop="mobile"></el-table-column>
         <el-table-column label="车主姓名" align="center" prop="realName"></el-table-column>
         <el-table-column label="身份证号" align="center" prop="idCard"></el-table-column>
-        <el-table-column label="操作用户" align="center" prop="operatorName"></el-table-column>
-        <el-table-column label="操作时间" align="center" prop="operateTime" width="180">
+        <el-table-column label="操作用户" align="center" prop="createdBy"></el-table-column>
+        <el-table-column label="操作时间" align="center" prop="createdTime" width="180">
            <template slot-scope="scope">
             <span>{{ parseTime(scope.row.operateTime) }}</span>
           </template> 
@@ -976,9 +1081,9 @@
 
 <script>
 import { getToken } from "@/utils/auth";
-import { listVehicleMessage,getVehicleMessage,deleteVehicleMessage,
-  batchDeleteVehicleMessage,scrapVehicleMessage,listVehicleMobile,
-  listVehicleBindRecord,queryVehicleAuth} from "../../../api/vehicle/vehicleMessage";
+import { listVehicleMessage,getVehicleMessage,deleteVehicleMessage,equipmentHistory,
+  batchDeleteVehicleMessage,scrapVehicleMessage,listVehicleMobile,equipmentNow,listVehicleOwner,
+  listVehicleBindRecord,queryVehicleAuth,listDealerName} from "../../../api/vehicle/vehicleMessage";
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
 
@@ -986,6 +1091,9 @@ export default {
   name: "vehicleModel",
   dicts:['vehicle_state','bind_status','vehicle_enum_certification_state','purpose','state','channel_type','plate_colour',
   'send_status','vehicle_color','ess_model','motor_brand','is_new_vehicle'],
+  props: {
+	       type: [String, Object, Array],
+	  },
   data() {
     return {
       // 遮罩层
@@ -1033,7 +1141,7 @@ export default {
         state: undefined,
         sendStatus: undefined,
       },
-      //新增弹窗
+      //详情对话框弹窗
       open: false,
       //报废弹窗
       scrapOpen: false,
@@ -1043,6 +1151,8 @@ export default {
       title: "",
       //绑定记录弹窗
       bindRecordOpen: false,
+      //经销商下拉框
+      sale_name: [],
       //弹窗表单
       form: {
         pageNum: 1,
@@ -1098,12 +1208,34 @@ export default {
         ],
 
       },
+      //下载图片路径
+      dialogImageUrl: "",
+	    dialogVisible: false, 
+	    baseUrl: 'http://10.110.1.241:8088',
+      //baseUrl: 'http://10.100.18.60:8088',
+	    uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+      //uploadImgUrl: process.env.VUE_APP_BASE_API + "/tsp/vehicle/model/upload/1",
+	    headers: {
+	          Authorization: "Bearer " + getToken(),
+	        },
+      //发票图片    
+	    fileList1: [],
+      //车辆图片
+      fileList2: [],
+      //身份证正面图片
+      fileList3: [],
+      //身份证反面图片
+      fileList4: [],      
     };
   },
   created() {
     this.setTreeData();
     this.getList();
     this.getMobileOption();
+    listDealerName().then(response => {
+      this.sale_name = response.data;
+      //console.log(this.sale_name)
+    });
   },
   methods: {
     //初始化列表数据
@@ -1148,7 +1280,7 @@ export default {
 
       listVehicleMobile().then(response => {
         this.mobileOption = response.data;    
-        console.log(this.mobileOption)
+        //console.log(this.mobileOption)
       });
     },
     //绑定记录按钮操作
@@ -1211,14 +1343,19 @@ export default {
         this.form.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId]
       
       });
-  //     queryVehicleAuth(row.id).then(response => {
-  //        this.listBindingRecord = response.data.tspUser;
-  //  })
+      equipmentHistory(row.id).then(response => {
+          this.listHistoryEquipment = response.data.list;
+        })
+      listVehicleOwner(this.form).then(response => {
+          this.listBindingRecord = response.data.list;
+        });
     },
     //重置详情表单
     reset() {
 
-      this.form = {};
+      this.form = {
+        vehicleTypeModel: [],
+      };
       this.resetForm("form");
     },
     //重置报废表单
@@ -1368,25 +1505,24 @@ export default {
         this.multiple = !selection.length
         console.log(this.tspVehicleIds)
       },
-   // 附件上传图片预览事件，这个就是将路径直接放进一个弹窗显示出来就可以了
+    // 图片预览
       handlePictureCardPreview(file) {
-              this.dialogImageUrl = file.url;
-              this.dialogVisible = true;
-        },
-   // 处理图片路径
-      setImgUrl(imgArr) {
-              let arr = [];
-          if (imgArr.length>0) {
-            for (let i = 0; i < imgArr.length; i++) {
-                const element = imgArr[i];
-                arr.push(element.response.data.url);
-   //这个地方根据后台返回的数据进行取值，可以先打印一下
-            }
-          return arr.join();
-           } else {
-            return ''
-          } 
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
       },
+   // 处理图片路径
+      // setImgUrl(imgArr) {
+      //         let arr = [];
+      //     if (imgArr.length>0) {
+      //       for (let i = 0; i < imgArr.length; i++) {
+      //           const element = imgArr[i];
+      //           arr.push(element.response.data.url);
+      //       }
+      //     return arr.join();
+      //      } else {
+      //       return ''
+      //     } 
+      // },
     
   },
 }

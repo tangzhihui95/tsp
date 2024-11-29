@@ -98,10 +98,11 @@ export function equipmentHistory(tspVehicleId) {
   })
 }
 //绑定信息页面车主绑定记录
-export function listVehicleOwner( ) {
+export function listVehicleOwner(data) {
   return request({
     url: '/tsp/vehicle/useVehicleRecordList',
     method: 'post',
+    data: data
   })
 }
 

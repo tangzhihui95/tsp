@@ -14,6 +14,7 @@
           <el-table-column label="信息进度" v-if="false" prop="progress"/>
         <h4 class="form-header h4" content-position="left">基本信息</h4>
         <el-table-column label="车辆ID" v-if="false" prop="tspvehicleId"/>
+        <el-table-column label="设备ID" v-if="false" prop="tspEquipmentId"/>
         <el-form-item label="车辆类型ID" prop="tspVehicleModelId" v-if="false" :disabled="true"/>
         <el-form-item label="车辆型号ID" prop="tspVehicleStdModelId" v-if="false" :disabled="true"/>
         <div class="itemInline">
@@ -246,9 +247,9 @@
             <el-select v-model="form2.newVehicleFlag" placeholder="是否是新车" clearable>
             <el-option
               v-for="dict6 in dict.type.is_new_vehicle"
-              :key="dict6.value"
+              :key="Number(dict6.value)"
               :label="dict6.label"
-              :value="dict6.label"
+              :value="Number(dict6.value)"
             />
           </el-select>
           </el-form-item>
@@ -289,15 +290,15 @@
       </el-form-item>
       <el-form-item label="是否三包" prop="isSanBao" label-width="120px" >
             <el-radio-group v-model="form2.isSanBao" ref="radioGroup">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </div>
         <div class="itemInline">  
           <el-form-item label="销货单位名称" prop="salesUnitName">          
             <el-select v-model="form2.salesUnitName" placeholder="请选择销货单位名称" 
-            @click.native="selectTrigger(form2.salesUnitName)" clearable>
+            @change="selectTrigger(form2.salesUnitName)" @clear="clearChange" clearable>
             <el-option
               v-for="dict7 in sale_name"
               :key="dict7.id"
@@ -306,21 +307,17 @@
             />
           </el-select>
           </el-form-item>
-          <el-form-item label="销货单位地址" prop="salesUnitAddress" >
-          <el-input
-            v-model="form2.salesUnitAddress"
-            style="width: 100%"
-            :disabled="true"
-            clearable
-          />
-        </el-form-item>
+        <el-form-item label="销货单位地址" prop="salesUnitAddress">
+        <el-input v-model="form2.salesUnitAddress" type="textarea" :disabled="true"
+          :autosize="{minRows: 2, maxRows: 2}" :style="{width: '120%'}"></el-input>
+      </el-form-item>   
         <el-form-item label="车辆状态" prop="vehicleStatus">          
             <el-select v-model="form2.vehicleStatus" placeholder="请选择车辆状态" clearable>
             <el-option
               v-for="dict8 in dict.type.state"
-              :key="dict8.value"
+              :key="Number(dict8.value)"
               :label="dict8.label"
-              :value="dict8.label"
+              :value="Number(dict8.value)"
             />
           </el-select>
           </el-form-item>
@@ -346,9 +343,9 @@
             <el-select v-model="form2.channelType" placeholder="请选择销售渠道类型" clearable>
             <el-option
               v-for="dict9 in dict.type.channel_type"
-              :key="dict9.value"
+              :key="Number(dict9.value)"
               :label="dict9.label"
-              :value="dict9.label"
+              :value="Number(dict9.value)"
             />
           </el-select>
           </el-form-item>
@@ -390,9 +387,9 @@
             <el-select v-model="form2.dealerId" placeholder="请选择经销商" clearable>
             <el-option
               v-for="dict7 in sale_name"
-              :key="dict7.id"
-              :label="dict7.dearlerName"
-              :value="dict7.id"
+              :key="String(dict7.id)"
+              :label="dict7.dealerName"
+              :value="String(dict7.id)"
             />
           </el-select>
           </el-form-item>
@@ -489,12 +486,12 @@
       
       <div class="join1" style="margin-right: 0px;">
       <el-form-item label="车牌号" prop="plateCodeName">
-            <el-select v-model="form3.plateCodeName" placeholder="地区" style="width: 35%" clearable>
+            <el-select v-model="form3.plateCodeName" placeholder="地区" style="width: 45%" clearable>
             <el-option
               v-for="item in plateCodeItems"
               :key="item.value"
               :label="item.label"
-              :value="item.label"
+              :value="item.value"
             />
           </el-select>
       </el-form-item>
@@ -558,6 +555,8 @@
         <el-form ref="form4" :model="form4" :rules="rules" label-width="180px">
           <el-table-column label="信息进度" v-if="false" prop="progress"/>
         <h4 class="form-header h4" content-position="left">车主绑定信息</h4>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="车辆ID" align="center" v-if="false" prop="tspVehicleId"/>
       <div class="itemInline"> 
         <el-form-item label="车主手机号" prop="mobile" :required="true">
           <el-input
@@ -670,92 +669,6 @@
   </div>
     </el-form-item>
       </div>
-      <div class="itemInline">
-        <el-form-item  prop="cardFrontImg">
-          <div class="component-upload-image">
-          <el-upload
-            :action="uploadImgUrl"
-            list-type="picture-card"
-            :on-success="handleUploadSuccess3"
-            :before-upload="handleBeforeUpload"
-            :limit="limit"
-            :on-error="handleUploadError"
-            :on-exceed="handleExceed"
-            name="file"
-            :on-remove="handleRemove"
-            :show-file-list="true"
-            :headers="headers"
-            :file-list="fileList3"
-            :on-preview="handlePictureCardPreview"
-            :class="{hide: this.fileList3.length >= this.limit}"
-        >
-            <i class="el-icon-plus"></i>
-        </el-upload>
-
-        <!-- 上传提示 -->
-      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
-        请上传
-        <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
-        <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
-        的文件
-      </div>
-
-      <el-dialog
-        :visible.sync="dialogVisible"
-        title="预览"
-        width="800px"
-        append-to-body
-      >
-      <img
-        :src="dialogImageUrl"
-        style="display: block; max-width: 100%; margin: 0 auto"
-      />
-    </el-dialog>
-  </div> 
-      </el-form-item>
-       <el-form-item  prop="cardBackImg">
-        <div class="component-upload-image">
-          <el-upload
-            :action="uploadImgUrl"
-            list-type="picture-card"
-            :on-success="handleUploadSuccess4"
-            :before-upload="handleBeforeUpload"
-            :limit="limit"
-            :on-error="handleUploadError"
-            :on-exceed="handleExceed"
-            name="file"
-            :on-remove="handleRemove"
-            :show-file-list="true"
-            :headers="headers"
-            :file-list="fileList4"
-            :on-preview="handlePictureCardPreview"
-            :class="{hide: this.fileList4.length >= this.limit}"
-        >
-            <i class="el-icon-plus"></i>
-        </el-upload> 
-
-        <!-- 上传提示 -->
-      <div class="el-upload__tip" slot="tip" v-if="isShowTip">
-        请上传
-        <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c"> {{ fileSize }}MB </b></template>
-        <template v-if="fileType"> 格式为 <b style="color: #f56c6c"> {{ fileType.join("/") }} </b></template>
-        的文件
-      </div>
-
-      <el-dialog
-        :visible.sync="dialogVisible"
-        title="预览"
-        width="800px"
-        append-to-body
-      >
-      <img
-        :src="dialogImageUrl"
-        style="display: block; max-width: 100%; margin: 0 auto"
-      />
-    </el-dialog>
-  </div> 
-      </el-form-item> 
-      </div>
       <h4 class="form-header h4" content-position="left">绑定记录</h4>
       <el-table ref="refTable3" v-loading="loading" :data="listBindingRecord">
         <el-table-column label="序号" type="index" align="center">
@@ -763,12 +676,12 @@
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="车主ID" align="center" v-if="false" prop="tspUserId"/>
+        <el-table-column label="车主ID" align="center" v-if="false" prop="id"/>
         <el-table-column label="手机号" align="center" prop="mobile"></el-table-column>
         <el-table-column label="车主姓名" align="center" prop="realName"></el-table-column>
         <el-table-column label="身份证号" align="center" prop="idCard"></el-table-column>
-        <el-table-column label="操作用户" align="center" prop="operatorName"></el-table-column>
-        <el-table-column label="操作时间" align="center" prop="operateTime" width="180">
+        <el-table-column label="操作用户" align="center" prop="createdBy"></el-table-column>
+        <el-table-column label="操作时间" align="center" prop="createdTime" width="180">
            <template slot-scope="scope">
             <span>{{ parseTime(scope.row.operateTime) }}</span>
           </template> 
@@ -941,9 +854,9 @@
 
   <script>
 import { getToken } from "@/utils/auth";
-import { regionData } from 'element-china-area-data';
-import { addVehicleMessage,getVehicleMessage,updateVehicleMessage,
-  queryVehicleAuth, bindVehicleEquipment,listDealerName,dealerAddress} from '../../../api/vehicle/vehicleMessage';
+import { regionData,codeToText,TextToCode } from 'element-china-area-data';
+import { addVehicleMessage,getVehicleMessage,updateVehicleMessage,equipmentHistory,
+         equipmentNow,listVehicleOwner, bindVehicleEquipment,listDealerName,dealerAddress} from '../../../api/vehicle/vehicleMessage';
 import {listdeviceModel} from "@/api/equipment/model";
 import { vehicleTypeModel } from "../../../api/vehicle/vehicleType";
 
@@ -1054,6 +967,8 @@ export default {
       title: '选择设备',
       //遮罩层
       loading: false,
+      //销货单位下拉框不同时触发
+      shouldIgnoreNextChange: false, // 初始化为false
       //车型下拉框
       vehicleTypeModel: [],
       option: [],
@@ -1136,7 +1051,7 @@ export default {
           { min: 2, max: 50, message: "长度在 2 到 50 个字符", trigger: "blur" }
         ],
         newVehicleFlag: [
-          { required: true, message: "请选择是否是新车", trigger: "change" }
+          { required: true, message: "请选择是否是新车", trigger: "blur" }
         ],
         purchaser: [
           { required: true, message: "请输入购买方名称", trigger: "change" }
@@ -1165,7 +1080,6 @@ export default {
         ],
         dealerId: [
           { required: true, message: "请选择经销商", trigger: "blur" },
-          { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" }
         ],
         awardPlaceName: [
           { required: true, message: "请输入车管所名称", trigger: "blur" },
@@ -1200,7 +1114,9 @@ export default {
     
     this.loading = true;
     listDealerName().then(response => {
-      this.sale_name=response.data});
+      this.sale_name = response.data;
+      //console.log(this.sale_name)
+    });  
     this.getVehicleType();
     const tspVehicleId = this.$route.params && this.$route.params.tspVehicleId;
     if(tspVehicleId){
@@ -1212,11 +1128,18 @@ export default {
           this.form4 = response.data;
           this.form5 = response.data;
           this.form1.vehicleTypeModel = [response.data.tspVehicleModelId,response.data.tspVehicleStdModelId];
+          this.form2.awardArea = codeToText[response.data.awardArea];
+          this.form2.awardCity = codeToText[response.data.awardCity];
+          this.form2.awardProvince = codeToText[response.data.awardProvince];
+          //this.form3.selectedOptions.push(TextToCode[response.data.awardProvince].code,TextToCode[response.data.awardProvince][response.data.awardCity].code,TextToCode[response.data.awardProvince][response.data.awardCity][response.data.awardArea].code);
       } 
    )
-  //  queryVehicleAuth(this.form1.tspVehicleId).then(response => {
-  //        this.listBindingRecord = response.data.tspUser;
-  //  })
+        equipmentHistory(this.form1.tspVehicleId).then(response => {
+          this.listHistoryEquipment = response.data.list;
+        })
+        listVehicleOwner(this.form4).then(response => {
+          this.listBindingRecord = response.data.list;
+        });
   }
 
   this.loading = false;
@@ -1235,15 +1158,41 @@ export default {
       },
 //选中销货单位名称获取地址
     selectTrigger(value){
-      console.log(value)
-      const dealerName = value;
-      console.log(dealerName)
-        dealerAddress(dealerName).then(response => {
 
-          this.form2.salesUnitAddress = response.data;
-        
-        })
-    },      
+      //console.log(value)
+
+      // 使用$nextTick确保shouldIgnoreNextChange已更新后再检查
+      this.$nextTick(() => {
+
+        if (!this.shouldIgnoreNextChange) {
+          // 调用接口获取地址
+          if(this.form2.salesUnitName != undefined){
+        dealerAddress(value).then(response => {
+          console.log(response.data.dealerAddress)
+          this.form2.salesUnitAddress = response.data.dealerAddress;
+          
+         })
+      }
+      else{
+        this.form2.salesUnitAddress = "";
+      }
+          console.log('Change event handled:', value);
+        } else {
+          // 重置标识，以便下次change可以触发
+          this.shouldIgnoreNextChange = false;
+        }
+      });
+
+
+    },  
+//销货单位名称清空
+     clearChange(){
+      // 先设置shouldIgnoreNextChange为true
+      this.shouldIgnoreNextChange = true;
+      // 然后清空表单相关内容
+      this.form2.salesUnitName = "";
+      this.form2.salesUnitAddress = "";
+    },   
 //选择车牌号
     selectItem(item) {
       this.form.plateCode = item;
@@ -1311,10 +1260,10 @@ export default {
     handleChange1(value) {
 
 
-        this.form3.awardProvince = value[0];
-        this.form3.awardCity = value[1];
-        this.form3.awardArea = value[2];
-			  console.log(this.selectedOptions)
+        this.form2.awardProvince = codeToText[value[0]];
+        this.form2.awardCity = codeToText[value[1]];
+        this.form2.awardArea = codeToText[value[2]];  
+			  //console.log(this.selectedOptions)
         console.log(value)
 			
       },
@@ -1648,8 +1597,8 @@ export default {
       let i = 0;
       this.form2.invoiceImgUrls = [];
       this.form3.plateImgUrls = [];
-      this.form4.cardFrontImg = [];
-      this.form4.cardBackImg = [];
+      this.form4.cardFrontImg = "";
+      this.form4.cardBackImg = "";
       if (list.length > 0) {
         if(list == this.fileList1){
           for (i = 0; i < list.length; i++) {
@@ -1687,12 +1636,12 @@ export default {
               if (list[i].url.includes("50881")){
                strs += list[i].url.substring(25);
                //strs += list[i].url;
-               this.form4.cardFrontImg[i] = strs;
+               this.form4.cardFrontImg = strs;
             }
             else{
                strs += list[i].url.substring(24);
                //strs += list[i].url;
-               this.form4.cardFrontImg[i] = strs;
+               this.form4.cardFrontImg = strs;
             }   
           }          
         }
@@ -1702,12 +1651,12 @@ export default {
               if (list[i].url.includes("50881")){
                strs += list[i].url.substring(25);
                //strs += list[i].url;
-               this.form4.cardBackImg[i] = strs;
+               this.form4.cardBackImg = strs;
             }
             else{
                strs += list[i].url.substring(24);
                //strs += list[i].url;
-               this.form4.cardBackImg[i] = strs;
+               this.form4.cardBackImg = strs;
             }   
           }
         }
