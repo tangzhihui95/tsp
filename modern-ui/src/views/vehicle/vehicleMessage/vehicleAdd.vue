@@ -137,7 +137,8 @@
           />
         </el-form-item>        
     </div>
-        <h4 class="form-header h4" content-position="left">当前设备信息</h4>
+    <div v-if="active!=0">
+      <h4 class="form-header h4" content-position="left">当前设备信息</h4>
         <el-table ref="refTable1" v-loading="loading" :data="listEquipment">
       <el-table-column label="设备ID" align="center" v-if="false" prop="tspEquipmentId"/>
       <el-table-column label="设备型号ID" align="center" v-if="false" prop="tspEquipmentModelId"/>
@@ -145,7 +146,8 @@
       <el-table-column label="车辆ID" align="center" v-if="false" prop="tspvehicleId"/>
       <el-table-column label="序号" type="index" align="center">
           <template slot-scope="scope">
-            <span>{{ scope.$index + 1}}</span>
+                 <span>1</span>
+  <!--           <span>{{ scope.$index + 1}}</span> -->
           </template>
         </el-table-column>
        <el-table-column label="设备类型-型号" align="center" prop="typeModel"></el-table-column>
@@ -157,14 +159,14 @@
           <template slot-scope="scope">
             <el-button
             size="mini"
-            type="text"
+            type="danger"
             icon="el-icon-edit"
             @click="handleSelect(scope.row)"
             v-hasPermi="['vehicle:device:add']"
           >选择设备</el-button>
           <el-button
               size="mini"
-              type="text"
+              type="danger"
               icon="el-icon-delete"
               @click="handleUnbind(scope.row)"
               v-hasPermi="['vehicle:device:remove']"
@@ -172,6 +174,8 @@
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    
         <h4 class="form-header h4" content-position="left">历史绑定设备</h4>
         <el-table ref="refTable2" v-loading="loading" :data="listHistoryEquipment">
       <el-table-column label="车辆ID" align="center" v-if="false" prop="tspvehicleId"/>
@@ -820,7 +824,7 @@
     <el-button v-if="active > 4" style="margin-top: 12px" @click="submit">完成</el-button>
      </div>
     <!-- 选择设备弹窗 --> 
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1500px" append-to-body>
       <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
         <el-form-item label="设备SN" prop="sn" label-width="100px">
           <el-input
@@ -1037,7 +1041,9 @@ export default {
       //历史绑定设备
       listHistoryEquipment: [],
       //当前绑定设备
-      listEquipment: [],
+      listEquipment: [
+       {index: '1'}
+      ],
       //绑定记录
       listBindingRecord: [],
       //出入库记录
@@ -1231,8 +1237,13 @@ export default {
           this.selectEquipment = response.data.list;
           this.total = response.data.total;
           this.loading = false;
+          this.showDialog();
         });
       },
+
+      showDialog() {
+            alert(`Selected: ${this.refTable1.typeModel}`);
+        },
 //选中销货单位名称获取地址
     selectTrigger(value){
       console.log(value)
@@ -1474,20 +1485,24 @@ export default {
     },
 //绑定确定按钮
     submitForm: function() {
-
-        if (this.currentRow != undefined) {
-              bindVehicleEquipment(this.form1.tspVehicleId, this.currentRow.tspEquipmentId).then(response => {
-                this.$modal.msgSuccess("设备绑定成功");
-                this.open = false;
-                this.getList();
-              });
-            } else {
-              adddeviceModel(this.form).then(response => {
-                this.$modal.msgSuccess("新增设备成功");
-                this.open = false;
-                this.getList();
-              });
-            }
+      // 添加到列表
+      this.listEquipment.push({...this.selectEquipment})
+      this.$message.success('添加成功')
+      this.getList();
+      this.loading.close();
+        // if (this.currentRow != undefined) {
+        //       bindVehicleEquipment(this.form1.tspVehicleId, this.currentRow.tspEquipmentId).then(response => {
+        //         this.$modal.msgSuccess("设备绑定成功");
+        //         this.open = false;
+        //         this.getList();
+        //       });
+        //     } else {
+        //       adddeviceModel(this.form).then(response => {
+        //         this.$modal.msgSuccess("新增设备成功");
+        //         this.open = false;
+        //         this.getList();
+        //       });
+        //     }
         
       }, 
 // 取消按钮
@@ -1780,6 +1795,12 @@ export default {
 .el-radio:focus:not(.is-focus):not(:active):not(.is-disabled) .el-radio__inner {
     box-shadow: none;
 }
+
+/* 确保按钮可见 */
+/* .el-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+} */
 
 </style>
   
