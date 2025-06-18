@@ -1,12 +1,6 @@
 package com.modern.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.modern.common.core.domain.BaseModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.modern.common.core.domain.BaseExModel;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -28,7 +22,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Alias("VehicleIntegrate")
-public class VehicleIntegrate extends BaseModel {
+public class VehicleIntegrate extends BaseExModel {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "vin")
@@ -63,12 +57,5 @@ public class VehicleIntegrate extends BaseModel {
     private Integer acceleratorPedalPosition;
     @Column(name = "brake_pedal_position")
     private Integer brakePedalPosition;
-
-    @Column(name = "collect_time")
-    @ApiModelProperty("数据采集时间")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Integer collectTime;
 
 }
