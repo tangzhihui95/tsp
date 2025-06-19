@@ -144,7 +144,7 @@ public class TspVehicleService extends TspBaseService {
             record.setBindStatus("已绑定");
         }
         log.info("车辆信息列表查询出参--------{}", page);
-        return PageInfo.of(page, page.getTotal());
+        return PageInfo.of(page, page.getSize());
     }
 
     @Transactional(rollbackFor = {ServiceException.class})
