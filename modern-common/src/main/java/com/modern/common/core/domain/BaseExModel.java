@@ -11,7 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import java.io.Serializable;
 
@@ -34,19 +34,19 @@ public class BaseExModel implements Serializable {
     @ApiModelProperty("vin")
     protected String vin;
 
-    @ApiModelProperty("")
+    @ApiModelProperty("数据类型")
     protected Integer dataType;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty("")
+    @ApiModelProperty("采集时间")
     protected LocalDateTime collectTime;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty("")
+    @ApiModelProperty("接收时间")
     protected LocalDateTime createTime;
 
     @TableLogic(value = "0", delval = "1")
