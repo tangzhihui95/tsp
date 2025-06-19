@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.modern.common.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -37,11 +37,11 @@ public class BaseVehicleDataDTO {
 
     public static final String NOT_HAVE_STRING = "无";
 
-    public static final Map<Integer, String> BYTE_EXCEPTION_INVALID_MAP = (Map<Integer, String>) ImmutableMap.of(Integer.valueOf(254), ", Integer.valueOf(255), ");
+    public static final Map<Integer, String> BYTE_EXCEPTION_INVALID_MAP = (Map<Integer, String>) ImmutableMap.of(Integer.valueOf(254), "异常", Integer.valueOf(255), "无效");
 
-    public static final Map<Integer, String> SHORT_EXCEPTION_INVALID_MAP = (Map<Integer, String>)ImmutableMap.of(Integer.valueOf(65534), ", Integer.valueOf(65535), ");
+    public static final Map<Integer, String> SHORT_EXCEPTION_INVALID_MAP = (Map<Integer, String>)ImmutableMap.of(Integer.valueOf(65534), "异常", Integer.valueOf(65535), "无效");
 
-    public static final Map<Integer, String> DATA_TYPE_MAP = (Map<Integer, String>)ImmutableMap.of(Integer.valueOf(1), ", Integer.valueOf(2), ", Integer.valueOf(3), ", Integer.valueOf(4), ");
+    public static final Map<Integer, String> DATA_TYPE_MAP = (Map<Integer, String>)ImmutableMap.of(Integer.valueOf(1), "车辆登入", Integer.valueOf(2), "实时信息", Integer.valueOf(3), "补发信息", Integer.valueOf(4), "车辆登出");
 
     public static final DecimalFormat df1 = new DecimalFormat("0.0");
 

@@ -14,6 +14,7 @@ import com.modern.exinterface.dto.VehicleIntegrateParsedDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class VehicleIntegrateService extends VehicleIntegrateRepository {
     @Autowired
     private VehicleIntegrateRepository vehicleIntegrateRepository;
 
-    @Autowired
+    @Resource
     private VehicleIntegrateMapper vehicleIntegrateMappe;
 
     public PageInfo<VehicleIntegrateParsedDTO> getPageList(VehicleSearchVO vo) {
@@ -48,7 +49,7 @@ public class VehicleIntegrateService extends VehicleIntegrateRepository {
             });
         List<Long> pageId = dtoList.stream().map(BaseVehicleDataDTO::getId).collect(Collectors.toList());
         hashMap.put(pageId, dtoList);
-        return PageInfo.of(hashMap.get(pageId), pageList.getCurrent(), pageList.getSize(), pageList.getTotal());
+        return PageInfo.of(hashMap.get(pageId), pageList.getCurrent(), pageList.getSize(), pageList.getRecords().size());
     }
 
 

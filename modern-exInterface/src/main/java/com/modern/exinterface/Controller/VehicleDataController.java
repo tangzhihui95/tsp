@@ -9,9 +9,9 @@ import com.modern.exinterface.vo.VehicleSearchVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -37,9 +37,10 @@ public class VehicleDataController {
     public Result<Map<String, Object>> latestData(@PathVariable("vin") String vin) {
         return Result.ok(vehicleDataService.getLatestData(vin));
     }
+    @PreAuthorize("@ss.hasPermi('tsp:vehicle:data:list')")
     @ApiOperation("整车数据分页查询")
     @GetMapping({"/list"})
-    public Result<PageInfo<VehicleIntegrateParsedDTO>> list(@RequestBody @Valid VehicleSearchVO vo) {
+    public Result<PageInfo<VehicleIntegrateParsedDTO>> list(VehicleSearchVO vo) {
         return Result.ok(vehicleIntegrateService.getPageList(vo));
     }
 

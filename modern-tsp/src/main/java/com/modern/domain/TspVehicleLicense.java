@@ -1,6 +1,8 @@
 package com.modern.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,6 +17,8 @@ import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author：tzh
@@ -25,7 +29,7 @@ import java.time.LocalDate;
  * @Filename：TspVehicleLicense
  */
 @Alias("TspVehicleLicense")
-@Table(name = "tsp_vehicle_license",comment = "摩登- TSP -车牌信息")
+@Table(name = "tsp_vehicle_license", comment = "摩登- TSP -车牌信息")
 @TableName(value = "tsp_vehicle_license", autoResultMap = true)
 @Data
 public class TspVehicleLicense extends BaseModel {
@@ -64,5 +68,33 @@ public class TspVehicleLicense extends BaseModel {
 
     @Column(comment = "车牌颜色", type = MySqlTypeConstant.VARCHAR, length = 22)
     private String plateColour;
+
+    @TableField(value = "plate_img_urls", typeHandler = FastjsonTypeHandler.class)
+    @Column(comment = "车辆照片", type = MySqlTypeConstant.TEXT)
+    private List<String> plateImgUrls = new ArrayList<>();
+
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(comment = "上牌日期", type = MySqlTypeConstant.DATE)
+    private LocalDate upPlaceDate;
+
+    public static final String TSP_VEHICLE_ID = "tsp_vehicle_id";
+
+    public static final String AWARD_PLACE_NAME = "award_place_name";
+
+    public static final String PLACE_AREA = "award_place_area";
+
+    public static final String ADDRESS = "award_place_address";
+
+    public static final String PLATE_CODE = "plate_code";
+
+    public static final String PLATE_COLOUR = "plate_colour";
+
+    public static final String PLATE_IMG_URLS = "plate_img_urls";
+
+    public static final String UP_PLACE_DATE = "up_place_date";
+
+    public static final String VERSION = "version";
 
 }

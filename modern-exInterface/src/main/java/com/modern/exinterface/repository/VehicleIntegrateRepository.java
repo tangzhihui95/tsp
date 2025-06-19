@@ -23,7 +23,7 @@ import java.util.Objects;
 public class VehicleIntegrateRepository extends ServicePlusImpl<VehicleIntegrateMapper, VehicleIntegrate, VehicleIntegrate> {
     public Wrapper<VehicleIntegrate> getPageListEw(VehicleSearchVO vo) {
         QueryWrapper<VehicleIntegrate> ew = new QueryWrapper();
-        ew.eq("t.deleted", Integer.valueOf(0));
+        ew.eq("t.isDelete", Integer.valueOf(0));
         ((QueryWrapper) ew.and(StringUtils.isNotEmpty(vo.getSearch()), q -> ((QueryWrapper) ((QueryWrapper) ((QueryWrapper) ((QueryWrapper) q.like("t.vin", vo.getSearch())).or()).like("b.sn", vo.getSearch())).or()).like("c.plate_code", vo.getSearch())))
                 .between((Objects.nonNull(vo.getCollectStartTime()) && Objects.nonNull(vo.getCollectEndTime())), "t.collect_time", vo
                         .getCollectStartTime(), vo.getCollectEndTime());
