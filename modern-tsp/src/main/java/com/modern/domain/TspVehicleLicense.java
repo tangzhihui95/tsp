@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import com.modern.common.core.domain.BaseModel;
@@ -73,11 +72,11 @@ public class TspVehicleLicense extends BaseModel {
     @Column(comment = "车辆照片", type = MySqlTypeConstant.TEXT)
     private List<String> plateImgUrls = new ArrayList<>();
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
+/*    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(comment = "上牌日期", type = MySqlTypeConstant.DATE)
-    private LocalDate upPlaceDate;
+    private LocalDate upPlaceDate;*/
 
     public static final String TSP_VEHICLE_ID = "tsp_vehicle_id";
 
