@@ -315,6 +315,7 @@ public class TspVehicleService extends TspBaseService {
                     license.setUpdateBy(SecurityUtils.getUsername());
                     license.setPlateCode(placeCode);
                     license.setCreateTime(DateUtils.getCurrentTime());
+                    license.setPlateImgUrls(vo.getPlateImgUrls());
                     tspVehicleLicenseRepository.saveOrUpdate(license);
                     TspVehicleLicenseRecordAddVO tspVehicleLicenseRecordAddVO = new TspVehicleLicenseRecordAddVO();
                     BeanUtils.copyProperties(vo, tspVehicleLicenseRecordAddVO);
