@@ -40,8 +40,9 @@ public class TspVehiclePageListVO extends BaseVO {
     private String bindStatus;
 
     @ApiModelProperty("车辆状态")
-    @JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
-    private TspVehicleStateEnum state;
+    //@JSONField(serialzeFeatures = {SerializerFeature.WriteEnumUsingToString})
+    //private TspVehicleStateEnum state;
+    private Integer state;
 
     @ApiModelProperty("关联账号")
     private Integer needAll;
