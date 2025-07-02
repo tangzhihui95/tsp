@@ -4,7 +4,7 @@
         <el-form-item label="关键字" prop="vehicleModelName" label-width="100px">
           <el-input
             v-model="queryParams.vehicleModelName"
-            placeholder="车型/型号"
+            placeholder="车型"
             clearable
             @keyup.enter.native="handleQuery"
           />
@@ -904,7 +904,7 @@ export default {
         const findex = this.fileList.map(f => f.url).indexOf(file.url);
         if (findex > -1) {
           this.fileList.splice(findex, 1);
-          //console.log(this.fileList);
+          console.log(this.fileList);
           //this.form2.stdModelExtraAddVO.extraImages.splice(findex, 1);
           this.$emit("input", this.listToString(this.fileList));
 
@@ -915,9 +915,9 @@ export default {
       },
       // 图片上传成功回调
       handleUploadSuccess(res) {
-        this.fileList.push({url:res.url});
+        this.fileList.push({url:res.url });
         //this.fileList.push({url:res.data})
-          console.log(this.fileList);
+        console.log(this.fileList);
         //console.log(this.form2.stdModelExtraAddVO.extraImages);
         this.$emit("input", this.listToString(this.fileList));
         this.loading.close();

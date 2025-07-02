@@ -427,7 +427,7 @@ export default {
         extraType: undefined,
         isTerminal: "0",
       };
-      his.resetForm("form");
+      this.resetForm("form");
     },
     resest2() {
       this.form2={  
