@@ -135,5 +135,11 @@ public class TspVehicleRepository extends ServicePlusImpl<TspVehicleMapper, TspV
         return dtos;
     }
 
+    public Integer countByTspUserId(Long id) {
+        QueryWrapper<TspVehicle> ew = new QueryWrapper();
+        ew.eq("tsp_user_id", id);
+        return Integer.valueOf((int) count((Wrapper)ew));
+    }
+
 
 }
