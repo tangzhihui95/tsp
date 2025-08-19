@@ -38,7 +38,7 @@ import java.util.List;
  * @Filename：TspEquipmentTypeController
  */
 @RestController
-@Api(tags = {"tsp-设备类型"})
+@Api(tags = {"TSP-设备类型"})
 @RequestMapping({"/tsp/equipmentType"})
 public class TspEquipmentTypeController {
 
@@ -100,7 +100,7 @@ public class TspEquipmentTypeController {
     @Log(title = "设备分类-下拉列表", businessType = BusinessType.DELETE)
     @PostMapping({"/selectList"})
     public Result<List<TspEquipmentTypeSelectDTO>> selectList(@RequestBody FrontQuery vo) {
-        return Result.ok(this.equipmentTypeService.selectList(vo));
+        return Result.ok(equipmentTypeService.selectList(vo));
     }
 
     @PreAuthorize("@ss.hasPermi('tsp:equipmentType:export')")
@@ -108,7 +108,7 @@ public class TspEquipmentTypeController {
     @Log(title = "设备信息-导出", businessType = BusinessType.EXPORT)
     @PostMapping({"/export"})
     public void export(HttpServletResponse response, FrontQuery vo) {
-        List<TspEquipmentTypeExcelDTO> list = this.equipmentTypeService.exportList(vo);
+        List<TspEquipmentTypeExcelDTO> list = equipmentTypeService.exportList(vo);
         ExcelUtil<TspEquipmentTypeExcelDTO> util = new ExcelUtil(TspEquipmentTypeExcelDTO.class);
         util.exportExcel(response, list, "设备分类信息");
     }
@@ -119,7 +119,7 @@ public class TspEquipmentTypeController {
     @PostMapping({"/importEquipmentModel"})
     public Result importEquipmentModel(MultipartFile file, Boolean isUpdateSupport) {
         try {
-            return Result.ok(this.equipmentTypeService.importEquipmentModel(file, isUpdateSupport));
+            return Result.ok(equipmentTypeService.importEquipmentModel(file, isUpdateSupport));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,7 +131,7 @@ public class TspEquipmentTypeController {
     @Log(title = "设备分类信息-导入", businessType = BusinessType.IMPORT)
     @PostMapping({"/importEquipmentType"})
     public Result importEquipmentType(MultipartFile file, Boolean isUpdateSupport) {
-        return Result.ok(this.equipmentTypeService.importEquipmentType(file, isUpdateSupport));
+        return Result.ok(equipmentTypeService.importEquipmentType(file, isUpdateSupport));
     }
 
     @ApiOperation("设备分类下载模版")

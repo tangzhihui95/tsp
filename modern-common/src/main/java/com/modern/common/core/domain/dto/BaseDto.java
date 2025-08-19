@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
+import com.modern.common.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -30,26 +31,32 @@ public class BaseDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @ApiModelProperty("ID")
+    @ApiModelProperty(value = "ID", required = true, example = "ID")
     private Long id;
-    @ApiModelProperty("创建人")
+
+    @ApiModelProperty(value = "创建人", required = true, example = "创建人")
     private String createBy;
-    @ApiModelProperty("创建时间")
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT, dateFormat = "yyyy-MM - dd HH:mm:ss")
+    @ApiModelProperty(value = "创建时间", required = true, example = "创建时间")
     private LocalDateTime createTime;
-    @ApiModelProperty("更新人")
+
+    @ApiModelProperty(value = "更新人", required = true, example = "更新人")
     private String updateBy;
-    @ApiModelProperty("更新时间")
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @Excel(name = "更新时间", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT, dateFormat = "yyyy-MM - dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间", required = true, example = "更新时间")
     private LocalDateTime updateTime;
 
     @TableLogic(value = "0", delval = "1")
     @TableField(select = false)
-    @ApiModelProperty("是否删除 1-是 0-否")
-    @Column(comment = "是否删除 1-是 0-否", type = MySqlTypeConstant.INT, defaultValue = "0")
+    @Column(comment = "是否删除 1-是 0-否", type = MySqlTypeConstant.INT, defaultValue = "10")
+    @ApiModelProperty(value = "是否删除 1-是 0-否", required = true)
     private Integer isDelete;
 }

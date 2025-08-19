@@ -37,7 +37,7 @@ import java.util.List;
  * @Filename：TspEquipmentController
  */
 @RestController
-@Api(tags = {"Tsp-设备信息"})
+@Api(tags = {"TSP-设备信息"})
 @RequestMapping({"/tsp/equipment"})
 public class TspEquipmentController {
 

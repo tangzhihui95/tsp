@@ -1,6 +1,7 @@
 package com.modern.common.core.domain;
 
 import com.modern.common.constant.HttpStatus;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -22,10 +23,13 @@ public class Result<T> implements Serializable {
      */
     public static final int FAIL = HttpStatus.ERROR;
 
+    @ApiModelProperty(value = "响应Code码", required = true, example = "响应Code码")
     private int code;
 
+    @ApiModelProperty(value = "响应描述", required = true, example = "响应描述")
     private String msg;
 
+    @ApiModelProperty(value = "响应内容", required = true, example = "响应内容")
     private T data;
 
     public static <T> Result<T> ok() {
