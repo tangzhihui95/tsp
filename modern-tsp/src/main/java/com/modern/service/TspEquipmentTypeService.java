@@ -160,18 +160,18 @@ public class TspEquipmentTypeService extends TspBaseService {
             throw new RuntimeException("设备分类ID不能为空");
         for (Long equipmentTypeId : equipmentTypeIds) {
             TspEquipmentType equipmentType = tspEquipmentTypeRepository.getById(equipmentTypeId);
-            if (equipmentType == null)
+            if (Objects.isNull(equipmentType))
                 ErrorEnum.TSP_EQUIPMENT_TYPE_NULL_ERR.throwErr();
             List<Long> models = tspEquipmentModelRepository.findByTspEquipmentTypeId(equipmentTypeId).stream().map(BaseModel::getId).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(models))
                 ErrorEnum.TSP_EQUIPMENT_TYPE_DELETE_ERR.throwErr();
-            this.tspEquipmentTypeRepository.removeById(equipmentTypeId);
+            tspEquipmentTypeRepository.removeById(equipmentTypeId);
         }
         return JsonResult.getResult(true);
     }
 
     public List<TspEquipmentTypeSelectDTO> selectList(FrontQuery vo) {
-        return this.tspEquipmentTypeRepository.selectList(vo);
+        return tspEquipmentTypeRepository.selectList(vo);
     }
 
     public List<TspEquipmentTypeExcelDTO> exportList(FrontQuery vo) {
@@ -247,35 +247,35 @@ public class TspEquipmentTypeService extends TspBaseService {
 
     private Map<String, Object> toCheckModel(TspEquipmentTypeExcelDTO dto, StringBuilder failureMsg, int failureNum) {
         Map<String, Object> checkMap = new HashMap<>();
-        if (dto.getName() == null || dto.getName().equals("")) {
+        if (StringUtils.isNull(dto.getName()) || dto.getName().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、设备类型").append(dto.getName()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getExtraType() == null || dto.getExtraType().equals("")) {
+        if (StringUtils.isNull(dto.getExtraType()) || dto.getExtraType().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、设备扩展信息").append(dto.getExtraType()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getModelName() == null || dto.getModelName().equals("")) {
+        if (StringUtils.isNull(dto.getModelName()) || dto.getModelName().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、设备型号").append(dto.getModelName()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getSuppliers() == null || dto.getSuppliers().equals("")) {
+        if (StringUtils.isNull(dto.getSuppliers()) || dto.getSuppliers().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、供应商").append(dto.getSuppliers()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getBatchNumber() == null || dto.getBatchNumber().equals("")) {
+        if (StringUtils.isNull(dto.getBatchNumber()) || dto.getBatchNumber().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、生产批次").append(dto.getBatchNumber()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
@@ -309,14 +309,14 @@ public class TspEquipmentTypeService extends TspBaseService {
                     failureMsg = (StringBuilder) checkMap.get("failureMsg");
                     if (failureNum == 0) {
                         TspEquipmentType tspEquipmentType = tspEquipmentTypeRepository.getByNameAndExtraType(dto.getName(), dto.getExtraType());
-                        if (tspEquipmentType != null) {
+                        if (Objects.nonNull(tspEquipmentType)) {
                             failureNum++;
                             failureMsg.append("<br/>").append(failureNum).append("、设备类型").append(dto.getName()).append("已存在");
                             continue;
                         }
                         tspEquipmentType = new TspEquipmentType();
                         BeanUtils.copyProperties(dto, tspEquipmentType);
-                        if (dto.getTerminal() == null || "".equals(dto.getTerminal()) || dto.getTerminal().equals("是")) {
+                        if (StringUtils.isNull(dto.getTerminal()) || "".equals(dto.getTerminal()) || dto.getTerminal().equals("是")) {
                             tspEquipmentType.setIsTerminal(Integer.valueOf(1));
                         } else {
                             tspEquipmentType.setIsTerminal(Integer.valueOf(0));
@@ -348,21 +348,21 @@ public class TspEquipmentTypeService extends TspBaseService {
 
     private Map<String, Object> toCheckType(TspEquipmentTypeImportDTO dto, StringBuilder failureMsg, int failureNum) {
         Map<String, Object> checkMap = new HashMap<>();
-        if (dto.getName() == null || dto.getName().equals("")) {
+        if (StringUtils.isNull(dto.getName()) || dto.getName().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、设备类型").append(dto.getName()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getExtraType() == null || dto.getExtraType().equals("")) {
+        if (StringUtils.isNull(dto.getExtraType()) || dto.getExtraType().equals("")) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、设备扩展信息").append(dto.getExtraType()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
             checkMap.put("failureMsg", failureMsg);
             return checkMap;
         }
-        if (dto.getTerminal() != null && !dto.getTerminal().equals("") && !"是".equals(dto.getTerminal()) && !"否".equals(dto.getTerminal())) {
+        if (StringUtils.isNotNull(dto.getTerminal()) && !dto.getTerminal().equals("") && !"是".equals(dto.getTerminal()) && !"否".equals(dto.getTerminal())) {
             failureNum++;
             failureMsg.append("<br/>").append(failureNum).append("、是否为终端").append(dto.getTerminal()).append("不能为空");
             checkMap.put("failureNum", Integer.valueOf(failureNum));
