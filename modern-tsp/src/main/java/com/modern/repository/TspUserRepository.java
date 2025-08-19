@@ -1,5 +1,6 @@
 package com.modern.repository;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.modern.common.core.ServicePlusImpl;
@@ -27,5 +28,13 @@ public class TspUserRepository extends ServicePlusImpl<TspUserMapper, TspUser,Ts
         ew.like(StringUtils.isNotEmpty(vo.getRealName()), "real_name", vo.getRealName());
         ew.orderByDesc("create_time", new String[0]);
         return ew;
+    }
+
+    public TspUser getByMobile(String mobile) {
+        QueryWrapper<TspUser> ew = new QueryWrapper();
+        ew.eq("mobile", mobile);
+        ew.orderByDesc("create_time", new String[0]);
+        ew.last(" limit 1");
+        return (TspUser)getOne((Wrapper)ew);
     }
 }

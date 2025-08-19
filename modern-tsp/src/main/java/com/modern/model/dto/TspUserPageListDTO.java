@@ -25,32 +25,32 @@ import java.time.LocalDateTime;
 @Data
 public class TspUserPageListDTO extends BaseDto {
     @Excel(name = "账号", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
-    @ApiModelProperty("手机号")
+    @ApiModelProperty(value = "账号", required = true, example = "手机号")
     private String mobile;
 
     @Excel(name = "真实姓名", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
-    @ApiModelProperty("真实姓名")
+    @ApiModelProperty(value = "真实姓名", required = true, example = "真实姓名")
     private String realName;
 
     @Excel(name = "身份证号", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
-    @ApiModelProperty("身份证号")
+    @ApiModelProperty(value = "身份证号", required = true, example = "身份证号")
     private String idCard;
 
     @Excel(name = "状态", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, readConverterExp = "1=已认证,0=已注册")
-    @ApiModelProperty("实名认证状态:0未认证 1:已认证 (默认为0)")
+    @ApiModelProperty(value = "实名认证状态:0未认证 1:已认证 (默认为0)", required = true, example = "实名认证状态:0未认证 1:已认证 (默认为0)")
     private Integer realNameAudit;
 
-    @ApiModelProperty("是否启用")
+    @ApiModelProperty(value = "是否启用", required = true, example = "是否启用")
     private Boolean isEnable;
 
     @Excel(name = "车辆数量", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
-    @ApiModelProperty("车辆数量")
+    @ApiModelProperty(value = "车辆数量", required = true, example = "车辆数量")
     private Integer vehicleCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Excel(name = "注册时间", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT, dateFormat = "yyyy-MM - dd HH:mm:ss")
-    @ApiModelProperty("注册时间")
+    @ApiModelProperty(value = "注册时间", required = true, example = "注册时间")
     private LocalDateTime regTime;
 }
