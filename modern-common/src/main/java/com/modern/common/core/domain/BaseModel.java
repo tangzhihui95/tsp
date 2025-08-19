@@ -65,6 +65,6 @@ public class BaseModel implements Serializable {
     @TableLogic(value = "0", delval = "1")
     @TableField(select = false)
     @Column(comment = "是否删除 1-是 0-否", type = MySqlTypeConstant.INT, defaultValue = "0")
-   // @ApiModelProperty(value = "是否删除 1-是 0-否", required = true, example = "0")
+    @ApiModelProperty(value = "是否删除 1-是 0-否", required = true, example = "0")
     private Integer isDelete;
 }
