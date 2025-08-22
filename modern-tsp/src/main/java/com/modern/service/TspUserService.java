@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.modern.common.annotation.DataScope;
 import com.modern.common.constant.ErrorEnum;
-import com.modern.common.core.domain.Result;
 import com.modern.common.core.page.PageInfo;
 import com.modern.common.exception.ServiceException;
+import com.modern.common.utils.DateUtils;
 import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
@@ -85,9 +85,9 @@ public class TspUserService extends TspBaseService {
             }
             tspUser.setLabel(vo.getLabel().toString());
         }
-        tspUser.setUpdateBy(SecurityUtils.getUsername());
         tspUser.setCreateBy(SecurityUtils.getUsername());
         tspUser.setIsDelete(Integer.valueOf(0));
+        tspUser.setCreateTime(DateUtils.getCurrentTime());
         if (StringUtils.isNotEmpty(tspUser.getUserCardBackImg()) && StringUtils.isNotEmpty(tspUser.getUserCardFrontImg()))
             tspUser.setRealNameAudit(Integer.valueOf(1));
         return JsonResult.getResult(tspUserRepository.save(tspUser));
@@ -131,6 +131,8 @@ public class TspUserService extends TspBaseService {
         tspUser.setLabel((Objects.isNull(vo.getLabel())) ? null : vo.getLabel().toString());
         if (StringUtils.isNotEmpty(tspUser.getUserCardBackImg()) && StringUtils.isNotEmpty(tspUser.getUserCardFrontImg()))
             tspUser.setRealNameAudit(Integer.valueOf(1));
+            tspUser.setUpdateTime(DateUtils.getCurrentTime());
+            tspUser.setUpdateBy(SecurityUtils.getUsername());
         return JsonResult.getResult(tspUserRepository.updateById(tspUser));
     }
 
