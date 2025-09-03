@@ -93,7 +93,7 @@ public class PageInfo<T> implements Serializable {
     }
 
     public static <T> PageInfo<T> of(List<T> list, long pageNum, long pageSize, long total) {
-        return new PageInfo<>(list, pageNum, pageSize, total, Long.valueOf(0L));
+        return new PageInfo<>(list, pageNum, pageSize, total);
     }
 
     public static <T> PageInfo<T> of(List<T> list, long pageNum, long pageSize, Long total, Long nextSeq) {

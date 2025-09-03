@@ -12,12 +12,14 @@ import com.modern.common.utils.JsonResult;
 import com.modern.common.utils.SecurityUtils;
 import com.modern.common.utils.StringUtils;
 import com.modern.common.utils.bean.BeanUtils;
+import com.modern.common.utils.poi.ExcelUtil;
 import com.modern.domain.TspTag;
 import com.modern.domain.TspUser;
 import com.modern.mapper.TspUserMapper;
 import com.modern.model.dto.TspUserDTO;
 import com.modern.model.dto.TspUserPageListDTO;
 import com.modern.model.vo.TspUserAddVO;
+import com.modern.model.vo.TspUserExcelVO;
 import com.modern.model.vo.TspUserPageListVO;
 import com.modern.repository.TspTagRepository;
 import com.modern.repository.TspUserRepository;
@@ -27,8 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -131,8 +137,8 @@ public class TspUserService extends TspBaseService {
         tspUser.setLabel((Objects.isNull(vo.getLabel())) ? null : vo.getLabel().toString());
         if (StringUtils.isNotEmpty(tspUser.getUserCardBackImg()) && StringUtils.isNotEmpty(tspUser.getUserCardFrontImg()))
             tspUser.setRealNameAudit(Integer.valueOf(1));
-            tspUser.setUpdateTime(DateUtils.getCurrentTime());
-            tspUser.setUpdateBy(SecurityUtils.getUsername());
+        tspUser.setUpdateTime(DateUtils.getCurrentTime());
+        tspUser.setUpdateBy(SecurityUtils.getUsername());
         return JsonResult.getResult(tspUserRepository.updateById(tspUser));
     }
 
@@ -218,5 +224,155 @@ public class TspUserService extends TspBaseService {
         return JsonResult.getResult(true);
     }
 
+    public String importUser(MultipartFile file, Boolean isUpdateSupport) throws IOException {
+        try {
+            ExcelUtil<TspUserExcelVO> util = new ExcelUtil(TspUserExcelVO.class);
+            List<TspUserExcelVO> dtos = util.importExcel(file.getInputStream());
+            if (StringUtils.isNull(dtos) || dtos.size() == 0)
+                throw new ServiceException("导入数据不能为空");
+            int successNum = 0;
+            int failureNum = 0;
+            StringBuilder successMsg = new StringBuilder();
+            StringBuilder failureMsg = new StringBuilder();
+            for (TspUserExcelVO dto : dtos) {
+                try {
+                    Map<String, Object> checkMap = toCheckUser(dto, failureMsg, failureNum);
+                    failureNum = ((Integer) checkMap.get("failureNum")).intValue();
+                    failureMsg = (StringBuilder) checkMap.get("failureMsg");
+                    if (failureNum == 0) {
+                        TspUser tspUser = tspUserRepository.getByMobile(dto.getMobile());
+                        Integer addressId = tspUserMapper.getAddress("中国,"+ dto.getProvince() + ", " + dto.getCity() + ", " + dto.getArea());
+                        if (addressId == null) {
+                            failureNum++;
+                            failureMsg.append("<br/>").append(failureNum).append("、地址").append(dto.getProvince())
+                                    .append(dto.getCity()).append(dto.getArea()).append("、填写不正确");
+                            continue;
+                        }
+                        if (tspUser == null) {
+                            tspUser = new TspUser();
+                            BeanUtils.copyProperties(dto, tspUser);
+                            if (dto.getLabel() != null && !"".equals(dto.getLabel())) {
+                                TspTag tag = tspTagRepository.getByDealerName(dto.getLabel());
+                                List<Long> label = new ArrayList<>();
+                                if (tag != null) {
+                                    tag.setTagCount(Integer.valueOf(tag.getTagCount().intValue() + 1));
+                                    tspTagRepository.updateById(tag);
+                                    label.add(tag.getId());
+                                    tspUser.setLabel(label.toString());
+                                } else {
+                                    tspUser.setLabel(null);
+                                }
+                            }
+                            tspUser.setCreateBy(SecurityUtils.getUsername());
+                            tspUser.setUpdateBy(SecurityUtils.getUsername());
+                            if (dto.getBirthday() != null && !"".equals(dto.getBirthday()))
+                                tspUser.setBirthday(LocalDate.parse(dto.getBirthday(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                            tspUserRepository.save(tspUser);
+                            successNum++;
+                            successMsg.append("<br/>").append(successNum).append("、用户").append(dto.getRealName()).append(" 导入成功 ");
+                            continue;
+                        }
+                        failureNum++;
+                        failureMsg.append("<br/>").append(failureNum).append("、用户").append(dto.getRealName()).append("的电话号码").append(dto.getMobile()).append("已被使用");
+                    }
+                } catch (Exception e) {
+                    failureNum++;
+                    String msg = "<br/>" + failureNum + "、用户" + dto.getRealName() + " 导入失败 ";
+                    failureMsg.append(msg).append(e.getMessage());
+                    log.error(msg, e);
+                }
+            }
+            if (failureNum > 0) {
+                failureMsg.insert(0, "很抱歉，导入失败！共" + failureNum + " 条数据格式不正确，错误如下：");
+                throw new ServiceException(failureMsg.toString());
+            }
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共" + successNum + " 条，数据如下：");
+            return successMsg.toString();
+        } catch (Throwable $ex) {
+            throw $ex;
+        }
+    }
+
+    public List<TspUserPageListDTO> exportList(TspUserPageListVO vo) {
+        vo.setPageNum(Integer.valueOf(1));
+        vo.setPageSize(Integer.valueOf(2147483647));
+        return getPageList(vo).getList();
+    }
+
+    private Map<String, Object> toCheckUser(TspUserExcelVO dto, StringBuilder failureMsg, int failureNum) {
+        Map<String, Object> checkMap = new HashMap<>();
+        if (dto.getRealName() == null || dto.getRealName().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、车主姓名").append(dto.getRealName()).append(" 不能为空 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String phoneRegexp = "^\\d{11}$";
+        if (dto.getMobile() == null || !dto.getMobile().matches(phoneRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、手机号码").append(dto.getMobile()).append(" 格式异常 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String idRegexp = "^(\\d{17})(\\d|X|x)$";
+        if (dto.getIdCard() == null || !dto.getIdCard().matches(idRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、身份证号").append(dto.getIdCard()).append(" 格式异常 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        String dateRegexp = "^([0-9]{4})(-([0-1][0-9]))(-[0-3][0-9])$";
+        if (dto.getBirthday() != null && !"".equals(dto.getBirthday()) && !dto.getBirthday().matches(dateRegexp)) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、生日").append(dto.getBirthday()).append(" 格式异常 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (dto.getProvince() == null || dto.getProvince().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、注册地址(省)").append(dto.getProvince()).append(" 不能为空 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (dto.getCity() == null || dto.getCity().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、注册地址(市)").append(dto.getCity()).append(" 不能为空 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (dto.getArea() == null || dto.getArea().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、注册地址(区/县)").append(dto.getArea()).append(" 不能为空 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (dto.getLabel() == null || dto.getLabel().equals("")) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、用户标签").append(dto.getLabel()).append(" 不能为空 ");
+                    checkMap.put("failureNum", Integer.valueOf(failureNum));
+            checkMap.put("failureMsg", failureMsg);
+            return checkMap;
+        }
+        if (dto.getLabel() != null && !dto.getLabel().equals("")) {
+            TspTag tag = tspTagRepository.getByDealerName(dto.getLabel());
+            if (tag == null) {
+                failureNum++;
+                failureMsg.append("<br/>").append(failureNum).append("、所填写的用户标签无法在标签管理中找到对应标签 ");
+                checkMap.put("failureNum", Integer.valueOf(failureNum));
+                checkMap.put("failureMsg", failureMsg);
+                return checkMap;
+            }
+        }
+        checkMap.put("failureNum", Integer.valueOf(failureNum));
+        checkMap.put("failureMsg", failureMsg);
+        return checkMap;
+    }
 
 }
