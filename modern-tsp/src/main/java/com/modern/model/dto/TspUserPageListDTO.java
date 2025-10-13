@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @ApiModel("tsp用户- 数据传输对象- 分页列表")
 @Data
 public class TspUserPageListDTO extends BaseDto {
-    @Excel(name = "账号", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL)
+    @Excel(name = "账号", cellType = Excel.ColumnType.STRING, type = Excel.Type.ALL, sort = 1)
     @ApiModelProperty(value = "账号", required = true, example = "手机号")
     private String mobile;
 

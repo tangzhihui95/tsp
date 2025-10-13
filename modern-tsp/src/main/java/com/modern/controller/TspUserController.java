@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -121,11 +122,11 @@ public class TspUserController {
     @ApiOperation("一般用户-导出")
     @PreAuthorize("@ss.hasPermi('tsp:user:export')")
     @Log(title = "- ", businessType = BusinessType.EXPORT)
-    @GetMapping({"/exportUser"})
-    public void export(TspUserPageListVO vo) {
+    @PostMapping({"/exportUser"})
+    public void export(HttpServletResponse response, TspUserPageListVO vo) {
         List<TspUserPageListDTO> list = tspUserService.exportList(vo);
         ExcelUtil<TspUserPageListDTO> util = new ExcelUtil(TspUserPageListDTO.class);
-        util.exportExcel(list, "一般用户信息数据");
+        util.exportExcel(response,list, "一般用户信息数据");
     }
 
 }
