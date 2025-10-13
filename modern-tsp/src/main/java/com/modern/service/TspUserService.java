@@ -126,7 +126,7 @@ public class TspUserService extends TspBaseService {
             }
         }
         List<Long> newLabelList = vo.getLabel();
-        if (Objects.nonNull(newLabelList) && newLabelList.size() != 0)
+        if (Objects.nonNull(vo.getLabel()) && newLabelList.size() != 0)
             for (Long newLabel : newLabelList) {
                 TspTag newTag = tspTagRepository.getById(newLabel);
                 newTag.setTagCount(Integer.valueOf(newTag.getTagCount().intValue() + 1));
@@ -296,7 +296,17 @@ public class TspUserService extends TspBaseService {
     public List<TspUserPageListDTO> exportList(TspUserPageListVO vo) {
         vo.setPageNum(Integer.valueOf(1));
         vo.setPageSize(Integer.valueOf(2147483647));
-        return getPageList(vo).getList();
+        //return getPageList(vo).getList();
+        ArrayList<TspUserPageListDTO> dtos = new ArrayList<>();
+        List<TspUserPageListDTO> list = getPageList(vo).getList();
+        for(TspUserPageListDTO tspUserPageListDTO :list){
+            Integer count = tspVehicleRepository.countByTspUserId(tspUserPageListDTO.getId());
+            TspUserPageListDTO dto = new TspUserPageListDTO();
+            BeanUtils.copyProperties(tspUserPageListDTO, dto);
+            dto.setVehicleCount(Integer.valueOf(count));
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     private Map<String, Object> toCheckUser(TspUserExcelVO dto, StringBuilder failureMsg, int failureNum) {

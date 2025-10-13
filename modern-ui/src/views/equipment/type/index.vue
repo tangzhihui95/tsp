@@ -192,7 +192,7 @@
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
-      @pagination="listdeviceType"
+      @pagination="getList"
     />
 
     <!-- 添加或修改设备类型对话框 -->
