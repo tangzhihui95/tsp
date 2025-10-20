@@ -175,7 +175,7 @@
        <el-input v-model="form.address" placeholder="请输入详细地址" :disabled="!this.isEditMode"/>
     </el-form-item>
 
-    </el-form-item>
+    <!-- </el-form-item> -->
         <el-form-item label="用户标签" prop="labels" multiple :required="true" >          
           <el-select v-model="form.labels" placeholder="请选择" :disabled="!this.isEditMode"  clearable>
           <el-option
@@ -184,9 +184,9 @@
             :label="dict1.label"
             :value="Number(dict1.value)"
           />
-        </el-select>
-        
-    </el-form-item>
+          </el-select>
+        </el-form-item>
+    <!-- </el-form-item> -->
     
     
 
@@ -256,7 +256,7 @@
             <i class="el-icon-plus"></i>
         </el-upload>
 
-        
+
         <!-- 上传提示 -->
        <div class="el-upload__tip" slot="tip" v-if="isShowTip">
         请上传
