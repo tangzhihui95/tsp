@@ -52,7 +52,7 @@ public class TspEquipmentModelService extends TspBaseService {
 
     public JsonResult add(TspEquipmentModelAddVO vo) {
         if (vo.getTspEquipmentTypeId() == null)
-            throw new RuntimeException("设备分类ID不能玩为空");
+            throw new RuntimeException("设备分类ID不能为空");
         TspEquipmentModel model = tspEquipmentModelRepository.getByModelName(vo.getModelName());
         if (Objects.nonNull(model))
             ErrorEnum.TSP_EQUIPMENT_MODEL_NOT_NULL_ERR.throwErr();
